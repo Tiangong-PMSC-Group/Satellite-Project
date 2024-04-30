@@ -1,7 +1,7 @@
 import numpy as np
 
-class Linear_Kalman_Filter():
-    def __init__(self, m0, Cov0, F, H, R = 1, Q = 0):
+class Satellite():
+    def __init__(self, true_state0, m0, Cov0, F, H, R = 1, Q = 0):
         '''
         m0 - inital guess of the means (Column Vector n x 1)
         Cov0 - intial covariance matrix, how good is the first guess (Square Matrix n x n)
@@ -19,15 +19,18 @@ class Linear_Kalman_Filter():
         1. Intialise/Reset the Filter
 
         2. If you DON'T recieve data (y):
-            2.a. forecast()
+            2.a. LKM_forecast()
 
         3. If you received data (y):
-            3.a. update()
+            3.a. LKM_update()
 
         4. Carry out 2 and 3 until exit condition is met.
         
         P.S. m and C are public variables so you can always access them through a = LKM.C and LKM.m
         '''
+
+        #True state of the satellite, this cannot leak into Kalman
+        self.true_state = true_state0
 
         #These don't really matter, make them large for large uncertainty
         self.m = m0
@@ -64,12 +67,11 @@ class Linear_Kalman_Filter():
         #K = self.C @ self.H.T @ np.linalg.solve(self.H @ self.C @ self.H.T + self.R, self.R)
         return K
     
-
-    def forecast(self):
+    def LKM_forecast(self):
         self.m = self.forecast_mean()
         self.C = self.forecast_cov()
 
-    def update(self, y):
+    def LKM_update(self, y):
         self.m = self.update_mean(y=y)
         self.C = self.update_cov()
 
