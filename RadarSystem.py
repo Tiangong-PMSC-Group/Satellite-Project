@@ -46,9 +46,9 @@ change to real time interval
 radar_system.start_timer(1)
 
 # Keep the program running to allow timer to trigger
-try:
-    while True:
-        time.sleep(1)
-except KeyboardInterrupt:
-    print("Stopping radar system.")
-    radar_system.stop_timer()
+# try:
+#     while True:
+#         time.sleep(1)
+# except KeyboardInterrupt:
+#     print("Stopping radar system.")
+#     radar_system.stop_timer()
