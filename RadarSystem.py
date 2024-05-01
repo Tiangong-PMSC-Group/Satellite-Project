@@ -1,4 +1,4 @@
-
+import math
 class RadarSystem:
     """A class control all radars to make them detect satellite positions periodically
      Predictor can get the informations by visiting radars list"""
@@ -6,10 +6,10 @@ class RadarSystem:
 
     def __init__(self, radars, earth):
         self.radars = radars
-        self.earth_eqn = earth_eqn
+        self.earth = earth
         self.timer = None
 
-    def check_los(self,sat_pos):
+    def check_los(self, sat_pos):
         global current_time
         current_time = current_time + 1
         for radar in self.radars:
@@ -24,7 +24,7 @@ class RadarSystem:
         """Handle the timer's event: check LOS and restart the timer."""
         """ TODO :
         True satellite positions need to be given, once the simulator finished """
-        self.check_los(None)
+        self.check_los(np.array([[1000000], [math.pi], [math.pi]]))
         self.start_timer()  # Restart the timer for the next check
 
     def stop_timer(self):
