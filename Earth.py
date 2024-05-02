@@ -38,6 +38,7 @@ class Earth():
         #We translate into the plane which is relevant to us
         x = np.asarray(state)
         relevant_state = np.array([[x[0]], [x[1]]])
+
         x2 = ut.p_to_c(relevant_state)
 
         t = math.atan2(x2[1], x2[0])

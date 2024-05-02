@@ -19,6 +19,7 @@ def c_to_p(state):
         polar_state = np.array([[rho], [theta], [phi]])
 
     elif dims == 2:
+        
         x = state[0]
         y = state[1]
         rho = math.sqrt(x**2 + y**2)
