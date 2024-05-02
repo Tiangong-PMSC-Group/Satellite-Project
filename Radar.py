@@ -9,7 +9,7 @@ class Radar():
         self.last_ping = 0 
         self.sate_pos_detected = None
     
-    # If the radat can detect the satellite, update sat position and last ping.
+    # If the radar can detect the satellite, update sat position and last ping.
     def line_of_sight(self, Sat_Pos, Earth_Eqn,current_time):
         '''
         Sat - Satellite Position
