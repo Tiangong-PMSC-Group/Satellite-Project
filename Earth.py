@@ -18,11 +18,20 @@ class Earth():
 
 
     def ellipse_equation(self, x, y, z):
+        """Defines the ellipse equation
+
+        Args:
+            x (float): Coordinate x
+            y (float): Coordinate y
+            z (float): Coordinate z
+
+        Returns:
+            float: _description_
+        """
         return (x^2)/(self.re^2) + (y^2)/(self.rp^2) + (z^2)/(self.re^2) - 1 
 
     def distane_to_surface(self, state, tolerance = 1e-6, max_iterations = 1000):
-        '''
-        Finds the minimum distance between the specified point and the ellipse
+        """Finds the minimum distance between the specified point and the ellipse
         using Newton's method.
 
         NEEDS TO BE OPTIMISED FOR POLAR COORDINATES
@@ -33,6 +42,18 @@ class Earth():
 
         x1 - ellipse coordinate
         x2 - satellite coordinates
+
+        Args:
+            state (_type_): _description_
+            tolerance (_type_, optional): _description_. Defaults to 1e-6.
+            max_iterations (int, optional): _description_. Defaults to 1000.
+
+        Returns:
+            float: minimun distance to Earth
+        """
+
+        '''
+        
         ''' 
 
         #We translate into the plane which is relevant to us
@@ -74,6 +95,14 @@ class Earth():
         return dict(x = t, y = y, error = error, iterations = iterations, success = success, xs = ts,  errors = errors)
 
     def air_denisty(self, distance):
+        """_summary_
+
+        Args:
+            distance (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         '''
         Atmosphere code, gets you the density.
         '''

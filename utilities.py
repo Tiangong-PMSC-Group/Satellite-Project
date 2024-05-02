@@ -3,9 +3,14 @@ import scipy as sp
 import math
 
 def c_to_p(state):
-    '''
-    Changes the coordinates from CARTESIAN to POLAR
-    '''
+    """Changes the coordinates from Cartesian to Polar
+
+    Args:
+        state (np.array): Cartesian coordinates array 
+
+    Returns:
+        np.array: Polar coordinates array
+    """
 
     dims = np.size(state)
 
@@ -29,9 +34,14 @@ def c_to_p(state):
     return polar_state
     
 def p_to_c(state):
-    '''
-    Changes the coordinates from POLAR to CARTESIAN
-    '''
+    """Changes the coordinates from Polar to Cartesian
+
+    Args:
+        state (np.array): Polar coordinates array 
+
+    Returns:
+        np.array: Cartesian coordinates array
+    """
 
     dims = np.size(state)
 

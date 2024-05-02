@@ -40,8 +40,8 @@ class RadarSystem:
 """ TODO :
 Init the positions of the radors, they should be on the surface of the earth.
 """
-radars = [Radar(np.array([[0], [0], [0]])), Radar(np.array([[0], [0], [0]]))]
-radar_system = RadarSystem(radars, Earth())
+radars = [radar(np.array([[0], [0], [0]])), radar(np.array([[0], [0], [0]]))]
+radar_system = RadarSystem(radars, earth())
 """ TODO :
 change to real time interval
 """

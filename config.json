@@ -22,7 +22,7 @@
             "distance": 1000000,
             "polar_angle": 1.57,
             "azimuthal_angle": 3.14,
-            "comment": "Just includ some random initial conditions, change later. Can be overwritten in the code"
+            "comment": "Just included some random initial conditions, change later. Can be overwritten in the code"
         }
     }
 
