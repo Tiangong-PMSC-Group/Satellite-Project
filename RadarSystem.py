@@ -1,6 +1,8 @@
 import math
 import threading
 import time
+import numpy as np 
+
 class RadarSystem:
     """A class control all radars to make them detect satellite positions periodically
      Predictor can get the informations by visiting radars list"""
@@ -16,7 +18,7 @@ class RadarSystem:
         self.current_time += 1
         for radar in self.radars:
             radar.line_of_sight(sat_pos, self.earth.ellipse_equation,self.current_time)
-
+    
     def start_timer(self, interval=5):
         """Start a periodic timer that checks LOS every 'interval' seconds."""
         self.timer = threading.Timer(interval, self.run_timer)
