@@ -70,6 +70,8 @@ class Earth():
         ts = np.array(ts)
         errors = np.array(errors)
         y = np.linalg.norm(x1 - x2)
+
+        #Makes it return a point on the ellipse rather than the optimisation
         success = error < tolerance and iterations < max_iterations
         return dict(x = t, y = y, error = error, iterations = iterations, success = success, xs = ts,  errors = errors)
 
