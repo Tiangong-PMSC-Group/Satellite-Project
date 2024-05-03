@@ -93,8 +93,12 @@ class Earth():
         y = np.linalg.norm(x1 - x2)
 
         #Makes it return a point on the ellipse rather than the optimisation
+        opt_x = a * np.cos(t)
+        opt_y = b * np.sin(t)
+        distance = np.sqrt((x2[0] - opt_x)**2 + (x2[1] - opt_y)**2)
+
         success = error < tolerance and iterations < max_iterations
-        return dict(x = t, y = y, error = error, iterations = iterations, success = success, xs = ts,  errors = errors)
+        return dict(distance = distance, x = opt_x, y = opt_y, error = error, iterations = iterations, success = success, xs = ts,  errors = errors)
 
     def air_denisty(self, distance):
         """_summary_

@@ -12,6 +12,7 @@ class LinearKalmanFilter():
             observation_noise (int, optional): _description_. Defaults to 1.
             process_noise (int, optional): _description_. Defaults to 0.
         """
+        
         '''
         m0 - inital guess of the means (Column Vector n x 1)
         Cov0 - intial covariance matrix, how good is the first guess (Square Matrix n x n)
@@ -23,7 +24,7 @@ class LinearKalmanFilter():
 
         y - data recieved (Column Vector n x 1), look at update_mean(self, y)
 
-        
+
         ### ### ### Operational Loop: ### ### ###
 
         1. Intialise/Reset the Filter
