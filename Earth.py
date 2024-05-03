@@ -1,9 +1,11 @@
 import numpy as np
 import math 
 import matplotlib as plt
-
+from decorators import singleton
 import utilities as ut
 
+
+@singleton
 class Earth():
     def __init__(self):
         
