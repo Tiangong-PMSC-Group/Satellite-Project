@@ -10,7 +10,7 @@ class Radar():
         self.sate_pos_detected = None
     
     # If the radar can detect the satellite, update sat position and last ping.
-    def line_of_sight(self, Sat_Pos, Earth_Eqn,current_time):
+    def line_of_sight(self, Sat_Pos, Earth_Eqn, current_time):
         '''
         Sat - Satellite Position
         Earth - Earth Ellipse Equation
@@ -31,11 +31,6 @@ class Radar():
                 return False
         
         #If no LOS break, return True
-
-        #COMMENT:
-        #Here you are adding the noise and changing the last ping prematurely as
-        #we dont yet know when was the last time for the radar has sent data,
-        #as such we need to check that current_time - self.last_ping > frequency
         sate_pos_detected = add_noise(Sat_Pos)
         self.last_ping = current_time
         return True

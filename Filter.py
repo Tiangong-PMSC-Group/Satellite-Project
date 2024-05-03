@@ -12,17 +12,17 @@ class LinearKalmanFilter():
             observation_noise (int, optional): _description_. Defaults to 1.
             process_noise (int, optional): _description_. Defaults to 0.
         """
-        
+
         '''
         m0 - inital guess of the means (Column Vector n x 1)
         Cov0 - intial covariance matrix, how good is the first guess (Square Matrix n x n)
 
         F - state transition matrix, the physics per timestep (Square Matrix n x n)
         H - observation matrix (Binary Column Vector n x 1)
-        R - covariance of observation noise (n x n)
-        Q - covariance of process noise (n x n)
+        R - covariance of observation noise (n x n) noise of RADAR
+        Q - covariance of process noise (n x n) noise of ATMOSPHERE/PHYSICS 
 
-        y - data recieved (Column Vector n x 1), look at update_mean(self, y)
+        measurement - data recieved (Column Vector n x 1), look at update_mean(self, y)
 
 
         ### ### ### Operational Loop: ### ### ###
@@ -47,6 +47,7 @@ class LinearKalmanFilter():
         self.H = observation_matrix
         self.R = observation_noise
         self.Q = process_noise
+
 
     def forecast_mean(self, transition_matrix = None):
         if transition_matrix == None:
