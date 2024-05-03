@@ -38,7 +38,7 @@ class Radar():
         TODO This frequency should be read from config.json
         """
         frequency = 10
-        if current_time - self > frequency:
+        if current_time - self.last_ping > frequency:
             sate_pos_detected = add_noise(Sat_Pos)
             self.last_ping = current_time
             """
