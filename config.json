@@ -3,7 +3,15 @@
         "dt":{
         "main_dt": 1,
         "kalman_x": 10,
-        "radar_x": 20
+        "radar_los": 2
+        }
+    },
+    "radar": {
+        "frequency": 20,
+        "noise": {
+            "rho": 100,
+            "phi": 0.1,
+            "theta": 0.1
         }
     },
     "earth":{
