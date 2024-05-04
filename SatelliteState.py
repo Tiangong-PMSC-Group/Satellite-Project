@@ -6,10 +6,7 @@ A dataclass which now is combination of time and position, and if the following 
 add a field here is very convenient to let data pass through classes
 '''
 @dataclass
-class SatellitePos:
-    def __init__(self):
-        pass
-
+class SatelliteState:
     velocity: np.ndarray
     pos: np.ndarray
     current_time: int

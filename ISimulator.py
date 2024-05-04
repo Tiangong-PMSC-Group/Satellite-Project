@@ -8,7 +8,7 @@
 '''
 from abc import abstractmethod, ABCMeta
 
-from SatellitePos import SatellitePos
+from SatelliteState import SatelliteState
 
 
 class ISimulator(metaclass=ABCMeta):
@@ -21,7 +21,7 @@ class ISimulator(metaclass=ABCMeta):
     '''
 
     @abstractmethod
-    def simulate(self) -> SatellitePos:
+    def simulate(self) -> SatelliteState:
         raise NotImplementedError
 
 
@@ -33,7 +33,7 @@ class FakeSimulator(ISimulator):
     def __init__(self):
         super().__init__()
 
-    def simulate(self) -> SatellitePos:
+    def simulate(self) -> SatelliteState:
         """TODO read positions from file"""
         raise NotImplementedError
 
@@ -45,6 +45,6 @@ class RealSimulator(ISimulator):
     def __init__(self):
         super().__init__()
 
-    def simulate(self) -> SatellitePos:
+    def simulate(self) -> SatelliteState:
         """The real dynamics which can generate the real positions of satellites"""
         raise NotImplementedError

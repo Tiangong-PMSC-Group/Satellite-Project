@@ -4,7 +4,8 @@
         "main_dt": 1,
         "kalman_x": 10,
         "radar_los": 2
-        }
+        },
+        "gravitational_constant":  6.67430e-11
     },
     "radar": {
         "frequency": 20,
