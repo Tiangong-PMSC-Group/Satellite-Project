@@ -1,6 +1,8 @@
 import numpy as np
 from Filter import LinearKalmanFilter
+from decorators import singleton
 
+@singleton
 class Satellite():
     """Satellite Class
     """

@@ -3,14 +3,14 @@ import math
 import utilities as ut
 
 
-class Radar():   
+class Radar():
     def __init__(self, position):
         self.position = position
         self.last_ping = 0 
         self.sate_pos_detected = None
     
     # If the radar can detect the satellite, update sat position and last ping.
-    def line_of_sight(self, Sat_Pos, Earth_Eqn,current_time):
+    def line_of_sight(self, Sat_Pos, Earth_Eqn):
         '''
         Sat - Satellite Position
         Earth - Earth Ellipse Equation
@@ -21,7 +21,7 @@ class Radar():
         p = ut.p_to_c(self.position)
 
         v0 = x - p
-        mag = np.sqrt(v0.dot(v0))
+        mag = np.sqrt(v0.dot(v0.T))
         v0 = v0/mag
 
         #Checks if the line from dish to satellite goes into Earth.
@@ -29,16 +29,22 @@ class Radar():
             LOS_p = p + v0*t
             if Earth_Eqn(LOS_p[0], LOS_p[1], LOS_p[2]) < 0:
                 return False
-        
-        #If no LOS break, return True
 
-        #COMMENT:
-        #Here you are adding the noise and changing the last ping prematurely as
-        #we dont yet know when was the last time for the radar has sent data,
-        #as such we need to check that current_time - self.last_ping > frequency
-        sate_pos_detected = add_noise(Sat_Pos)
-        self.last_ping = current_time
+        # If no LOS break, return True
         return True
+
+    def detect_satellite_pos(self,Sat_Pos, current_time):
+        """
+        TODO This frequency should be read from config.json
+        """
+        frequency = 10
+        if current_time - self.last_ping > frequency:
+            sate_pos_detected = add_noise(Sat_Pos)
+            self.last_ping = current_time
+            """
+            TODO  Send broadcast to Predictor 
+            """
+            print(sate_pos_detected)
         
 
 def add_noise(position, noise_level=1.0):
