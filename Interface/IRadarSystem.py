@@ -18,7 +18,7 @@ class IRadarSystem(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def try_detect_satellite(self, sat_pos, current_time):
+    def try_detect_satellite(self, sat_pos, current_time) -> SatelliteState:
         pass
 
 

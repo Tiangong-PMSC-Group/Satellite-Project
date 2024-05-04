@@ -43,7 +43,7 @@ class Radar():
             """
             TODO  Send broadcast to Predictor 
             """
-            print(sate_pos_detected)
+            # print(sate_pos_detected)
 
 
 def add_noise(position):
