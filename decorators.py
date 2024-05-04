@@ -7,10 +7,14 @@ Moreover, it simplifies the usage of these classes for other parts of the projec
 For example, when declaring instances such as earth1 = Earth() and earth2 = Earth(), both earth1 and earth2 in storage
 will actually point to the same object, thanks to the singleton pattern.
 '''
+
+
 def singleton(cls):
     instances = {}
+
     def get_instance(*args, **kwargs):
         if cls not in instances:
             instances[cls] = cls(*args, **kwargs)
         return instances[cls]
+
     return get_instance

@@ -58,8 +58,7 @@ def add_noise(position):
         noise_levels = np.array([config['radar']['noise']['rho'],config['radar']['noise']['theta']])
     elif len(position) == 3:
         noise_levels = np.array([config['radar']['noise']['rho'],config['radar']['noise']['theta'],config['radar']['noise']['phi']])
-    if len(position) != len(noise_levels):
-        raise ValueError("The length of noise_levels must match the number of dimensions in position.")
+
 
     noisy_position = np.array(position) + np.random.normal(0, noise_levels, size=np.shape(position))
     return noisy_position

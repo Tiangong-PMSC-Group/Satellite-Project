@@ -10,6 +10,7 @@ class SatellitePos:
     def __init__(self):
         pass
 
-    state: np.ndarray
+    velocity: np.ndarray
+    pos: np.ndarray
     current_time: int
 
