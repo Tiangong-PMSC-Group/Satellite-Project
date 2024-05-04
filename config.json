@@ -1,9 +1,9 @@
 {
-    "simulation_config":{
+    "sim_config":{
         "dt":{
-        "main": 1,
-        "kalman": 10,
-        "radar": 20
+        "main_dt": 1,
+        "kalman_x": 10,
+        "radar_x": 20
         }
     },
     "earth":{
