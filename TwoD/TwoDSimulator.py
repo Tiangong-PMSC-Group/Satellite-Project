@@ -1,19 +1,22 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+from config import config
 import utilities
 from ISimulator import ISimulator
 from SatelliteState import SatelliteState
 import json
+
 '''
-"A 2D simulator without considering atmospheric drag, suitable for early project testing and integration."
+"A TwoD simulator without considering atmospheric drag, suitable for early project testing and integration."
 '''
-class Two_D_Simulator(ISimulator):
+
+
+class TwoDSimulator(ISimulator):
     """Simulator for satellite positions in a two-dimensional orbital plane."""
 
     def __init__(self):
         super().__init__()
-        self.G = config['sim_config']['gravitational_constant'] # Gravitational constant in m^3 kg^-1 s^-2
+        self.G = config['sim_config']['gravitational_constant']  # Gravitational constant in m^3 kg^-1 s^-2
         self.M = config['earth']['mass']  # Mass of Earth in kg
         self.dt = config['sim_config']['dt']['main_dt']  # Timestep in seconds
         self.r = config['earth']['major_axis'] + 400e3  # Initial distance from Earth's center plus 400 km
@@ -21,7 +24,7 @@ class Two_D_Simulator(ISimulator):
         self.dr = 0  # Initial radial velocity
         self.dtheta = np.sqrt(self.G * self.M / self.r ** 3)  # Initial angular velocity, assuming circular orbit
 
-    def simulate(self) -> SatelliteState:
+    def simulate(self, current_time) -> SatelliteState:
         """Simulates one timestep and returns the satellite position and velocity."""
 
         # Calculate new position using Forward Euler Method
@@ -36,21 +39,25 @@ class Two_D_Simulator(ISimulator):
         self.r, self.theta, self.dr, self.dtheta = new_r, new_theta, new_dr, new_dtheta
 
         return SatelliteState(velocity=np.array([self.dr, self.dtheta]), pos=np.array([self.r, self.theta]),
-                              current_time=0)
-def load_config(file_path):
-    with open(file_path, 'r') as file:
-        return json.load(file)
+                              current_time=current_time)
 
-config = load_config('../config.json')
+
+# def load_config(file_path):
+#     with open(file_path, 'r') as file:
+#         return json.load(file)
+#
+#
+# config = load_config('../config.json')
+
 
 def print_trajactory_for_test():
     # Usage of Two_D_Simulator to simulate an orbit for a day
-    simulator = Two_D_Simulator()
+    simulator = TwoDSimulator()
     positions = []
 
     num_steps = int(3600 * 24 / simulator.dt)
-    for _ in range(num_steps):
-        satelliteState = simulator.simulate()
+    for step in range(num_steps):
+        satelliteState = simulator.simulate(step)
         positions.append(utilities.p_to_c(satelliteState.pos))
 
     # Convert positions list to numpy array for plotting
@@ -64,4 +71,5 @@ def print_trajactory_for_test():
     plt.axis('equal')
     plt.show()
 
-print_trajactory_for_test()
+
+# print_trajactory_for_test()

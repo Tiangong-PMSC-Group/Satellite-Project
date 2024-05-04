@@ -21,7 +21,7 @@ class ISimulator(metaclass=ABCMeta):
     '''
 
     @abstractmethod
-    def simulate(self) -> SatelliteState:
+    def simulate(self, current_time) -> SatelliteState:
         raise NotImplementedError
 
 

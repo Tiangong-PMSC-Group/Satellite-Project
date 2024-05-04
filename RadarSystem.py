@@ -1,5 +1,7 @@
 import math
 import numpy as np
+
+from Interface.IRadarSystem import IRadarSystem
 from config import config
 import utilities
 from decorators import singleton
@@ -8,7 +10,7 @@ from Earth import Earth
 
 
 @singleton
-class RadarSystem:
+class RadarSystem(IRadarSystem):
     radar_dt = config['sim_config']['dt']['radar_los']
     # earth_angular_velocity = config['earth']['angular_velocity']
     earth_angular_velocity = 2 * math.pi / 86400
@@ -22,6 +24,7 @@ class RadarSystem:
         self.init_radar_positions()
 
     def init_radar_positions(self):
+        print("2")
         points = random_points_on_ellipse(Earth(), self.counts)
         # print(points) # check are these radar on the surface of the earth
         # c_pos = utilities.p_to_c(points[0])
@@ -59,10 +62,10 @@ def random_points_on_ellipse(self, num_points):
     return points
 
 
-radar_system = RadarSystem(10, Earth())
-''' Test code'''
-current_time = 1
-for i in range(1000):
-    radar_system.update_radar_positions()
-    radar_system.try_detect_satellite(np.array([100000000, math.pi, math.pi]), current_time)
-    current_time = current_time + 1
+# radar_system = RadarSystem(10, Earth())
+# ''' Test code'''
+# current_time = 1
+# for i in range(1000):
+#     radar_system.update_radar_positions()
+#     radar_system.try_detect_satellite(np.array([100000000, math.pi, math.pi]), current_time)
+#     current_time = current_time + 1
