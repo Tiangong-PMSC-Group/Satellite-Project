@@ -13,14 +13,18 @@ class LinearKalmanFilter():
             process_noise (int, optional): _description_. Defaults to 0.
         """
 
+        
         '''
-        m0 - inital guess of the means (Column Vector n x 1)
-        Cov0 - intial covariance matrix, how good is the first guess (Square Matrix n x n)
+        n_stat = number of total states
+        n_mes = number of measured states
 
-        F - state transition matrix, the physics per timestep (Square Matrix n x n)
-        H - observation matrix (Binary Column Vector n x 1)
-        R - covariance of observation noise (n x n) noise of RADAR
-        Q - covariance of process noise (n x n) noise of ATMOSPHERE/PHYSICS 
+        m0 - inital guess of the means (Column Vector n_stat x 1)
+        Cov0 - intial covariance matrix, how good is the first guess (Square Matrix n_stat x n_stat)
+
+        F - state transition matrix, the physics per timestep (Square Matrix n_stat x n_stat)
+        H - observation matrix (Binary Column Vector n_mes x n_stat)
+        R - covariance of observation noise (n_mes x n_mes) noise of RADAR
+        Q - covariance of process noise (n_stat x n_stat) noise of ATMOSPHERE/PHYSICS 
 
         measurement - data recieved (Column Vector n x 1), look at update_mean(self, y)
 
@@ -41,6 +45,7 @@ class LinearKalmanFilter():
         '''
 
         self.m = mean_0
+        self.m = self.m[:, np.newaxis]
         self.C = cov_0
 
         self.F = transition_matrix
@@ -66,7 +71,6 @@ class LinearKalmanFilter():
         K = self.get_kalman_gain()
         return self.m + K @ (measurement - self.H @ self.m)
         
-    
     def update_cov(self):
         K = self.get_kalman_gain()
         return self.C - K @ self.H @ self.C
@@ -83,6 +87,7 @@ class LinearKalmanFilter():
         self.C = self.forecast_cov(transition_matrix)
 
     def update(self, measurement):
+        measurement = measurement[:, np.newaxis]
         self.m = self.update_mean(measurement)
         self.C = self.update_cov()
 
