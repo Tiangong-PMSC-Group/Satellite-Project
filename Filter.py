@@ -80,8 +80,6 @@ class LinearKalmanFilter():
         #K = self.C @ self.H.T @ np.linalg.solve(self.H @ self.C @ self.H.T + self.R, self.R)
 
     def forecast(self, transition_matrix = None):
-        if transition_matrix == None:
-            transition_matrix = self.F
         self.m = self.forecast_mean(transition_matrix)
         self.C = self.forecast_cov(transition_matrix)
 
