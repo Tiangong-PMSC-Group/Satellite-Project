@@ -15,7 +15,7 @@ class Earth():
         '''
 
         self.re = config['earth']['major_axis']
-        self.rp = config['earth']['major_axis']
+        self.rp = config['earth']['minor_axis']
         self.omega = config['earth']['omega']
         self.mass = config['earth']['mass']
 
