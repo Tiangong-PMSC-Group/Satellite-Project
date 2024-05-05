@@ -4,14 +4,12 @@ from config import config
 import utilities
 from ISimulator import ISimulator
 from SatelliteState import SatelliteState
-
-
+import pickle
+from ISimulator import ISimulator, FakeSimulator, RealSimulator
 class TwoDSimulator(ISimulator):
     def __init__(self):
         super().__init__()
-        self.G = config['sim_config']['gravitational_constant']
-        self.M = config['earth']['mass']
-        self.dt = config['sim_config']['dt']['main_dt']
+
         self.r = config['earth']['major_axis'] + 400e3  # Initial altitude 4000 km above Earth's surface
         self.theta = 0
         self.dr = 0
@@ -65,19 +63,23 @@ class TwoDSimulator(ISimulator):
         return SatelliteState(velocity=np.array([self.dr, self.dtheta]), pos=np.array([self.r, self.theta]),
                               current_time=current_time)
 
-def print_trajectory_for_test():
-    simulator = TwoDSimulator()
-    positions = []
 
+def print_trajectory_for_test(real):
+    file_name = '2dtraj'
+    if real:
+        simulator = TwoDSimulator()
+    else:
+        simulator = FakeSimulator(file_name)
+    positions = []
+    satellite_states = []
     num_steps = int(3600 * 24* 10 / simulator.dt)
     for step in range(num_steps):
         satellite_state = simulator.simulate(step)
         if satellite_state is None:
-            print(step)
             print("Simulation stopped: Satellite has crashed into the Earth.")
             break
         positions.append(utilities.p_to_c(satellite_state.pos))
-
+        satellite_states.append(satellite_state)
     positions = np.array(positions)
     earth_radius = config['earth']['major_axis']  # Earth's radius
 
@@ -94,5 +96,10 @@ def print_trajectory_for_test():
     plt.axis('equal')
     plt.show()
 
+    if real:
+        with open(file_name, 'wb') as file:
+         pickle.dump(satellite_states, file)
 
-# print_trajectory_for_test()
+# print_trajectory_for_test(False)
+
+
