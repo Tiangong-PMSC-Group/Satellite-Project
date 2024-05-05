@@ -44,8 +44,11 @@ class LinearKalmanFilter():
         P.S. m and C are public variables so you can always access them through a = LKM.C and LKM.m
         '''
 
-        self.m = mean_0
-        self.m = self.m[:, np.newaxis]
+        if mean_0.ndim == 1:
+            self.m = self.m[:, np.newaxis]
+        else:
+            self.m = mean_0
+
         self.C = cov_0
 
         self.F = transition_matrix
@@ -84,7 +87,10 @@ class LinearKalmanFilter():
         self.C = self.forecast_cov(transition_matrix)
 
     def update(self, measurement):
-        measurement = measurement[:, np.newaxis]
+        if measurement.ndim == 1:
+            self.m = self.m[:, np.newaxis]
+        else:
+            self.m = measurement
         self.m = self.update_mean(measurement)
         self.C = self.update_cov()
 
