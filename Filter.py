@@ -59,7 +59,6 @@ class LinearKalmanFilter():
             transition_matrix = self.F
         return (transition_matrix) @ self.m
         
-    
     def forecast_cov(self, transition_matrix = None):
         if transition_matrix == None:
             transition_matrix = self.F
@@ -75,14 +74,14 @@ class LinearKalmanFilter():
         K = self.get_kalman_gain()
         return self.C - K @ self.H @ self.C
         
-
     def get_kalman_gain(self):
         #CHANGE THIS LINE TO SOLVE INSTEAD OF LINALG.INV
         return self.C @ self.H.T @ np.linalg.inv(self.H @ self.C @ self.H.T + self.R)
         #K = self.C @ self.H.T @ np.linalg.solve(self.H @ self.C @ self.H.T + self.R, self.R)
 
-    
     def forecast(self, transition_matrix = None):
+        if transition_matrix == None:
+            transition_matrix = self.F
         self.m = self.forecast_mean(transition_matrix)
         self.C = self.forecast_cov(transition_matrix)
 
@@ -90,7 +89,6 @@ class LinearKalmanFilter():
         measurement = measurement[:, np.newaxis]
         self.m = self.update_mean(measurement)
         self.C = self.update_cov()
-
 
     def reset(self, m0, Cov0):
         self.m = m0
