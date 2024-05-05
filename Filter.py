@@ -63,12 +63,12 @@ class LinearKalmanFilter():
     
     #The place where you feed the new recieved data in; y (Column Vector n x 1)
     def update_mean(self, measurement):
-        K = self.get_KalmanGain()
+        K = self.get_kalman_gain()
         return self.m + K @ (measurement - self.H @ self.m)
         
     
     def update_cov(self):
-        K = self.get_Kalman_Gain()
+        K = self.get_kalman_gain()
         return self.C - K @ self.H @ self.C
         
 
