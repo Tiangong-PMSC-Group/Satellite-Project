@@ -4,72 +4,95 @@ from config import config
 import utilities
 from ISimulator import ISimulator
 from SatelliteState import SatelliteState
-import json
-
-'''
-"A TwoD simulator without considering atmospheric drag, suitable for early project testing and integration."
-'''
 
 
 class TwoDSimulator(ISimulator):
-    """Simulator for satellite positions in a two-dimensional orbital plane."""
-
     def __init__(self):
         super().__init__()
-        self.G = config['sim_config']['gravitational_constant']  # Gravitational constant in m^3 kg^-1 s^-2
-        self.M = config['earth']['mass']  # Mass of Earth in kg
-        self.dt = config['sim_config']['dt']['main_dt']  # Timestep in seconds
-        self.r = config['earth']['major_axis'] + 400e3  # Initial distance from Earth's center plus 400 km
-        self.theta = 0  # Initial angle
-        self.dr = 0  # Initial radial velocity
-        self.dtheta = np.sqrt(self.G * self.M / self.r ** 3)  # Initial angular velocity, assuming circular orbit
+        self.G = config['sim_config']['gravitational_constant']
+        self.M = config['earth']['mass']
+        self.dt = config['sim_config']['dt']['main_dt']
+        self.r = config['earth']['major_axis'] + 400e3  # Initial altitude 4000 km above Earth's surface
+        self.theta = 0
+        self.dr = 0
+        self.dtheta = np.sqrt(0.8 * self.G * self.M / self.r ** 3)
+
+
 
     def simulate(self, current_time) -> SatelliteState:
-        """Simulates one timestep and returns the satellite position and velocity."""
+        # Current speed
+        v = np.sqrt(self.dr ** 2 + (self.r * self.dtheta) ** 2)
 
-        # Calculate new position using Forward Euler Method
-        new_r = self.r + self.dt * self.dr
-        new_theta = self.theta + self.dt * self.dtheta
+        # Atmospheric density
+        if self.r > config['earth']['major_axis']:
+            altitude = self.r - config['earth']['major_axis']
+            rho = 1.225 * np.exp(-altitude / 8500)  # Density decreases with altitude
+        else:
+            rho = 0  # Below the surface of the Earth, no atmosphere
 
-        # Calculate new velocity
-        new_dr = self.dr - self.dt * (self.r * self.dtheta ** 2 - self.G * self.M / self.r ** 2)
+        # Drag force calculation
+        Cd = config['Satellite']['drag_coefficient']  # Drag coefficient for a spherical object
+        A = config['Satellite']['area']  # Cross-sectional area of the satellite
+        Fd = -0.5 * Cd * rho * v ** 2 * A
+        ad = Fd / config['Satellite']['mass']  # Acceleration due to drag
+
+        # Update dynamics with drag
+        new_dr = self.dr - self.dt * (self.r * self.dtheta ** 2 - self.G * self.M / self.r ** 2) + self.dt * ad
         new_dtheta = self.dtheta + self.dt * (2 * self.dr * self.dtheta / self.r)
 
-        # Update current state
+        # position update
+        new_r = self.r + self.dt * new_dr
+        new_theta = self.theta + self.dt * new_dtheta
+
+        # Update state
         self.r, self.theta, self.dr, self.dtheta = new_r, new_theta, new_dr, new_dtheta
 
+        if self.r < config['earth']['major_axis']:  # Check if the satellite has crashed
+            return None
         return SatelliteState(velocity=np.array([self.dr, self.dtheta]), pos=np.array([self.r, self.theta]),
                               current_time=current_time)
 
+ # round trajectory of not falling satellite
+    def simulate_not_fall(self, current_time) -> SatelliteState:
+        new_r = self.r + self.dt * self.dr
+        new_theta = self.theta + self.dt * self.dtheta
+        new_dr = self.dr - self.dt * (self.r * self.dtheta ** 2 - self.G * self.M / self.r ** 2)
+        new_dtheta = self.dtheta + self.dt * (2 * self.dr * self.dtheta / self.r)
+        self.r, self.theta, self.dr, self.dtheta = new_r, new_theta, new_dr, new_dtheta
 
-# def load_config(file_path):
-#     with open(file_path, 'r') as file:
-#         return json.load(file)
-#
-#
-# config = load_config('../config.json')
+        if self.r < config['earth']['major_axis']:  # Check if the satellite has crashed
+            return None
+        return SatelliteState(velocity=np.array([self.dr, self.dtheta]), pos=np.array([self.r, self.theta]),
+                              current_time=current_time)
 
-
-def print_trajactory_for_test():
-    # Usage of Two_D_Simulator to simulate an orbit for a day
+def print_trajectory_for_test():
     simulator = TwoDSimulator()
     positions = []
 
-    num_steps = int(3600 * 24 / simulator.dt)
+    num_steps = int(3600 * 24* 10 / simulator.dt)
     for step in range(num_steps):
-        satelliteState = simulator.simulate(step)
-        positions.append(utilities.p_to_c(satelliteState.pos))
+        satellite_state = simulator.simulate(step)
+        if satellite_state is None:
+            print(step)
+            print("Simulation stopped: Satellite has crashed into the Earth.")
+            break
+        positions.append(utilities.p_to_c(satellite_state.pos))
 
-    # Convert positions list to numpy array for plotting
     positions = np.array(positions)
-    plt.figure(figsize=(8, 8))
-    plt.plot(positions[:, 0], positions[:, 1])
+    earth_radius = config['earth']['major_axis']  # Earth's radius
+
+    # Plotting the trajectory
+    plt.figure(figsize=(10, 10))
+    plt.plot(positions[:, 0], positions[:, 1], label='Satellite Orbit')
+    earth = plt.Circle((0, 0), earth_radius, color='blue', fill=False, linestyle='dashed', linewidth=2, label='Earth')
+    plt.gca().add_patch(earth)
     plt.xlabel('X (meters)')
     plt.ylabel('Y (meters)')
-    plt.title('Orbit Simulation using Two_D_Simulator')
+    plt.title('Orbit Simulation with Earth')
+    plt.legend()
     plt.grid(True)
     plt.axis('equal')
     plt.show()
 
 
-# print_trajactory_for_test()
+# print_trajectory_for_test()
