@@ -2,13 +2,12 @@
     "sim_config":{
         "dt":{
         "main_dt": 1,
-        "kalman_x": 10,
+        "kalman_freq": 10,
+        "radar_freq": 20,
         "radar_los": 2
-        },
-        "gravitational_constant":  6.67430e-11
+        }
     },
     "radar": {
-        "frequency": 20,
         "noise": {
             "rho": 100,
             "phi": 0.1,
@@ -19,7 +18,8 @@
         "major_axis": 6378136.6,
         "minor_axis": 6356751.9,
         "omega": 7.2921159e-5,
-        "mass": 5.9722e24
+        "mass": 5.9722e24,
+        "gravitational_constant":  6.67430e-11
     },
     "atmosphere":{
         "gas_const": 8.3144598,

@@ -1,9 +1,22 @@
 import numpy as np
 from Filter import LinearKalmanFilter
 from decorators import singleton
+from dataclasses import dataclass
+
+
+''' 
+A dataclass which now is combination of time and position, and if the following steps need more data from the simulator,
+add a field here is very convenient to let data pass through classes
+'''
+@dataclass
+class SatelliteState:
+    velocity: np.ndarray
+    pos: np.ndarray
+    acceleration: np.ndarray
+    current_time: int
 
 @singleton
-class Satellite():
+class Satellite(ISimulator):
     """Satellite Class
     """
     def __init__(self, true_state0, filter=None, earth=None):
@@ -22,6 +35,7 @@ class Satellite():
         
         # Placeholder function, just as example
         # Change for the physical real one
+        dt = config['earth']['mass']
         distance = self.earth.distane_to_surface(self.true_state) # Get distance to earth
         air = self.earth.air_density(distance)
         self.true_state = self.true_state + 1 * dt - air * dt # Dummy function
