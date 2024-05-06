@@ -66,7 +66,7 @@ class LinearKalmanFilter():
         if transition_matrix is None:
             transition_matrix = self.F
         if process_noise is None:
-            process_noise = self.Q
+            process_noise = self.Q  
         fore_cov = transition_matrix @ (self.C) @ transition_matrix.T + process_noise
         return fore_cov
     
@@ -93,9 +93,8 @@ class LinearKalmanFilter():
     # Receive the information
     def update(self, measurement):
         if measurement.ndim == 1:
-            self.m = self.m[:, np.newaxis]
-        else:
-            self.m = measurement
+            measurement = measurement[:, np.newaxis]
+
         self.m = self.update_mean(measurement)
         self.C = self.update_cov()
         return self.m, self.C
@@ -104,3 +103,7 @@ class LinearKalmanFilter():
         self.m = m0
         self.C = Cov0
 
+
+class ExtendedKalmanFilter(LinearKalmanFilter):
+    def __init__(self):
+        pass
