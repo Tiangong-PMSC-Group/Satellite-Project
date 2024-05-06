@@ -27,7 +27,7 @@ class RadarSystem(IRadarSystem):
         self.init_radar_positions()
 
     def init_radar_positions(self):
-        points = random_points_on_ellipse(Earth(), self.counts)
+        points = utilities.random_points_on_ellipse(Earth(), self.counts)
         # print(points) # check are these radar on the surface of the earth
         # c_pos = utilities.p_to_c(points[0])
         # print(Earth().ellipse_equation(c_pos[0], c_pos[1], c_pos[2]) )
@@ -50,31 +50,6 @@ class RadarSystem(IRadarSystem):
             item.position[1] = (item.position[1] + self.angular_change) % (2 * np.pi)
             # print(item.position)
 
-def random_points_on_ellipse(self, num_points):
-    points = []
-    for _ in range(num_points):
-        # Squared first eccentricity
-        e2 = 1 - (self.rp ** 2 / self.re ** 2)
-
-        # Generate random latitude and longitude
-        latitude = random.uniform(-90, 90)
-        longitude = random.uniform(-180, 180)
-
-        # Convert to radians
-        phi = np.radians(latitude)
-        lambda_ = np.radians(longitude)
-
-        # Calculate the prime vertical radius
-        N = self.re / np.sqrt(1 - e2 * np.sin(phi) ** 2)
-
-        # Convert to geocentric Cartesian coordinates
-        x = N * np.cos(phi) * np.cos(lambda_)
-        y = N * np.cos(phi) * np.sin(lambda_)
-        z = (N * (1 - e2)) * np.sin(phi)
-
-        # Append the converted polar coordinates of the point
-        points.append(utilities.c_to_p(np.array([x, y, z])))
-    return points
 
 
 

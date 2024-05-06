@@ -130,3 +130,13 @@ class Earth():
             scale_height = R*rl['Tb'][layer]/(M*G)
             rho = rl['Pb'][layer]*np.exp(-(distance - rl['hb'][layer])/scale_height)
         return rho
+    
+
+
+
+    ### Bonus Question
+
+    def create_city(center, density_param,):
+        pass
+
+
