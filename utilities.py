@@ -2,6 +2,7 @@ import numpy as np
 import scipy as sp
 import math
 
+
 def c_to_p(state):
     """Changes the coordinates from Cartesian to Polar
 
@@ -32,12 +33,14 @@ def c_to_p(state):
         polar_state = np.array([rho, theta])
 
     return polar_state
-    
+
+
+
 def p_to_c(state):
     """Changes the coordinates from Polar to Cartesian
 
     Args:
-        state (np.array): Polar coordinates array 
+        state (np.array): Polar coordinates array
 
     Returns:
         np.array: Cartesian coordinates array
@@ -49,16 +52,17 @@ def p_to_c(state):
         rho = state[0]
         theta = state[1]
         phi = state[2]
-        x = rho * math.sin(phi) * math.cos(theta)
-        y = rho * math.sin(phi) * math.sin(theta)
-        z = rho * math.cos(phi)
+        x = rho * np.sin(theta) * np.cos(phi)
+        y = rho * np.sin(theta) * np.sin(phi)
+        z = rho * np.cos(theta)
         cartesian_state = np.array([x, y, z])
 
     elif dims == 2:
         rho = state[0]
         theta = state[1]
-        x = rho * math.cos(theta)
-        y = rho * math.sin(theta)
+        x = rho * np.cos(theta)
+        y = rho * np.sin(theta)
         cartesian_state = np.array([x, y])
 
     return cartesian_state
+
