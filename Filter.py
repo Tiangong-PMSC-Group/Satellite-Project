@@ -103,3 +103,7 @@ class LinearKalmanFilter():
         self.m = m0
         self.C = Cov0
 
+
+class ExtendedKalmanFilter(LinearKalmanFilter):
+    def __init__(self):
+        pass

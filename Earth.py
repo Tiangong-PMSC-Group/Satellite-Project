@@ -66,7 +66,7 @@ class Earth():
 
         x2 = ut.p_to_c(relevant_state)
 
-        t = math.atan2(x2[1], x2[0])
+        t = np.arctan2(x2[1], x2[0])
 
         a = self.re
         b = self.rp
@@ -77,8 +77,8 @@ class Earth():
         ts = []
                 
         while (error >= tolerance) and (iterations < max_iterations):
-            cost = math.cos(t)
-            sint = math.sin(t)
+            cost = np.cos(t)
+            sint = np.sin(t)
             x1 = np.array([a * cost, b * sint])
             xp = np.array([-a * sint, b * cost])
             xpp = np.array([-a * cost, -b * sint])
