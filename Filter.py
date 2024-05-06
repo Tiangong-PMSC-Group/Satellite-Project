@@ -93,9 +93,9 @@ class LinearKalmanFilter():
     # Receive the information
     def update(self, measurement):
         if measurement.ndim == 1:
-            self.m = self.m[:, np.newaxis]
+            measurement = self.m[:, np.newaxis]
         else:
-            self.m = measurement
+            measurement = measurement
         self.m = self.update_mean(measurement)
         self.C = self.update_cov()
         return self.m, self.C
