@@ -31,7 +31,7 @@ class Earth():
         Returns:
             float: _description_
         """
-        return (x**2)/(self.re**2) + (y**2)/(self.rp**2) + (z**2)/(self.re**2) - 1
+        return (x**2)/(self.re**2) + (y**2)/(self.re**2) + (z**2)/(self.rp**2) - 1
 
 
     def distane_to_surface(self, state, tolerance = 1e-6, max_iterations = 1000):
