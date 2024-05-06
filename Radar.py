@@ -5,7 +5,7 @@ from config import config
 
 
 class Radar():
-    frequency = config['sim_config']['radar_freq']
+    frequency = config['sim_config']['dt']['radar_freq']
 
     def __init__(self, position):
         self.position = position

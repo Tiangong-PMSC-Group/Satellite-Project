@@ -1,4 +1,6 @@
 import math
+import random
+
 import numpy as np
 
 from Interface.IRadarSystem import IRadarSystem
@@ -51,18 +53,41 @@ class RadarSystem(IRadarSystem):
 def random_points_on_ellipse(self, num_points):
     points = []
     for _ in range(num_points):
-        # generate latitude and longitude randomly
-        latitude = np.random.uniform(-np.pi / 2, np.pi / 2)  # -π/2 到 π/2
-        longitude = np.random.uniform(-np.pi, np.pi)  # -π 到 π
+        # Squared first eccentricity
+        e2 = 1 - (self.rp ** 2 / self.re ** 2)
 
-        # generate x y z using  latitude and longitude
-        x = self.re * np.cos(latitude) * np.cos(longitude)
-        y = self.re * np.cos(latitude) * np.sin(longitude)
-        z = self.rp * np.sin(latitude)
+        # Generate random latitude and longitude
+        latitude = random.uniform(-90, 90)
+        longitude = random.uniform(-180, 180)
 
+        # Convert to radians
+        phi = np.radians(latitude)
+        lambda_ = np.radians(longitude)
+
+        # Calculate the prime vertical radius
+        N = self.re / np.sqrt(1 - e2 * np.sin(phi) ** 2)
+
+        # Convert to geocentric Cartesian coordinates
+        x = N * np.cos(phi) * np.cos(lambda_)
+        y = N * np.cos(phi) * np.sin(lambda_)
+        z = (N * (1 - e2)) * np.sin(phi)
+
+        # Append the converted polar coordinates of the point
         points.append(utilities.c_to_p(np.array([x, y, z])))
     return points
 
+
+
+'''
+test code do not delete until last edition
+'''
+# pos = random_points_on_ellipse(Earth(), 1)[0]
+# print("origin Cartesian:",pos)
+# pos1 = utilities.p_to_c(pos)
+# print("transformed to Cartesian:",pos1)
+# print(Earth().ellipse_equation(pos1[0], pos1[1], pos1[2]))
+# pos2 = utilities.c_to_p(pos1)
+# print("transformed back to polar:",pos2)
 
 # radar_system = RadarSystem(10, Earth())
 # ''' Test code'''
