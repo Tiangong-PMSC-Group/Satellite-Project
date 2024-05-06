@@ -14,7 +14,7 @@ from config import config
 class ISimulator(metaclass=ABCMeta):
 
     def __init__(self):
-        self.G = config['sim_config']['gravitational_constant']
+        self.G = config['earth']['gravitational_constant']
         self.M = config['earth']['mass']
         self.dt = config['sim_config']['dt']['main_dt']
 
@@ -23,7 +23,7 @@ class ISimulator(metaclass=ABCMeta):
     '''
 
     @abstractmethod
-    def simulate(self, current_time) -> SatelliteState:
+    def update_true_state(self, current_time) -> SatelliteState:
         raise NotImplementedError
 
 

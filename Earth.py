@@ -76,7 +76,7 @@ class Earth():
         errors = []
         ts = []
                 
-        while error >= tolerance and iterations < max_iterations:
+        while (error >= tolerance) and (iterations < max_iterations):
             cost = math.cos(t)
             sint = math.sin(t)
             x1 = np.array([a * cost, b * sint])
@@ -104,7 +104,7 @@ class Earth():
         success = error < tolerance and iterations < max_iterations
         return dict(distance = distance, x = opt_x, y = opt_y, error = error, iterations = iterations, success = success, xs = ts,  errors = errors)
 
-    def air_denisty(self, distance):
+    def air_density(self, distance):
         """_summary_
 
         Args:

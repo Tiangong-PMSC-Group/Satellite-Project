@@ -45,7 +45,7 @@ class LinearKalmanFilter():
         '''
 
         if mean_0.ndim == 1:
-            self.m = self.m[:, np.newaxis]
+            self.m = mean_0[:, np.newaxis]
         else:
             self.m = mean_0
 
@@ -58,14 +58,16 @@ class LinearKalmanFilter():
 
 
     def forecast_mean(self, transition_matrix = None):
-        if transition_matrix == None:
+        if transition_matrix is None:
             transition_matrix = self.F
         return (transition_matrix) @ self.m
         
-    def forecast_cov(self, transition_matrix = None):
-        if transition_matrix == None:
+    def forecast_cov(self, transition_matrix = None, process_noise = None):
+        if transition_matrix is None:
             transition_matrix = self.F
-        fore_cov = transition_matrix @ (self.C) @ transition_matrix.T + self.Q
+        if process_noise is None:
+            process_noise = self.Q
+        fore_cov = transition_matrix @ (self.C) @ transition_matrix.T + process_noise
         return fore_cov
     
     #The place where you feed the new recieved data in; y (Column Vector n x 1)
@@ -82,10 +84,13 @@ class LinearKalmanFilter():
         return self.C @ self.H.T @ np.linalg.inv(self.H @ self.C @ self.H.T + self.R)
         #K = self.C @ self.H.T @ np.linalg.solve(self.H @ self.C @ self.H.T + self.R, self.R)
 
+    # Project without new information
     def forecast(self, transition_matrix = None):
         self.m = self.forecast_mean(transition_matrix)
         self.C = self.forecast_cov(transition_matrix)
+        return self.m, self.C
 
+    # Receive the information
     def update(self, measurement):
         if measurement.ndim == 1:
             self.m = self.m[:, np.newaxis]
@@ -93,6 +98,7 @@ class LinearKalmanFilter():
             self.m = measurement
         self.m = self.update_mean(measurement)
         self.C = self.update_cov()
+        return self.m, self.C
 
     def reset(self, m0, Cov0):
         self.m = m0
