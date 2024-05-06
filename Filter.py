@@ -66,7 +66,7 @@ class LinearKalmanFilter():
         if transition_matrix is None:
             transition_matrix = self.F
         if process_noise is None:
-            process_noise = self.Q
+            process_noise = self.Q  
         fore_cov = transition_matrix @ (self.C) @ transition_matrix.T + process_noise
         return fore_cov
     
