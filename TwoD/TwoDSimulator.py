@@ -29,10 +29,10 @@ class TwoDSimulator(ISimulator):
             rho = 0  # Below the surface of the Earth, no atmosphere
 
         # Drag force calculation
-        Cd = config['Satellite']['drag_coefficient']  # Drag coefficient for a spherical object
-        A = config['Satellite']['area']  # Cross-sectional area of the satellite
+        Cd = config['satellite']['drag_coefficient']  # Drag coefficient for a spherical object
+        A = config['satellite']['area']  # Cross-sectional area of the satellite
         Fd = -0.5 * Cd * rho * v ** 2 * A
-        ad = Fd / config['Satellite']['mass']  # Acceleration due to drag
+        ad = Fd / config['satellite']['mass']  # Acceleration due to drag
 
         # Update dynamics with drag
         new_dr = self.dr - self.dt * (self.r * self.dtheta ** 2 - self.G * self.M / self.r ** 2) + self.dt * ad
