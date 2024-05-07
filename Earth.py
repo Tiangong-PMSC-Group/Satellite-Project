@@ -1,6 +1,6 @@
 import numpy as np
 import math 
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from decorators import singleton
 import utilities as ut
 from config import config
@@ -140,3 +140,100 @@ class Earth():
         pass
 
 
+
+class City():
+    def __init__(self, center, density = None, cov_matrix = None, cut_off = None, precision = 1000):
+        
+        self.center = center
+    
+        if density is None:
+            params = config['city']['density_params']
+            self.dens = np.random.lognormal(params[0], params[1])
+        else:
+            self.dens = density
+
+        if cov_matrix is None:
+            params = config['city']['cov_params']
+            print(params)
+            cov = 1/np.random.gamma(params[1], params[2])
+            print(cov)
+            self.cov = params[0] * np.array([[1, cov], [cov, 1]])
+            print(self.cov)
+        else:
+            self.cov = cov_matrix
+
+        if cut_off is None:
+            # cut_off in degrees
+            params = config['city']['cut_off_params']
+            self.cut = np.random.normal(params[0], params[1])
+            print(self.cut)
+        else:
+            self.cut = cut_off
+
+
+        self.grid = self.population_grid(precision)
+
+
+    def population_density(self, target):
+    
+        # Our position array has the distance in the first from the (0,0,0) in meters.
+        # We don't need that, only the angles (that translate to latitude and longitude)
+        # This check allows to pass the usual array, or just the angles 
+        if len(target) == 3:
+            target = target[1:]
+        if len(self.center) == 3:
+            center = self.center[1:]
+        else:
+            center = self.center
+
+        diff = target - center
+
+
+        return self.dens * np.exp(-0.5 * diff.T @ np.linalg.inv(self.cov) @ diff)
+
+
+    def population_grid(self, precision):
+
+        x_values = np.linspace(self.center[1] - self.cut, self.center[1] + self.cut, precision)
+        y_values = np.linspace(self.center[2] - self.cut, self.center[2] + self.cut, precision)
+        Z = np.zeros((len(x_values), len(y_values)))
+
+        for i in range(len(x_values)):
+            for j in range(len(y_values)):
+                point = [x_values[i], y_values[j]]
+                Z[j, i] = self.population_density(point)
+
+        return Z
+    
+
+    def get_population(self, target):
+
+        x_min = self.center[1] - 2*self.cut
+        y_min = self.center[2] - 2*self.cut
+        x_max = self.center[1] + 2*self.cut
+        y_max = self.center[2] + 2*self.cut
+
+        x_step = (x_max - x_min) / (self.precision - 1)
+        y_step = (y_max - y_min) / (self.precision - 1)
+
+        x_index = int((target[1] - x_min) / x_step)
+        y_index = int((target[2] - y_min) / y_step)
+
+        return self.grid[y_index, x_index]
+
+
+    def plot_heatmap(self):
+        x_min = self.center[1] - 20*self.cut
+        y_min = self.center[2] - 20*self.cut
+        x_max = self.center[1] + 20*self.cut
+        y_max = self.center[2] + 20*self.cut
+
+        min_coord = min(x_min, y_min)
+        max_coord = max(x_max, y_max)
+
+        plt.imshow(self.grid , extent=[min_coord, max_coord, min_coord, max_coord], origin='lower', cmap='hot', aspect='auto')
+        plt.colorbar()  # Show color scale
+        plt.title('Heatmap of Population Density')
+        plt.xlabel('X coordinate')
+        plt.ylabel('Y coordinate')
+        plt.show()
