@@ -120,7 +120,7 @@ def population_density(target, center, density_param, cov_matrix):
     diff = target - center
     return density_param * np.exp(-0.5 * diff.T @ np.linalg.inv(cov_matrix) @ diff)
 
-def satellite_to_earth(r_s, phi_s, theta_s):
+def satellite_to_earth(state):
     """Changes the coordinates from Satellite to Earth
 
     Args:
@@ -129,14 +129,15 @@ def satellite_to_earth(r_s, phi_s, theta_s):
     Returns:
         np.array: Satellite coordinates array in refernce to Earths axis
     """
-    
+
+    r_s, phi_s, theta_s = state[0], state[1], state[2]
     x, y, z = r_s*np.sin(phi_s)*np.cos(theta_s), r_s*np.sin(phi_s)*np.sin(theta_s), r_s*np.cos(phi_s)
     z, y, x = x, y, z
     r_e = np.sqrt(x**2 + y**2 + z**2)
     theta_e, phi_e = np.arccos(z/r_e), np.arctan(y/x)
-    return r_e, theta_e, phi_e
+    return np.array([r_e, theta_e, phi_e])
 
-def earth_to_satellite(r_e, theta_e, phi_e):
+def earth_to_satellite(state):
     """Changes the coordinates from Earth to Satellite
 
     Args:
@@ -146,13 +147,9 @@ def earth_to_satellite(r_e, theta_e, phi_e):
         np.array: Satellite coordinates array in refernce to Satellites axis
     """
 
+    r_e, theta_e, phi_e = state[0], state[1], state[2]
     x, y, z = r_e*np.sin(theta_e)*np.cos(phi_e), r_e*np.sin(theta_e)*np.sin(phi_e), r_e*np.cos(theta_e)
     x, y, z = z, y, x
     r_s = np.sqrt(x**2 + y**2 + z**2)
     theta_s, phi_s = np.arctan(y/x), np.arccos(z/r_s)
-    return r_s, phi_s, theta_s
-
-
-
-
-
+    return np.array([r_s, phi_s, theta_s])
