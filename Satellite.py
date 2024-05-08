@@ -36,6 +36,7 @@ class Satellite(ISimulator):
 
 
     def update_true_state(self):
+        # Update the state one step.
         
         # Placeholder function, just as example
         # Change for the physical real one
@@ -46,6 +47,12 @@ class Satellite(ISimulator):
         #- air * self.dt # Dummy function
         self.true_state.velocity = self.true_state.velocity + self.true_state.acceleration  * self.dt
         self.recorded_true_states.append(deepcopy(self.true_state))
+
+    def run_simulation(self):
+        # Run the whole simulation from "S_0" until the crash.
+        # The intermediary result must be an array of arrays, each one in the satellite coordinates.
+        # This vector should be passed through s_to_e and returned a new array of arrays in the earth coordinates
+        pass
 
     
     def update_estimated_state(self, measurement=None):
@@ -74,5 +81,13 @@ class Satellite(ISimulator):
         # It is a PREDICTION, not the true simulation. Use for the bonus part 
         pass 
     
+    def e_to_s(self, position):
+        # Convert the position from the earth referential to satellite referential.
+        pass
+
+    def s_to_e(self, position):
+        # Convert the position from the satellite referential to earth referential.
+        pass
+
 
 
