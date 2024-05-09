@@ -49,6 +49,23 @@ class Satellite(ISimulator):
         self.plane_of_inclination = self.true_state.pos[2]
 
 
+
+        # Event class for handling the crash
+        # For the solver
+        class CrashEvent:
+            def __init__(self, satellite):
+                self.satellite = satellite
+            
+            def __call__(self, t, state):
+                # Logic from the crash method
+                r, v_r, phi, v_phi = state
+                return self.satellite.plane_to_altitude(r, phi)['distance']
+            
+            terminal = True
+            direction = -1
+
+        self.crash_event = CrashEvent(self)
+
     ##### Old
 
     def update_true_state(self):
@@ -97,29 +114,26 @@ class Satellite(ISimulator):
         d_r = v_r
         d_vr = - (G*Me/r**2) + (v_phi**2)/r
         d_phi = v_phi/r
-        d_v_phi = -0.5*rho(r, phi) * v_phi**2 * B + (v_phi*v_r)/r
+        d_v_phi = -0.5*self.earth.air_density(self.plane_to_altitude(r,phi)['distance']) * v_phi**2 * B + (v_phi*v_r)/r
 
         return np.array([d_r, d_vr, d_phi, d_v_phi])
 
     def plane_to_altitude(self, r, phi):
-        earth_coor = utilities.satellite_to_earth(r, phi, self.plane_of_inclination)
+        earth_coor = utilities.satellite_to_earth([r, phi, self.plane_of_inclination])
         return self.earth.distance_to_surface(earth_coor)
 
 
-    def crash(self, t, state):
-        #Check if satellite hitted the earth
-        r, v_r, phi, v_phi = state
-        return self.plane_to_altitude(r, phi)
+    #def crash(self, t, state):
+     #   #Check if satellite hitted the earth
+      #  r, v_r, phi, v_phi = state
+       # return self.plane_to_altitude(r, phi)['distance']
+    
+    
 
 
     def simulate(self, time_limit):
         # Run the full integration
 
-        # it stops when the satellite crashes
-        # Setting the crash attributes
-        crash = self.crash
-        crash.terminal = True
-        crash.direction = -1 # Check if atitude is less than 0
 
         # Time span for the solution
         t_span = (0, time_limit)  # From t=0 to t=10
@@ -129,8 +143,8 @@ class Satellite(ISimulator):
 
         method = config['sim_config']['solver']
 
-        sol = solve_ivp(self.ode_system, t_span, self.initial_conditions, method = method,
-                        t_eval=t_eval, events=crash)
+        sol = solve_ivp(self.d_state, t_span, self.true_state.get_state_sat_plane(), method = method,
+                        t_eval=t_eval, events=self.crash_event)
         
         # Use later outside this class, wherever the program will run
         # Output results from the event
