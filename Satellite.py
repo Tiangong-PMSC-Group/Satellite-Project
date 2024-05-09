@@ -124,7 +124,7 @@ class Satellite(ISimulator):
 
         method = config['sim_config']['solver']
 
-        sol = solve_ivp(self.ode_system, t_span, self.initial_conditions, method = method
+        sol = solve_ivp(self.ode_system, t_span, self.initial_conditions, method = method,
                         t_eval=t_eval, events=crash)
         
         # Use later outside this class, wherever the program will run
