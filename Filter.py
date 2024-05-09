@@ -127,7 +127,6 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
             self.H = self.H()
 
         self.planet = planet
-        self.F = self.get_F()
 
         self.orbital_angle = config["earth"]["orbital_angle"]
         self.dt = config['sim_config']['dt']['main_dt']
@@ -136,6 +135,9 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         self.ms = config["satellite"]["mass"]
         self.G = config['earth']['gravitational_constant']
         self.Me = config['earth']['mass']
+
+        self.F = self.get_F()
+
 
     def get_H(self):
         H = np.zeros([2, 6])
