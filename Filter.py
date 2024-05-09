@@ -136,7 +136,7 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         self.G = config['earth']['gravitational_constant']
         self.Me = config['earth']['mass']
 
-        self.F = self.get_F()
+        self.F, rho = self.get_F()
 
 
     def get_H(self):
@@ -144,8 +144,10 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         return H
     
     def get_F(self):
+        sat_coords = np.array([self.m[0][0], self.m[3][0], self.orbital_angle])
+        earth_coords = ut.satellite_to_earth(sat_coords)
+        res = self.planet.distance_to_surface(state=earth_coords)
 
-        res = self.planet.distane_to_surface(ut.satellite_to_earth(np.array([self.m[0], self.m[3], self.orbital_angle])))
         rho = self.planet.air_density(res['distance'])
 
         F = np.zeros([6, 6])
@@ -192,6 +194,8 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         self.m[4] = self.m[4] + 0.5 * self.dt * self.m[5]
         self.m[5] = -0.5 * rho * self.m[0] * (self.m[4] ** 2) * self.As * self.Cd/self.ms
 
+        return self.m
+    
     def forecast(self):
 
         F, rho = self.get_F()
