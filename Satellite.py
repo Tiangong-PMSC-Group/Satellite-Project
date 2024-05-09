@@ -16,7 +16,7 @@ from config import config
 from copy import deepcopy
 
 
-@singleton
+#@singleton
 class Satellite(ISimulator):
     """Satellite Class
     """
