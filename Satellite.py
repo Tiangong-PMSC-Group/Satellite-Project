@@ -7,6 +7,8 @@ from scipy.integrate import solve_ivp
 from config import config
 from ISimulator import ISimulator
 
+import utilities
+
 from SatelliteState import SatelliteState
 
 from config import config 
@@ -26,7 +28,9 @@ class Satellite(ISimulator):
         n = len(true_state0.pos)
         observation_matrix = np.fill_diagonal(np.zeros((n, 3 * n)), 1)
         observation_noise = np.diag(list(config['radar']['noise'].values())) #Check if the noise values in the radar (in the config file) are in the correct order
-        self.filter = filter(prior_state.get_state(), prior_state.cov, None, observation_matrix, observation_noise, None)
+        
+        if filter is not None:
+            self.filter = filter(prior_state.get_state(), prior_state.cov, None, observation_matrix, observation_noise, None)
         
         self.mass = config['satellite']['mass']
         self.area = config['satellite']['area']
@@ -41,6 +45,8 @@ class Satellite(ISimulator):
         self.estimated_state = prior_state
         self.recorded_true_states = [deepcopy(self.true_state)]
         self.recorded_estimated_states = [deepcopy(self.estimated_state)]
+
+        self.plane_of_inclination = self.true_state.pos[2]
 
 
     ##### Old
@@ -80,8 +86,8 @@ class Satellite(ISimulator):
 
         r, v_r, phi, v_phi = state
 
-        G = self.earth.G
         Me = self.earth.mass
+        G = self.earth.grav_const
         B = self.B
 
         #rho = self.earth.air_density(plane_to_altitude( r, phi))
@@ -96,14 +102,14 @@ class Satellite(ISimulator):
         return np.array([d_r, d_vr, d_phi, d_v_phi])
 
     def plane_to_altitude(self, r, phi):
-        earth_coor = convert_to_earth_coordinates(r, phi, self.plane_of_inclination)
-        return self.earth.distane_to_surface(earth_coor)
+        earth_coor = utilities.satellite_to_earth(r, phi, self.plane_of_inclination)
+        return self.earth.distance_to_surface(earth_coor)
 
 
     def crash(self, t, state):
         #Check if satellite hitted the earth
         r, v_r, phi, v_phi = state
-        return plane_to_altitude(r, phi)
+        return self.plane_to_altitude(r, phi)
 
 
     def simulate(self, time_limit):
@@ -116,11 +122,10 @@ class Satellite(ISimulator):
         crash.direction = -1 # Check if atitude is less than 0
 
         # Time span for the solution
-        t_span = (0, 10)  # From t=0 to t=10
-        t_eval = np.linspace(t_span[0], t_span[1], 10000000)  # Grid. Arbritarially large
+        t_span = (0, time_limit)  # From t=0 to t=10
+        t_eval = np.linspace(t_span[0], t_span[1], time_limit*self.dt)  # Grid. Arbritarially large
 
-        initial_state = convert_to_satellite_coordinates(
-            self.true_state.get_state())
+        initial_state = self.true_state.get_state_sat_plane() #Just get position
 
         method = config['sim_config']['solver']
 
@@ -164,14 +169,5 @@ class Satellite(ISimulator):
         # Return the full mean-trajectory and the uncertainty area on the ground.
         # It is a PREDICTION, not the true simulation. Use for the bonus part 
         pass 
-    
-    def e_to_s(self, position):
-        # Convert the position from the earth referential to satellite referential.
-        pass
-
-    def s_to_e(self, position):
-        # Convert the position from the satellite referential to earth referential.
-        pass
-
 
 

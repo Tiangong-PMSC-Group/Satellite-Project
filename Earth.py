@@ -18,6 +18,7 @@ class Earth():
         self.rp = config['earth']['minor_axis']
         self.omega = config['earth']['omega']
         self.mass = config['earth']['mass']
+        self.grav_const = config['earth']['gravitational_constant']
 
 
     def ellipse_equation(self, x, y, z):
@@ -34,7 +35,7 @@ class Earth():
         return (x**2)/(self.re**2) + (y**2)/(self.re**2) + (z**2)/(self.rp**2) - 1
 
 
-    def distane_to_surface(self, state, tolerance = 1e-6, max_iterations = 1000):
+    def distance_to_surface(self, state, tolerance = 1e-6, max_iterations = 1000):
         """Finds the minimum distance between the specified point and the ellipse
         using Newton's method.
 
@@ -120,6 +121,7 @@ class Earth():
         G = config['atmosphere']['gravity']
         M = config['atmosphere']['molar_mass']
         rl = config['atmosphere']['layers']
+
         layer = 0
         if distance > rl['hb'][-1]:
              rho = config['atmosphere']['rho_params']['rho0']*np.exp(-(distance - config['atmosphere']['rho_params']['rho1'])/config['atmosphere']['rho_params']['rho2'])    

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import utilities
 import numpy as np
 
 ''' 
@@ -9,15 +10,19 @@ add a field here is very convenient to let data pass through classes
 
 @dataclass
 class SatelliteState:
-    pos: np.ndarray
+    pos: np.ndarray # In Earth Coordinates
     cov: np.ndarray ## Matrix of covariance of the predicted state. For true state is 0
-    velocity: np.ndarray
+    velocity: np.ndarray # In Satellite coordinates [r velocity, tangent velocity, 0]
     acceleration: np.ndarray
     #current_time: int
 
     # Return the state in a single array
     def get_state(self):
         return np.concatenate([self.pos, self.velocity, self.acceleration])
+    
+    def get_state_sat_plane(self):
+        new_pos = utilities.earth_to_satellite(self.pos)
+        return np.array([new_pos[0], self.velocity[0], new_pos[1], self.velocity[1]])
 
     def update_state(self, array):
         # Assuming the size of each component (pos, velocity, acceleration) is known and fixed
