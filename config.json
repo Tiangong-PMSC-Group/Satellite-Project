@@ -22,7 +22,7 @@
         "omega": 7.2921159e-5,
         "mass": 5.9722e24,
         "gravitational_constant":  6.67430e-11,
-        "orbital_angle": 2
+        "orbital_angle": 0.3
 
     },
     "atmosphere":{

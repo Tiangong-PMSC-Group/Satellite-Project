@@ -85,7 +85,7 @@ class Satellite(ISimulator):
         B = self.B
 
         #rho = self.earth.air_density(plane_to_altitude( r, phi))
-        rho = 1
+        rho = 0.5
 
 
         d_r = v_r
