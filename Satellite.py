@@ -143,7 +143,7 @@ class Satellite(ISimulator):
 
         method = config['sim_config']['solver']
 
-        sol = solve_ivp(self.d_state, t_span, self.true_state.get_state_sat_plane(), method = method,
+        sol = solve_ivp(self.d_state, t_span, initial_state, method = method,
                         t_eval=t_eval, events=self.crash_event)
         
         # Use later outside this class, wherever the program will run
