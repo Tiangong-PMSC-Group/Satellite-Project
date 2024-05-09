@@ -1,4 +1,8 @@
 import numpy as np
+from Earth import Earth
+import config
+import utilities as ut
+
 
 class LinearKalmanFilter():
     def __init__(self, mean_0, cov_0, transition_matrix, observation_matrix, observation_noise = 1, process_noise = 0):
@@ -105,15 +109,16 @@ class LinearKalmanFilter():
 
 
 class ExtendedKalmanFilter(LinearKalmanFilter):
-    def __init__(self, mean_0, cov_0, transition_matrix, observation_matrix = None, observation_noise = 1, process_noise = 0):
+    def __init__(self, mean_0, cov_0, planet, observation_matrix = None, observation_noise = 1, process_noise = 0):
         
+        self.R = observation_noise
+        self.Q = process_noise
+        self.C = cov_0
+
         if mean_0.ndim == 1:
             self.m = mean_0[:, np.newaxis]
         else:
             self.m = mean_0
-
-        self.C = cov_0
-        self.F = self.get_F(rho, dt)
 
         if observation_matrix == None:
             self.H = np.array([[1, 0, 0, 0, 0, 0,],
@@ -121,39 +126,35 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         else:
             self.H = self.H()
 
-        self.R = observation_noise
-        self.Q = process_noise
-        
-        '''TODO:
-            1. -Add these as properties of other classes
-            2. - H matrix COULD (NOT SHOULD OR MUST, COULD) have observational functions to enchance the filter
-        '''
-        self.As = 1 
-        self.Cd = 1
-        self.ms = 1
+        self.planet = planet
+        self.F = self.get_F()
 
-        self.G = 1 
-        self.Me = 1 
-
+        self.orbital_angle = config["earth"]["orbital_angle"]
+        self.dt = config['sim_config']['dt']['main_dt']
+        self.As = config["satellite"]["area"]
+        self.Cd = config["satellite"]["drag_coefficient"]
+        self.ms = config["satellite"]["mass"]
+        self.G = config['earth']['gravitational_constant']
+        self.Me = config['earth']['mass']
 
     def get_H(self):
         H = np.zeros([2, 6])
         return H
     
-    def get_F(self, rho, dt):
-        F = np.zeros([6, 6])
+    def get_F(self):
 
-        '''TODO:
-            1. - Import Earth and System Properties into the EKF to allow rho and dt extraction
-        '''
+        res = self.planet.distane_to_surface(ut.satellite_to_earth(np.array([self.m[0], self.m[3], self.orbital_angle])))
+        rho = self.planet.air_density(res['distance'])
+
+        F = np.zeros([6, 6])
 
         # FIRST ROW #
         F[0,0] = 1
-        F[0,1] = dt
+        F[0,1] = self.dt
 
         # SECOND ROW #
         F[1,1] = 1 
-        F[1,2] = dt
+        F[1,2] = self.dt
 
         # THIRD ROW #
         F[2,0] = (2 * self.G * self.Me * 1/(self.m[0] ** 3)) + (self.m[4]) ** 2
@@ -161,38 +162,38 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
 
         # FORTH ROW #
         F[3,3] = 1
-        F[3,4] = dt
+        F[3,4] = self.dt
 
         # FIFTH ROW #
         F[4, 4] = 1
-        F[4, 5] = dt
+        F[4, 5] = self.dt
 
         # SIXTH ROW #
         F[5,0] = self.As * self.Cd/self.ms *  -0.5 * rho * self.m[4] ** 2 
         F[5,4] = -rho * self.m[0] * self.m[4] * self.As * self.Cd/self.ms
 
-        return F
-    
-    def forecast_mean(self, rho, dt):
+        #return F, rho
+        return F, 0.5
+
+    def forecast_mean(self, rho):
 
         '''TODO:
-            1. - Import Earth and System Properties into the EKF to allow rho and dt extraction
-            2. - Add Runge Kutta to this (CURRENTLY: FORWARD EULER)
+        2. - Add Runge Kutta to this (CURRENTLY: LEAPFROG EULER EULER)
         '''
 
-        self.m[0] = self.m[0] + dt * self.m[1]
-        self.m[1] = self.m[1] + dt * self.m[2]
+        self.m[0] = self.m[0] + 0.5 * self.dt * self.m[1]
+        self.m[1] = self.m[1] + 0.5 * self.dt * self.m[2]
         self.m[2] = -self.G  * self.Me * 1/(self.m[0] ** 2) + self.m[0] * self.m[4] ** 2
 
     
-        self.m[3] = self.m[3] + dt * self.m[4]
-        self.m[4] = self.m[4] + dt * self.m[5]
+        self.m[3] = self.m[3] + 0.5 * self.dt * self.m[4]
+        self.m[4] = self.m[4] + 0.5 * self.dt * self.m[5]
         self.m[5] = -0.5 * rho * self.m[0] * (self.m[4] ** 2) * self.As * self.Cd/self.ms
 
-    def forecast(self, rho, dt):
+    def forecast(self):
 
-        F = self.get_F(rho, dt)
-        self.m = self.forecast_mean(rho, dt)
+        F, rho = self.get_F()
+        self.m = self.forecast_mean(rho=rho)
         self.C = self.forecast_cov(transition_matrix=F, process_noise=None)
 
         return self.m, self.C
