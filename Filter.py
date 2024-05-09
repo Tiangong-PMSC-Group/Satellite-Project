@@ -1,6 +1,6 @@
 import numpy as np
 from Earth import Earth
-import config
+from config import config
 import utilities as ut
 
 
