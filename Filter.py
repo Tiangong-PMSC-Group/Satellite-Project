@@ -183,15 +183,13 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         '''TODO:
         2. - Add Runge Kutta to this (CURRENTLY: LEAPFROG EULER EULER)
         '''
-
-        self.m[0] = self.m[0] + 0.5 * self.dt * self.m[1]
-        self.m[1] = self.m[1] + 0.5 * self.dt * self.m[2]
         self.m[2] = -self.G  * self.Me * 1/(self.m[0] ** 2) + self.m[0] * self.m[4] ** 2
+        self.m[1] = self.m[1] + 0.5 * self.dt * self.m[2]
+        self.m[0] = self.m[0] + 0.5 * self.dt * self.m[1]
 
-    
-        self.m[3] = self.m[3] + 0.5 * self.dt * self.m[4]
-        self.m[4] = self.m[4] + 0.5 * self.dt * self.m[5]
         self.m[5] = -0.5 * rho * self.m[0] * (self.m[4] ** 2) * self.As * self.Cd/self.ms
+        self.m[4] = self.m[4] + 0.5 * self.dt * self.m[5]
+        self.m[3] = self.m[3] + 0.5 * self.dt * self.m[4]
 
         return self.m
     
