@@ -162,7 +162,7 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
 
         # THIRD ROW #
         F[2,0] = (2 * self.G * self.Me * 1/(self.m[0] ** 3)) + (self.m[4]) ** 2
-        F[2,5] = 2 * self.m[0] * self.m[4]
+        F[2,4] = 2 * self.m[0] * self.m[4]
 
         # FORTH ROW #
         F[3,3] = 1
