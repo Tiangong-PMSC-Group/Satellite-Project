@@ -1,5 +1,6 @@
 import math
 import random
+from typing import List
 
 import numpy as np
 
@@ -12,7 +13,7 @@ from Radar import Radar
 from Earth import Earth
 
 
-@singleton
+# @singleton
 class RadarSystem(IRadarSystem):
     radar_dt = config['sim_config']['dt']['radar_los']
     # earth_angular_velocity = config['earth']['angular_velocity']
@@ -27,44 +28,79 @@ class RadarSystem(IRadarSystem):
         self.init_radar_positions()
 
     def init_radar_positions(self):
-        points = utilities.random_points_on_ellipse(Earth(), self.counts)
-        # print(points) # check are these radar on the surface of the earth
-        # c_pos = utilities.p_to_c(points[0])
-        # print(Earth().ellipse_equation(c_pos[0], c_pos[1], c_pos[2]) )
+        # points = utilities.random_points_on_ellipse(Earth(), self.counts)
+        points = self.random_points_on_equator(Earth(), self.counts)
         radars = []
         for point in points:
             radar = Radar(point)
             radars.append(radar)
         self.radars = radars
 
-    def try_detect_satellite(self, sat_pos, current_time) -> SatelliteState:
+
+    def try_detect_satellite(self, sat_pos, current_time) -> list[SatelliteState]:
+        results = []
         for radar in self.radars:
             find = radar.line_of_sight(sat_pos, self.earth.ellipse_equation)
             if find:
-                radar.detect_satellite_pos(sat_pos, current_time)
-            else:
-                return None
+                result = radar.detect_satellite_pos(sat_pos, current_time)
+                results.append(result)
+        return results
 
     def update_radar_positions(self):
         for item in self.radars:
             item.position[1] = (item.position[1] + self.angular_change) % (2 * np.pi)
-            # print(item.position)
 
+
+
+    def random_points_on_equator(self,earth, num_points):
+        points = []
+        # Interval between points in degrees
+        interval = 360 / num_points
+
+        for i in range(num_points):
+            # Longitude at equal intervals
+            longitude = i * interval
+
+            # Latitude is 0 for the equator
+            latitude = 0
+
+            # Convert to radians
+            phi = np.radians(latitude)
+            lambda_ = np.radians(longitude)
+
+            # Calculate the prime vertical radius, N, for latitude = 0 simplifies the formula
+            N = earth.re  # At the equator, the simplification occurs because sin(0) = 0
+
+            # Convert to geocentric Cartesian coordinates
+            x = N * np.cos(phi) * np.cos(lambda_)
+            y = N * np.cos(phi) * np.sin(lambda_)
+            z = N * np.sin(phi)  # This will be zero at the equator
+
+            # Append the converted polar coordinates of the point
+            points.append(utilities.c_to_p(np.array([x, y, z])))
+
+        return points
 
 
 
 '''
 test code do not delete until last edition
 '''
-# pos = random_points_on_ellipse(Earth(), 1)[0]
+# pos = random_points_on_equator(Earth(), 2)[0]
 # print("origin Cartesian:",pos)
+# print("origin Cartesian:",random_points_on_equator(Earth(), 2)[1])
 # pos1 = utilities.p_to_c(pos)
+# pos3 = random_points_on_equator(Earth(), 2)[1]
 # print("transformed to Cartesian:",pos1)
+# print("transformed to Cartesian:",utilities.p_to_c(pos3))
 # print(Earth().ellipse_equation(pos1[0], pos1[1], pos1[2]))
 # pos2 = utilities.c_to_p(pos1)
 # print("transformed back to polar:",pos2)
 
 # radar_system = RadarSystem(10, Earth())
+# print(radar_system)
+# radar_system = RadarSystem(1, Earth())
+# print(radar_system)
 # ''' Test code'''
 # current_time = 1
 # for i in range(1000):

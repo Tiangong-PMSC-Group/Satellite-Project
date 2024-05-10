@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import utilities as ut
+from SatelliteState import SatelliteState
 from config import config
 
 
@@ -36,29 +37,35 @@ class Radar():
         # If no LOS break, return True
         return True
 
-    def detect_satellite_pos(self, Sat_Pos, current_time):
-        if current_time - self.last_ping > self.frequency:
-            sate_pos_detected = add_noise(Sat_Pos)
+    def detect_satellite_pos(self, Sat_Pos, current_time)-> SatelliteState:
+        '''
+        TODO YUHAN, For debug make the radar always return the position,
+        whether this frequency thing works well needs to be checked and debuged
+        '''
+
+        if True:
+        # if current_time - self.last_ping > self.frequency:
+        # if current_time - self.last_ping > 2:
+        #     sate_pos_detected = Sat_Pos
+            sate_pos_detected = self.add_noise(Sat_Pos)
             self.last_ping = current_time
-            """
-            TODO  Send broadcast to Predictor 
-            """
+            return SatelliteState(sate_pos_detected)
             # print(sate_pos_detected)
 
 
-def add_noise(position):
-    """
-    Adds Gaussian noise to a satellite position with different noise levels for each dimension.
+    def add_noise(self,position):
+        """
+        Adds Gaussian noise to a satellite position with different noise levels for each dimension.
 
-    :param position: Original position of the satellite (numpy array or list).
-    :param noise_levels: List of standard deviations of the Gaussian noise for each dimension.
-    :return: Noisy position.
-    """
-    if len(position) == 2:
-        noise_levels = np.array([config['radar']['noise']['rho'],config['radar']['noise']['theta']])
-    elif len(position) == 3:
-        noise_levels = np.array([config['radar']['noise']['rho'],config['radar']['noise']['theta'],config['radar']['noise']['phi']])
+        :param position: Original position of the satellite (numpy array or list).
+        :param noise_levels: List of standard deviations of the Gaussian noise for each dimension.
+        :return: Noisy position.
+        """
+        if len(position) == 2:
+            noise_levels = np.array([config['radar']['noise']['rho'],config['radar']['noise']['theta']])
+        elif len(position) == 3:
+            noise_levels = np.array([config['radar']['noise']['rho'],config['radar']['noise']['theta'],config['radar']['noise']['phi']])
 
 
-    noisy_position = np.array(position) + np.random.normal(0, noise_levels, size=np.shape(position))
-    return noisy_position
+        noisy_position = np.array(position) + np.random.normal(0, noise_levels, size=np.shape(position))
+        return noisy_position

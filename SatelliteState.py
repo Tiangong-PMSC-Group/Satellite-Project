@@ -10,10 +10,11 @@ add a field here is very convenient to let data pass through classes
 
 @dataclass
 class SatelliteState:
-    pos: np.ndarray # In Earth Coordinates
-    cov: np.ndarray ## Matrix of covariance of the predicted state. For true state is 0
-    velocity: np.ndarray # In Satellite coordinates [r velocity, tangent velocity, 0]
-    acceleration: np.ndarray
+    def __init__(self, pos: np.ndarray, cov: np.ndarray = None, velocity: np.ndarray = None, acceleration: np.ndarray = None):
+        self.pos = pos
+        self.cov = cov
+        self.velocity = velocity
+        self.acceleration = acceleration
     #current_time: int
 
     # Return the state in a single array
