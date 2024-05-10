@@ -13,7 +13,7 @@ class Visualisation:
         self.x_positions = x_positions
         self.y_positions = y_positions
         self.z_positions = z_positions
-        self.radarSystem = RadarSystem(5, Earth())
+        self.radarSystem = RadarSystem(1, Earth())
 
 
     re = Earth().re
@@ -40,10 +40,7 @@ class Visualisation:
         ax.plot_surface(x, y, z, color='b', rstride=4, cstride=4, alpha=0.5)
         ax.plot(self.x_positions, self.y_positions, self.z_positions, 'g')
 
-        # Plot radar positions
-        for radar in self.radarSystem.radars:
-            position = utilities.p_to_c(radar.position)
-            ax.scatter(position[0], position[1], position[2], color='r', marker='o')
+
 
         view_xs = []
         view_ys = []
@@ -56,19 +53,24 @@ class Visualisation:
             # print(pos1)
             # print("pos1")
             states = self.radarSystem.try_detect_satellite(pos1, i)
+            print(utilities.p_to_c(self.radarSystem.radars[0].position))
             if len(states) > 0:
-                print(states[0])
+                # print(states[0])
                 c_pos = utilities.p_to_c(states[0].pos)
                 view_xs.append(c_pos[0])
                 view_ys.append(c_pos[1])
                 view_zs.append(c_pos[2])
 
         ax.scatter(view_xs,view_ys,view_zs, color='r')
-        print("a")
-        print(view_xs)
-        print(view_ys)
-        print(view_zs)
+        # print("a")
+        # print(view_xs)
+        # print(view_ys)
+        # print(view_zs)
         ax.view_init(elev=elev, azim=azim)
+        # Plot radar positions
+        for radar in self.radarSystem.radars:
+            position = utilities.p_to_c(radar.position)
+            ax.scatter(position[0], position[1], position[2], color='r', marker='o')
         plt.show()
 
 orbit_radius = Earth().re + 2000000

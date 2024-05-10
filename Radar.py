@@ -38,19 +38,13 @@ class Radar():
         return True
 
     def detect_satellite_pos(self, Sat_Pos, current_time)-> SatelliteState:
-        '''
-        TODO YUHAN, For debug make the radar always return the position,
-        whether this frequency thing works well needs to be checked and debuged
-        '''
-
-        if True:
-        # if current_time - self.last_ping > self.frequency:
-        # if current_time - self.last_ping > 2:
-        #     sate_pos_detected = Sat_Pos
+        if current_time - self.last_ping > self.frequency:
             sate_pos_detected = self.add_noise(Sat_Pos)
             self.last_ping = current_time
             return SatelliteState(sate_pos_detected)
             # print(sate_pos_detected)
+        else:
+            return None
 
 
     def add_noise(self,position):

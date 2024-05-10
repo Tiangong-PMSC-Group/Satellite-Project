@@ -3,8 +3,8 @@
         "dt":{
         "main_dt": 1,
         "kalman_freq": 10,
-        "radar_freq": 20,
-        "radar_los": 2
+        "radar_freq": 2,
+        "radar_los": 1
         },
         "solver":"RK45",
         "solver_options":["RK45", "RK23", "DOP853", "Radau", "BDF", "LSODA"]

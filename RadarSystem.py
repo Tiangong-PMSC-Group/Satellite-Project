@@ -15,10 +15,10 @@ from Earth import Earth
 
 # @singleton
 class RadarSystem(IRadarSystem):
-    radar_dt = config['sim_config']['dt']['radar_los']
-    # earth_angular_velocity = config['earth']['angular_velocity']
+    radar_dt = config['sim_config']['dt']['main_dt']
     earth_angular_velocity = 2 * math.pi / 86400
     angular_change = radar_dt * earth_angular_velocity
+    last_time = 0
     """A class control all radars to make them detect satellite positions periodically
      Predictor can get the informations by visiting radars list"""
 
@@ -28,8 +28,8 @@ class RadarSystem(IRadarSystem):
         self.init_radar_positions()
 
     def init_radar_positions(self):
-        points = utilities.random_points_on_ellipse(Earth(), self.counts)
-        #points = self.random_points_on_equator(Earth(), self.counts)
+        # points = utilities.random_points_on_ellipse(Earth(), self.counts)
+        points = self.random_points_on_equator(Earth(), self.counts)
         radars = []
         for point in points:
             radar = Radar(point)
@@ -38,17 +38,20 @@ class RadarSystem(IRadarSystem):
 
 
     def try_detect_satellite(self, sat_pos, current_time) -> list[SatelliteState]:
+        self.update_radar_positions(current_time - self.last_time)
+        self.last_time = current_time
         results = []
         for radar in self.radars:
             find = radar.line_of_sight(sat_pos, self.earth.ellipse_equation)
             if find:
                 result = radar.detect_satellite_pos(sat_pos, current_time)
-                results.append(result)
+                if result is not None:
+                    results.append(result)
         return results
 
-    def update_radar_positions(self):
+    def update_radar_positions(self,time_steps):
         for item in self.radars:
-            item.position[1] = (item.position[1] + self.angular_change) % (2 * np.pi)
+            item.position[2] = (item.position[2] + self.angular_change) % (2 * np.pi)*time_steps
 
 
 
