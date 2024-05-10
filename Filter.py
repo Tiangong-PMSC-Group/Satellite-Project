@@ -176,8 +176,7 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         F[5,0] = self.As * self.Cd/self.ms *  -0.5 * rho * self.m[4] ** 2 
         F[5,4] = -rho * self.m[0] * self.m[4] * self.As * self.Cd/self.ms
 
-        #return F, rho
-        return F, 0.5
+        return F, rho
 
     def forecast_mean(self, rho):
 
