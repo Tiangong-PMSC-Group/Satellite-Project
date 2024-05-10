@@ -66,11 +66,16 @@ class Earth():
         relevant_state = np.array([x[0], x[1]])
 
         x2 = ut.p_to_c(relevant_state)
-
         t = np.arctan2(x2[1], x2[0])
 
         a = self.re
         b = self.rp
+
+        ell = (x[0] ** 2)/(self.re ** 2) + (x[1] ** 2)/(self.rp ** 2) -1
+        Inside = False
+        if ell < 0: 
+            Inside = True
+
             
         iterations = 0
         error = tolerance
@@ -102,8 +107,8 @@ class Earth():
         opt_y = b * np.sin(t)
         distance = np.sqrt((x2[0] - opt_x)**2 + (x2[1] - opt_y)**2)
 
-        success = error < tolerance and iterations < max_iterations
-        return dict(distance = distance, x = opt_x, y = opt_y, error = error, iterations = iterations, success = success, xs = ts,  errors = errors)
+        success = error < tolerance and iterations < max_iterations 
+        return dict(distance = distance, x = opt_x, y = opt_y, inside = Inside, error = error, iterations = iterations, success = success, xs = ts,  errors = errors)
 
     def air_density(self, distance):
         """_summary_
