@@ -183,7 +183,6 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         '''TODO:
         2. - Add Runge Kutta to this (CURRENTLY: LEAPFROG EULER FORWARD)
         '''
-
         self.m[0] = self.m[0] + self.dt * self.m[1]
         self.m[3] = self.m[3] + self.dt * self.m[4]
 
@@ -192,13 +191,11 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
 
         self.m[2] = -self.G  * self.Me * 1/(self.m[0] ** 2) + self.m[0] * self.m[4] ** 2
         self.m[5] = -0.5 * rho * self.m[0] * (self.m[4] ** 2) * self.As * self.Cd/self.ms
-
-        return self.m
     
     def forecast(self):
 
         F, rho = self.get_F()
-        self.m = self.forecast_mean(rho=rho)
+        m = self.forecast_mean(rho=rho)
         self.C = self.forecast_cov(transition_matrix=F, process_noise=None)
 
         return self.m, self.C
