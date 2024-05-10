@@ -122,7 +122,7 @@ class Satellite(ISimulator):
         return np.array([d_r, d_vr, d_phi, d_v_phi])
 
     def plane_to_altitude(self, r, phi):
-        earth_coor = utilities.satellite_to_earth([r, phi, self.plane_of_inclination])
+        earth_coor = utilities.spherical_to_spherical([r, phi, self.plane_of_inclination])
         return self.earth.distance_to_surface(earth_coor)
 
 
