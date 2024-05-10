@@ -21,8 +21,8 @@ class Radar():
         '''
 
         #Build the iterative line towards satellite in Cartesian 
-        x = ut.spherical_to_spherical(ut.p_to_c(Sat_Pos))
-        p = ut.spherical_to_spherical(ut.p_to_c(self.position))
+        x = ut.p_to_c(Sat_Pos)
+        p = ut.p_to_c(self.position)
 
         v0 = x - p
         mag = np.sqrt(v0.dot(v0.T))
