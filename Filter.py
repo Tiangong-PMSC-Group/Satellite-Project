@@ -124,7 +124,7 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
             self.H = np.array([[1, 0, 0, 0, 0, 0,],
                                [0, 0, 0, 1, 0, 0,],])
         else:
-            self.H = self.H()
+            self.H = observation_matrix
 
         self.planet = planet
 
