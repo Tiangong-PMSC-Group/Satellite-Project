@@ -155,7 +155,15 @@ class Satellite(ISimulator):
         #    print(f"Event occurred at t = {sol.t_events[0][0]}")
         #    print(f"State at event: r = {sol.y_events[0][0][0]}, v_r = {sol.y_events[0][0][1]}")
 
+        self.solution = sol
         return sol
+    
+    def get_position_at_t(self, t):
+        r = self.solution.y[0][t]
+        theta = self.solution.y[2][t]
+        phi = self.plane_of_inclination
+
+        return np.array([r, theta, phi])
 
     #######
 

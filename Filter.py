@@ -120,7 +120,7 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         else:
             self.m = mean_0
 
-        if observation_matrix == None:
+        if observation_matrix is None:
             self.H = np.array([[1, 0, 0, 0, 0, 0,],
                                [0, 0, 0, 1, 0, 0,],])
         else:
