@@ -39,7 +39,7 @@ def c_to_p(state):
             theta = np.arctan(np.sqrt(x**2 + y**2)/z)
         elif z < 0:
             theta = np.pi + np.arctan(np.sqrt(x**2 + y**2)/ z)
-        elif z == 0 and x*y == 0:
+        elif z == 0 and x*y != 0:
             theta = 0.5*np.pi
         
         #does np.arctan2(y,x) make the first 3 check redundant?
