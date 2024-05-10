@@ -128,7 +128,7 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
 
         self.planet = planet
 
-        self.orbital_angle = config["earth"]["orbital_angle"]
+        self.orbital_angle = config['satellite']['initial_conditions']['azimuthal_angle']
         self.dt = config['sim_config']['dt']['main_dt']
         self.As = config["satellite"]["area"]
         self.Cd = config["satellite"]["drag_coefficient"]
