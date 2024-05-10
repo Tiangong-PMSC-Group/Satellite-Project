@@ -59,7 +59,10 @@ class Satellite(ISimulator):
             def __call__(self, t, state):
                 # Logic from the crash method
                 r, v_r, phi, v_phi = state
-                return self.satellite.plane_to_altitude(r, phi)['distance']
+                dist = self.satellite.plane_to_altitude(r, phi)['distance']
+                if self.satellite.plane_to_altitude(r, phi)['inside']:
+                    dist *= -1
+                return dist
             
             terminal = True
             direction = -1
@@ -119,7 +122,7 @@ class Satellite(ISimulator):
         return np.array([d_r, d_vr, d_phi, d_v_phi])
 
     def plane_to_altitude(self, r, phi):
-        earth_coor = utilities.satellite_to_earth([r, phi, self.plane_of_inclination])
+        earth_coor = utilities.spherical_to_spherical([r, phi, self.plane_of_inclination])
         return self.earth.distance_to_surface(earth_coor)
 
 

@@ -24,10 +24,37 @@ def c_to_p(state):
         x = state[0]
         y = state[1]
         z = state[2]
+
+
         rho = np.sqrt(x**2 + y**2 + z**2)  # Radial distance
-        theta = np.arccos(z / rho)          # Inclination angle (polar angle) from the z-axis
-        phi = np.arctan2(y, x)              # Azimuthal angle from the x-axis
-        polar_state = np.array([rho, theta, phi])
+        #theta = np.arccos(z / rho)          # Inclination angle (polar angle) from the z-axis
+        #phi = np.arctan2(y, x)              # Azimuthal angle from the x-axis
+        if x == y == 0:
+            assert True, "Point lies on the the z-axis, Azimuthal angle cannot be defined"
+    
+        if x == y == z == 0:
+            assert True, "Point is on origin, Polar and Azimuthal angle cannot be defined"
+        
+        if z > 0:    
+            theta = np.arctan(np.sqrt(x**2 + y**2)/z)
+        elif z < 0:
+            theta = np.pi + np.arctan(np.sqrt(x**2 + y**2)/ z)
+        elif z == 0:
+            theta = 0.5*np.pi
+        
+        #does np.arctan2(y,x) make the first 3 check redundant?
+        if x > 0:
+            azimuthal = np.arctan(y/x)
+        elif x < 0 and y >= 0:
+            azimuthal = np.arctan(y/x) + np.pi
+        elif x < 0 and y < 0:
+            azimuthal = np.arctan(y/x) - np.pi
+        elif x == 0 and y > 0:
+            azimuthal = 0.5*np.pi
+        elif x == 0 and y < 0:
+            azimuthal = -0.5*np.pi
+        
+        polar_state = np.array([rho, theta, azimuthal])
 
     elif dims == 2:
         
@@ -127,6 +154,91 @@ def earth_to_satellite(state):
     phi_s = np.arccos(z/r_s)
     
     return np.array([r_s, phi_s, theta_s])
+
+def orbit_to_xyz_bulk(states):    
+    """Changes the coordinates from the Orbits spherical axis to Earths XYZ
+
+    Args:
+        state (np.array([R, Polar, Azimuthal])): Satellite coordinates array in reference spherical obrit axis
+
+    Returns:
+        np.array([x, y, z]): Satellite coordinates array in refernce Earths XYZ
+    """    
+    R = states[0]
+    polar = states[1]
+    azimuthal = states[2]
+    
+    x = R*np.sin(polar)*np.cos(azimuthal)
+    y = R*np.cos(polar)
+    z = R*np.sin(polar)*np.sin(azimuthal)
+
+    return np.array([x, y, z])
+
+def earth_to_xyz_bulk(states):
+    """Changes the coordinates from the Earths spherical axis to Earths XYZ
+
+    Args:
+        state (np.array([R, Polar, Azimuthal])): Earth coordinates array in reference spherical Earth axis
+
+    Returns:
+        np.array([x, y, z]): Earth coordinates array in refernce Earths XYZ
+    """ 
+    R = states[0]
+    polar = states[1]
+    azimuthal = states[2]
+    
+    x = R*np.sin(polar)*np.cos(azimuthal)
+    y = R*np.sin(polar)*np.sin(azimuthal)
+    z = R*np.cos(polar)
+
+    return np.array([x, y, z])
+
+
+def spherical_to_spherical(state):
+    """Changes the coordinates from one Spherical axis to Spherical another axis
+
+    Args:
+        state (np.array([R, Polar, Azimuthal])): Sperical coordinates array in one axis (Earth or Satellite)
+
+    Returns:
+        np.array([R, Polar, Azimuthal]): Sperical coordinates array in one axis (Earth or Satellite)
+    """
+    R_old = state[0]
+    polar_old = state[1]
+    azimuthal_old = state[2]
+    
+    x = R_old*np.sin(polar_old)*np.cos(azimuthal_old)
+    y = R_old*np.cos(polar_old)
+    z = R_old*np.sin(polar_old)*np.sin(azimuthal_old)
+    
+    if x == y == 0:
+        assert True, "Point lies on the the z-axis, Azimuthal angle cannot be defined"
+    
+    if x == y == z == 0:
+        assert True, "Point is on origin, Polar and Azimuthal angle cannot be defined"
+    
+    R_new = np.sqrt(x**2 + y**2 + z**2)
+    if z > 0:    
+        polar_new = np.arctan(np.sqrt(x**2 + y**2)/z)
+    elif z < 0:
+        polar_new = np.pi + np.arctan(np.sqrt(x**2 + y**2)/ z)
+    elif z == 0:
+        polar_new = 0.5*np.pi
+    
+    #does np.arctan2(y,x) make the first 3 check redundant?
+    if x > 0:
+        azimuthal_new = np.arctan(y/x)
+    elif x < 0 and y >= 0:
+        azimuthal_new = np.arctan(y/x) + np.pi
+    elif x < 0 and y < 0:
+        azimuthal_new = np.arctan(y/x) - np.pi
+    elif x == 0 and y > 0:
+        azimuthal_new = 0.5*np.pi
+    elif x == 0 and y < 0:
+        azimuthal_new = -0.5*np.pi
+    
+    return np.array([R_new, polar_new, azimuthal_new])
+
 
 
 
