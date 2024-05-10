@@ -24,10 +24,37 @@ def c_to_p(state):
         x = state[0]
         y = state[1]
         z = state[2]
+
+
         rho = np.sqrt(x**2 + y**2 + z**2)  # Radial distance
-        theta = np.arccos(z / rho)          # Inclination angle (polar angle) from the z-axis
-        phi = np.arctan2(y, x)              # Azimuthal angle from the x-axis
-        polar_state = np.array([rho, theta, phi])
+        #theta = np.arccos(z / rho)          # Inclination angle (polar angle) from the z-axis
+        #phi = np.arctan2(y, x)              # Azimuthal angle from the x-axis
+        if x == y == 0:
+            assert True, "Point lies on the the z-axis, Azimuthal angle cannot be defined"
+    
+        if x == y == z == 0:
+            assert True, "Point is on origin, Polar and Azimuthal angle cannot be defined"
+        
+        if z > 0:    
+            theta = np.arctan(np.sqrt(x**2 + y**2)/z)
+        elif z < 0:
+            theta = np.pi + np.arctan(np.sqrt(x**2 + y**2)/ z)
+        elif z == 0 and x*y == 0:
+            theta = 0.5*np.pi
+        
+        #does np.arctan2(y,x) make the first 3 check redundant?
+        if x > 0:
+            azimuthal = np.arctan(y/x)
+        elif x < 0 and y >= 0:
+            azimuthal = np.arctan(y/x) + np.pi
+        elif x < 0 and y < 0:
+            azimuthal = np.arctan(y/x) - np.pi
+        elif x == 0 and y > 0:
+            azimuthal = 0.5*np.pi
+        elif x == 0 and y < 0:
+            azimuthal = -0.5*np.pi
+        
+        polar_state = np.array([rho, theta, azimuthal])
 
     elif dims == 2:
         
@@ -198,7 +225,7 @@ def spherical_to_spherical(state):
     elif z == 0 and x*y == 0:
         polar_new = 0.5*np.pi
     
-    #does np.arctan2(y,x) make the first 3 check redundant
+    #does np.arctan2(y,x) make the first 3 check redundant?
     if x > 0:
         azimuthal_new = np.arctan(y/x)
     elif x < 0 and y >= 0:
