@@ -195,7 +195,7 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
     def forecast(self):
 
         F, rho = self.get_F()
-        m = self.forecast_mean(rho=rho)
+        self.forecast_mean(rho=rho)
         self.C = self.forecast_cov(transition_matrix=F, process_noise=None)
 
         return self.m, self.C
