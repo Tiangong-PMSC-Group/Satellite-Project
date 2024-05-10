@@ -78,7 +78,7 @@ for i in range(sim_lenght):
             state_satellite_cord = utilities.spherical_to_spherical(state_earth_cord)
             new_state_satellite_cord = tianhe.update(state_satellite_cord)
         
-    new_state_satellite_cord = tianhe.forecast()
+    new_state_satellite_cord = tianhe.forecast()[0]
 
     predicted_states_satellite_cord += new_state_satellite_cord,
 
