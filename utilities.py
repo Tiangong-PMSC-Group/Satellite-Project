@@ -179,6 +179,8 @@ def spherical_to_spherical(state):
         azimuthal_new = 0.5*np.pi
     elif x == 0 and y < 0:
         azimuthal_new = -0.5*np.pi
+    else:
+        azimuthal_new = 0
     
     return np.array([R_new, polar_new, azimuthal_new])
 
