@@ -84,6 +84,11 @@ def p_to_c(state):
         rho = state[0]
         theta = state[1]
         phi = state[2]
+
+        assert math.isinf(rho) == False, "TypeError: function receiving infinity instead of a number for Radius"
+        assert math.isinf(theta) == False, "TypeError: function receiving infinity instead of a number for Polar Angle"
+        assert math.isinf(phi) == False, "TypeError: function receiving infinity instead of a number for Azimuthal Angle"
+
         x = rho * np.sin(theta) * np.cos(phi)
         y = rho * np.sin(theta) * np.sin(phi)
         z = rho * np.cos(theta)
@@ -92,6 +97,10 @@ def p_to_c(state):
     elif dims == 2:
         rho = state[0]
         theta = state[1]
+
+        assert math.isinf(rho) == False, "TypeError: function receiving infinity instead of a number for Radius"
+        assert math.isinf(theta) == False, "TypeError: function receiving infinity instead of a number for Polar Angle"
+
         x = rho * np.cos(theta)
         y = rho * np.sin(theta)
         cartesian_state = np.array([x, y])
@@ -110,10 +119,6 @@ def orbit_to_xyz_bulk(states):
     R = states[0]
     polar = states[1]
     azimuthal = states[2]
-
-    assert math.isinf(R) == False, "TypeError: function receiving infinity instead of a number for Radius"
-    assert math.isinf(polar) == False, "TypeError: function receiving infinity instead of a number for Polar Angle"
-    assert math.isinf(azimuthal) == False, "TypeError: function receiving infinity instead of a number for Azimuthal Angle"
     
     x = R*np.sin(polar)*np.cos(azimuthal)
     y = R*np.cos(polar)
