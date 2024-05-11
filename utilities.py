@@ -112,8 +112,8 @@ def orbit_to_xyz_bulk(states):
     azimuthal = states[2]
 
     #assert math.isinf(R), "TypeError: function receiving infinity instead of a number for Radius"
-    assert math.isinf(polar), "TypeError: function receiving infinity instead of a number for Polar Angle"
-    assert math.isinf(azimuthal), "TypeError: function receiving infinity instead of a number for Azimuthal Angle"
+    #assert math.isinf(polar), "TypeError: function receiving infinity instead of a number for Polar Angle"
+    #assert math.isinf(azimuthal), "TypeError: function receiving infinity instead of a number for Azimuthal Angle"
     
     x = R*np.sin(polar)*np.cos(azimuthal)
     y = R*np.cos(polar)
@@ -155,8 +155,8 @@ def spherical_to_spherical(state):
     azimuthal_old = state[2]
 
     #assert math.isinf(R_old), "TypeError: function receiving infinity instead of a number for Radius"
-    assert math.isinf(polar_old), "TypeError: function receiving infinity instead of a number for Polar Angle"
-    assert math.isinf(azimuthal_old), "TypeError: function receiving infinity instead of a number for Azimuthal Angle"
+    #assert math.isinf(polar_old), "TypeError: function receiving infinity instead of a number for Polar Angle"
+    #assert math.isinf(azimuthal_old), "TypeError: function receiving infinity instead of a number for Azimuthal Angle"
     
     x = R_old*np.sin(polar_old)*np.cos(azimuthal_old)
     y = R_old*np.cos(polar_old)
