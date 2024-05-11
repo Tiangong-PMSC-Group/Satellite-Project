@@ -1,9 +1,9 @@
 {
     "sim_config":{
         "dt":{
-        "main_dt": 1,
+        "main_dt": 0.5,
         "kalman_freq": 10,
-        "radar_freq": 1,
+        "radar_freq": 5,
         "radar_los": 1
         },
         "solver":"RK45",
