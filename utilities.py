@@ -8,6 +8,22 @@ from config import config
 
 ##### Converters #####
 
+def orbit_to_earth(state):
+    r_s, phi_s, theta_s = state[0], state[1], state[2]
+    x, y, z = r_s*np.sin(phi_s)*np.cos(theta_s), r_s*np.sin(phi_s)*np.sin(theta_s), r_s*np.cos(phi_s)
+    z, y, x = y, z, x
+    r_e = np.sqrt(x**2 + y**2 + z**2)
+    theta_e, phi_e = np.arccos(z/r_e), np.arctan(y/x)
+    return np.array([r_e, theta_e, phi_e])
+
+def earth_to_orbit(state):
+    r_e, theta_e, phi_e = state[0], state[1], state[2]
+    x, y, z = r_e*np.sin(theta_e)*np.cos(phi_e), r_e*np.sin(theta_e)*np.sin(phi_e), r_e*np.cos(theta_e)
+    y, z, x = z, y, x
+    r_s = np.sqrt(x**2 + y**2 + z**2)
+    theta_s, phi_s = np.arctan(y/x), np.arccos(z/r_s)
+    return np.array([r_s, phi_s, theta_s])
+
 def c_to_p(state):
     """Changes the coordinates from Cartesian to Polar
 
@@ -185,8 +201,6 @@ def spherical_to_spherical(state):
         azimuthal_new = 0.5*np.pi
     
     return np.array([R_new, polar_new, azimuthal_new])
-
-
 
 
 ####################################################
