@@ -54,7 +54,7 @@ def c_to_p(state):
         elif x == 0 and y < 0:
             azimuthal = -0.5*np.pi
         else:
-            azimuthal_new = 0
+            azimuthal = 0.5*np.pi
         
         polar_state = np.array([rho, theta, azimuthal])
 
@@ -182,7 +182,7 @@ def spherical_to_spherical(state):
     elif x == 0 and y < 0:
         azimuthal_new = -0.5*np.pi
     else:
-        azimuthal_new = 0
+        azimuthal_new = 0.5*np.pi
     
     return np.array([R_new, polar_new, azimuthal_new])
 
