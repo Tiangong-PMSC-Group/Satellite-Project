@@ -139,7 +139,7 @@ class Satellite(ISimulator):
 
 
         # Time span for the solution
-        t_span = (0, time_limit)  # From t=0 to t=10
+        t_span = (0, time_limit*self.dt)  # From t=0 to t=10
         t_eval = np.linspace(t_span[0], t_span[1], int(time_limit*self.dt))  # Grid. Arbritarially large
 
         initial_state = self.true_state.get_state_sat_plane() #Just get position

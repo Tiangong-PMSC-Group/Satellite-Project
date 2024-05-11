@@ -77,6 +77,11 @@ class LinearKalmanFilter():
     #The place where you feed the new recieved data in; y (Column Vector n x 1)
     def update_mean(self, measurement):
         K = self.get_kalman_gain()
+        #print(K)
+        #print(measurement)
+        #print(self.H)
+        #print(self.m[0])
+        #print('##############')
         return self.m + K @ (measurement - self.H @ self.m)
         
     def update_cov(self):
@@ -98,7 +103,7 @@ class LinearKalmanFilter():
     def update(self, measurement):
         if measurement.ndim == 1:
             measurement = measurement[:, np.newaxis]
-
+        
         self.m = self.update_mean(measurement)
         self.C = self.update_cov()
         return self.m, self.C

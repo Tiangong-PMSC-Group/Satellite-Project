@@ -46,7 +46,7 @@
         "initial_conditions":{
             "distance": 6778136,
             "polar_angle": 1.57079,
-            "azimuthal_angle": 1.57079,
+            "azimuthal_angle": 0,
             "comment": "Just included some random initial conditions, change later. Can be overwritten in the code"
         }
     },
