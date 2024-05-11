@@ -28,8 +28,8 @@ class RadarSystem(IRadarSystem):
         self.init_radar_positions()
 
     def init_radar_positions(self):
-        # points = utilities.random_points_on_ellipse(Earth(), self.counts)
-        points = self.random_points_on_equator(Earth(), self.counts)
+        points = utilities.random_points_on_ellipse(Earth(), self.counts)
+        # points = self.random_points_on_equator(Earth(), self.counts)
         radars = []
         for point in points:
             radar = Radar(point)
@@ -89,6 +89,7 @@ class RadarSystem(IRadarSystem):
 '''
 test code do not delete until last edition
 '''
+
 # pos = random_points_on_equator(Earth(), 2)[0]
 # print("origin Cartesian:",pos)
 # print("origin Cartesian:",random_points_on_equator(Earth(), 2)[1])
