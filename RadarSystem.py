@@ -22,10 +22,17 @@ class RadarSystem(IRadarSystem):
     """A class control all radars to make them detect satellite positions periodically
      Predictor can get the informations by visiting radars list"""
 
-    def __init__(self, counts, earth):
+    def __init__(self, counts, earth, seed=None):
         self.earth = earth
         self.counts = counts
+
+        if seed is not None:
+            np.random.seed(seed)
+
+            
         self.init_radar_positions()
+
+        
 
     def init_radar_positions(self):
         points = utilities.random_points_on_ellipse(Earth(), self.counts)
