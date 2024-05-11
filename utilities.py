@@ -53,6 +53,8 @@ def c_to_p(state):
             azimuthal = 0.5*np.pi
         elif x == 0 and y < 0:
             azimuthal = -0.5*np.pi
+        else:
+            azimuthal_new = 0
         
         polar_state = np.array([rho, theta, azimuthal])
 
