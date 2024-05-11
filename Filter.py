@@ -150,7 +150,7 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
     
     def get_F(self):
         sat_coords = np.array([self.m[0][0], self.m[3][0], self.orbital_angle])
-        earth_coords = ut.satellite_to_earth(sat_coords)
+        earth_coords = ut.spherical_to_spherical(sat_coords)
         res = self.planet.distance_to_surface(state=earth_coords)
 
         rho = self.planet.air_density(res['distance'])

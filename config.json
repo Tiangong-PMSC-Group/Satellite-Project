@@ -3,7 +3,7 @@
         "dt":{
         "main_dt": 1,
         "kalman_freq": 10,
-        "radar_freq": 2,
+        "radar_freq": 1,
         "radar_los": 1
         },
         "solver":"RK45",

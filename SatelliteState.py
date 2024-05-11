@@ -22,7 +22,7 @@ class SatelliteState:
         return np.concatenate([self.pos, self.velocity, self.acceleration])
     
     def get_state_sat_plane(self):
-        new_pos = utilities.earth_to_satellite(self.pos)
+        new_pos = utilities.spherical_to_spherical(self.pos)
         return np.array([new_pos[0], self.velocity[0], new_pos[1], self.velocity[1]])
 
     def update_state(self, array):
