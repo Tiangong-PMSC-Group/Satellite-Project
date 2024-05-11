@@ -98,63 +98,6 @@ def p_to_c(state):
 
     return cartesian_state
 
-
-def satellite_to_earth(state):
-    """Changes the coordinates from Satellite to Earth
-
-    Args:
-        state (np.array): Satellite coordinates array in reference to Satellites axis
-
-    Returns:
-        np.array: Satellite coordinates array in refernce to Earths axis
-    """
-
-    #r_s, phi_s, theta_s = state[0], state[1], state[2]
-
-    r_s = state[0]
-    phi_s = state[1]
-    theta_s = state[2]
-
-    x = r_s*np.sin(phi_s)*np.cos(theta_s)
-    y = r_s*np.cos(phi_s)
-    z = r_s*np.sin(phi_s)*np.sin(theta_s)
-
-    #x, y, z = r_s*np.sin(phi_s)*np.cos(theta_s), r_s*np.sin(phi_s)*np.sin(theta_s), r_s*np.cos(phi_s)
-    #z, y, x = y, z, x
-    r_e = np.sqrt(x**2 + y**2 + z**2)
-    theta_e = np.arccos(z/r_e)
-    phi_e = np.arctan(y/x)
-
-    return np.array([r_e, theta_e, phi_e])
-
-def earth_to_satellite(state):
-    """Changes the coordinates from Earth to Satellite
-
-    Args:
-        state (np.array): Satellite coordinates array in reference to Earth axis
-
-    Returns:
-        np.array: Satellite coordinates array in refernce to Satellites axis
-    """
-
-    #r_e, theta_e, phi_e = state[0], state[1], state[2]
-
-    r_e = state[0]
-    theta_e = state[1]
-    phi_e = state[2]
-
-    x = r_e*np.sin(theta_e)*np.cos(phi_e)
-    y = r_e*np.cos(theta_e)
-    z = r_e*np.sin(theta_e)*np.sin(phi_e)
-
-    #x, y, z = r_e*np.sin(theta_e)*np.cos(phi_e), r_e*np.sin(theta_e)*np.sin(phi_e), r_e*np.cos(theta_e)
-    #y, z, x = z, y, x
-    r_s = np.sqrt(x**2 + y**2 + z**2)
-    theta_s = np.arctan(y/x)
-    phi_s = np.arccos(z/r_s)
-    
-    return np.array([r_s, phi_s, theta_s])
-
 def orbit_to_xyz_bulk(states):    
     """Changes the coordinates from the Orbits spherical axis to Earths XYZ
 
