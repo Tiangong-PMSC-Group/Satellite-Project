@@ -51,8 +51,8 @@ class RadarSystem(IRadarSystem):
 
     def update_radar_positions(self,time_steps):
         for item in self.radars:
-            item.position[2] = (item.position[2] + self.angular_change) % (2 * np.pi)*time_steps
-
+            new_state = item.position[2] + self.angular_change * time_steps
+            item.position[2] = new_state % (2 * np.pi)
 
 
     def random_points_on_equator(self,earth, num_points):
