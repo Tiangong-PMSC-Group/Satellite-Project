@@ -36,6 +36,7 @@ class Radar():
 
         # If no LOS break, return True
         return True
+    
 
     def detect_satellite_pos(self, Sat_Pos, current_time)-> SatelliteState:
         if current_time - self.last_ping > self.frequency:
@@ -45,6 +46,18 @@ class Radar():
             # print(sate_pos_detected)
         else:
             return None
+        
+    def is_time(self, current_time)-> SatelliteState:
+        if current_time - self.last_ping > self.frequency:
+            self.last_ping = current_time
+            return True
+        else:
+            return False
+        
+    def detect_satellite_pos_short(self, Sat_Pos, current_time)-> SatelliteState:
+        sate_pos_detected = self.add_noise(Sat_Pos)
+        self.last_ping = current_time
+        return SatelliteState(sate_pos_detected)
 
 
     def add_noise(self,position):
