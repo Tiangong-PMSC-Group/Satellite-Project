@@ -20,8 +20,9 @@ def on_button_click():
     # process = subprocess.Popen(["python", "/Users/han/Documents/GitHub/Satellite-Project/Visualization.py"])
     # subprocess.Popen(["python", "/Users/han/Documents/GitHub/Satellite-Project/Visualization.py"])
     # subprocess.run(["python", "/Users/han/Documents/GitHub/Satellite-Project/Visualization.py"], check=True)
-    subprocess.run(["python", "Visualization.py"], check=True)
     subprocess.run(["python", "try.py"], check=True)
+    subprocess.run(["python", "Visualization.py"], check=True)
+
     # subprocess.run(["jupyter", "nbconvert", "--to", "notebook", "--execute",
     #                 "--inplace", "/Users/han/Documents/GitHub/Satellite-Project/3DVisual.ipynb"], check=True)
     
