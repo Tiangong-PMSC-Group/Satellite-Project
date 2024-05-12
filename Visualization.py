@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('TkAgg')
 from RadarSystem import RadarSystem
 import utilities
 from Earth import Earth
@@ -8,12 +10,15 @@ from mpl_toolkits.mplot3d import Axes3D
 from ipywidgets import interact, FloatSlider, Output, Button
 import time
 
+from config import config
+
+
 class Visualisation:
     def __init__(self, x_positions, y_positions, z_positions, radar_positions=None):
         self.x_positions = x_positions
         self.y_positions = y_positions
         self.z_positions = z_positions
-        self.radarSystem = RadarSystem(1, Earth())
+        self.radarSystem = RadarSystem(500, Earth())
 
 
     re = Earth().re
@@ -37,8 +42,8 @@ class Visualisation:
         y = self.re * np.outer(np.sin(u), np.sin(v))
         z = self.rp * np.outer(np.ones(np.size(u)), np.cos(v))
 
-        ax.plot_surface(x, y, z, color='b', rstride=4, cstride=4, alpha=0.5)
-        ax.plot(self.x_positions, self.y_positions, self.z_positions, 'g')
+        ax.plot_surface(x, y, z, color='b', rstride=4, cstride=4, alpha=0.1)
+        ax.plot(self.x_positions, self.y_positions, self.z_positions, c='g')
 
 
 
@@ -70,10 +75,11 @@ class Visualisation:
         # Plot radar positions
         for radar in self.radarSystem.radars:
             position = utilities.p_to_c(radar.position)
-            ax.scatter(position[0], position[1], position[2], color='r', marker='o')
+            ax.scatter(position[0], position[1], position[2], color='g', marker='o')
         plt.show()
 
-orbit_radius = Earth().re + 2000000
+print(config['radar']['noise']['rho'])
+orbit_radius = Earth().re + 100000
 theta = np.linspace(0, 2 * np.pi, 100)
 orbit_x = orbit_radius * np.cos(theta)
 orbit_y = orbit_radius * np.sin(theta)
@@ -81,3 +87,7 @@ orbit_z = np.zeros_like(orbit_x)
 # Update the instantiation of the Visualisation class to include radar positions
 visual = Visualisation(orbit_x, orbit_y, orbit_z)
 visual.update_view()
+
+
+
+
