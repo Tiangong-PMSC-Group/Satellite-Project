@@ -11,6 +11,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Earth import Earth
 
+import plotly.graph_objects as go
+from Earth import Earth
+import numpy as np
+
 class VisualisationPlotly:
     def __init__(self, states1, states2):
         self.states1 = states1
@@ -25,7 +29,7 @@ class VisualisationPlotly:
         x = self.re * np.outer(np.cos(u), np.sin(v))
         y = self.re * np.outer(np.sin(u), np.sin(v))
         z = self.rp * np.outer(np.ones(np.size(u)), np.cos(v))
-        return go.Surface(x=x, y=y, z=z, opacity=0.5, colorscale='Blues')
+        return go.Surface(x=x, y=y, z=z, opacity=0.5, colorscale='Blues',showscale=False)
 
     def create_trajectory(self, states, color, progress=100, opacity=1.0):
         progress_index = int(len(states) * progress / 100)
@@ -36,14 +40,31 @@ class VisualisationPlotly:
             z=z,
             mode='lines',
             line=dict(color=color, width=2),
-            opacity=opacity  # Set the opacity for the trajectory
+            opacity=opacity,
+            name="Real Satellite Trajectory"
         )
+
+    def highlight_last_points(self, states, color):
+        # Extract last two points
+        if len(states) > 1:
+            x, y, z = zip(*states[-1:])
+            return go.Scatter3d(
+                x=x,
+                y=y,
+                z=z,
+                mode='markers',
+                marker=dict(color=color, size=5, symbol='circle',opacity=0.5 ),
+                name="Final Location"
+            )
+        return None
 
     def visualise(self, progress=100):
         fig = go.Figure()
         fig.add_trace(self.create_earth_surface())
         fig.add_trace(self.create_trajectory(self.states1, 'red', progress, opacity=0.8))
         fig.add_trace(self.create_trajectory(self.states2, 'green', progress, opacity=0.6))
+        fig.add_trace(self.highlight_last_points(self.states1, 'red'))
+        fig.add_trace(self.highlight_last_points(self.states2, 'green'))
 
         fig.update_layout(
             scene=dict(
@@ -55,6 +76,7 @@ class VisualisationPlotly:
             title="Satellite Trajectory Visualization"
         )
         fig.show()
+
 
 
 orbit_radius = Earth().re + 1000000
@@ -104,4 +126,4 @@ def polar_plot(states1, states2):
     plt.tight_layout()
     plt.show()
 
-polar_plot(polar_real_state, polar_predict_state)
+# polar_plot(polar_real_state, polar_predict_state)
