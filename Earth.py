@@ -69,9 +69,9 @@ class Earth():
         t = np.arctan2(x2[1], x2[0])
 
         ell = (x[0] ** 2)/(self.re ** 2) + (x[1] ** 2)/(self.rp ** 2) -1
-        Inside = False
+        inside = False
         if ell < 0: 
-            Inside = True
+            inside = True
 
             
         iterations = 0
@@ -98,7 +98,7 @@ class Earth():
         opt_y = self.rp * np.sin(t)
         distance = np.sqrt((x2[0] - opt_x)**2 + (x2[1] - opt_y)**2)
 
-        return dict(distance = distance, x = opt_x, y = opt_y, inside = Inside, error = error)
+        return dict(distance = distance, x = opt_x, y = opt_y, inside = inside, error = error)
 
     def air_density(self, distance):
         """_summary_
