@@ -1,7 +1,7 @@
 {
   "sim_config": {
     "dt": {
-      "main_dt": 0.2,
+      "main_dt": 1,
       "kalman_freq": 10,
       "radar_freq": 5,
       "radar_los": 1
@@ -62,9 +62,9 @@
     "comment": "drag_coefficient hasn't been decided",
     "initial_conditions": {
       "distance": 6778136,
-      "polar_angle": 1.57079,
+      "polar_angle": 0.78,
       "azimuthal_angle": 0,
-      "comment": "Defined in Earth coordinates where the azimuthal_angle cannot be changed from 0, and the polar_angle refers to latitude in (0, pi]"
+      "comment": "Satellites position as described in earth's spherical coordinate system, azimuthal angle set at const 0, polar angle describing latitude (0, pi]"
     }
   },
   "city": {
