@@ -1,7 +1,7 @@
 {
     "sim_config":{
         "dt":{
-        "main_dt": 0.5,
+        "main_dt": 0.2,
         "kalman_freq": 10,
         "radar_freq": 5,
         "radar_los": 1
