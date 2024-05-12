@@ -153,48 +153,8 @@ def spherical_to_spherical(state):
     Returns:
         np.array([R, Polar, Azimuthal]): Sperical coordinates array in one axis (Earth or Satellite)
     """
-    #R_old = state[0]
-    #polar_old = state[1]
-    #azimuthal_old = state[2]
-
-    #assert math.isinf(R_old) == False, "TypeError: function receiving infinity instead of a number for Radius"
-    #assert math.isinf(polar_old) == False, "TypeError: function receiving infinity instead of a number for Polar Angle"
-    #assert math.isinf(azimuthal_old) == False, "TypeError: function receiving infinity instead of a number for Azimuthal Angle"
-    
-    #x = R_old*np.sin(polar_old)*np.cos(azimuthal_old)
-    #y = R_old*np.cos(polar_old)
-    #z = R_old*np.sin(polar_old)*np.sin(azimuthal_old)
-    
-
     x, z, y = p_to_c(state)     #convert to cartesian, while switching the y and z coordinates
     rho, polar, azimuthal = c_to_p(np.array([x, y, z]))     #convert back to Sperical coordinates
-
-    #if x == y == 0:
-    #    assert True, "Point lies on the the z-axis, Azimuthal angle cannot be defined"
-    
-    #if x == y == z == 0:
-    #    assert True, "Point is on origin, Polar and Azimuthal angle cannot be defined"
-    
-    #R_new = np.sqrt(x**2 + y**2 + z**2)
-    #if z > 0:    
-    #    polar_new = np.arctan(np.sqrt(x**2 + y**2)/z)
-    #elif z < 0:
-    #    polar_new = np.pi + np.arctan(np.sqrt(x**2 + y**2)/ z)
-    #elif z == 0:
-    #    polar_new = 0.5*np.pi
-
-    
-    #does np.arctan2(y,x) make the first 3 check redundant?
-    #if x > 0:
-    #    azimuthal_new = np.arctan(y/x)
-    #elif x < 0 and y >= 0:
-    #    azimuthal_new = np.arctan(y/x) + np.pi
-    #elif x < 0 and y < 0:
-    #    azimuthal_new = np.arctan(y/x) - np.pi
-    #elif x == 0 and y > 0:
-    #    azimuthal_new = 0.5*np.pi
-    #elif x == 0 and y < 0:
-    #    azimuthal_new = -0.5*np.pi
     
     return np.array([rho, polar, azimuthal])
 

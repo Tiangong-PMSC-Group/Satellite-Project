@@ -35,7 +35,7 @@ class Earth():
         return (x**2)/(self.re**2) + (y**2)/(self.re**2) + (z**2)/(self.rp**2) - 1
 
 
-    def distance_to_surface(self, state, tolerance = 1e-6, max_iterations = 1000):
+    def distance_to_surface(self, state, tol = 1e-3, max_iter = 20):
         """Finds the minimum distance between the specified point and the ellipse
         using Newton's method.
 
@@ -68,47 +68,37 @@ class Earth():
         x2 = ut.p_to_c(relevant_state)
         t = np.arctan2(x2[1], x2[0])
 
-        a = self.re
-        b = self.rp
-
         ell = (x[0] ** 2)/(self.re ** 2) + (x[1] ** 2)/(self.rp ** 2) -1
-        Inside = False
+        inside = False
         if ell < 0: 
-            Inside = True
+            inside = True
 
             
         iterations = 0
-        error = tolerance
-        errors = []
-        ts = []
+        error = tol
                 
-        while (error >= tolerance) and (iterations < max_iterations):
+        while (error >= tol) and (iterations < max_iter):
             cost = np.cos(t)
             sint = np.sin(t)
-            x1 = np.array([a * cost, b * sint])
-            xp = np.array([-a * sint, b * cost])
-            xpp = np.array([-a * cost, -b * sint])
+
+            x1 = np.array([self.re * cost, self.rp * sint])
+            xp = np.array([-self.re * sint, self.rp * cost])
+            xpp = np.array([-self.re * cost, -self.rp * sint])
             delta = x1 - x2
             dp = np.dot(xp, delta)
             dpp = np.dot(xpp, delta) + np.dot(xp, xp)
 
             t -= dp / dpp
             error = abs(dp / dpp)
-            errors.append(error)
-            ts.append(t)
             iterations += 1
         
-        ts = np.array(ts)
-        errors = np.array(errors)
-        y = np.linalg.norm(x1 - x2)
 
         #Makes it return a point on the ellipse rather than the optimisation
-        opt_x = a * np.cos(t)
-        opt_y = b * np.sin(t)
+        opt_x = self.re * np.cos(t)
+        opt_y = self.rp * np.sin(t)
         distance = np.sqrt((x2[0] - opt_x)**2 + (x2[1] - opt_y)**2)
 
-        success = error < tolerance and iterations < max_iterations 
-        return dict(distance = distance, x = opt_x, y = opt_y, inside = Inside, error = error, iterations = iterations, success = success, xs = ts,  errors = errors)
+        return dict(distance = distance, x = opt_x, y = opt_y, inside = inside, error = error)
 
     def air_density(self, distance):
         """_summary_
