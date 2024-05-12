@@ -111,6 +111,7 @@ def p_to_c(state):
 
     return cartesian_state
 
+
 def satellite_to_xyz_bulk(states):    
     """Changes the coordinates from the Orbits spherical axis to Earths XYZ
 

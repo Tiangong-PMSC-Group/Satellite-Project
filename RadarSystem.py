@@ -44,16 +44,28 @@ class RadarSystem(IRadarSystem):
         self.radars = radars
 
 
+#    def try_detect_satellite(self, sat_pos, current_time) -> list[SatelliteState]:
+#        self.update_radar_positions(current_time - self.last_time)
+#        self.last_time = current_time
+#        results = []
+#        for radar in self.radars:
+#            find = radar.line_of_sight(sat_pos, self.earth.ellipse_equation)
+#             if find:
+#                 result = radar.detect_satellite_pos(sat_pos, current_time)
+#                 if result is not None:
+#                     results.append(result)
+#         return results
+
     def try_detect_satellite(self, sat_pos, current_time) -> list[SatelliteState]:
         self.update_radar_positions(current_time - self.last_time)
         self.last_time = current_time
+        radars = [self.radars[i] for i in range(len(self.radars)) if self.radars[i].is_time(current_time)]
         results = []
-        for radar in self.radars:
+        for radar in radars:
             find = radar.line_of_sight(sat_pos, self.earth.ellipse_equation)
             if find:
-                result = radar.detect_satellite_pos(sat_pos, current_time)
-                if result is not None:
-                    results.append(result)
+                result = radar.detect_satellite_pos_short(sat_pos, current_time)
+                results.append(result)
         return results
 
     def update_radar_positions(self,time_steps):
