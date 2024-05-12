@@ -10,6 +10,7 @@
     "solver_options": ["RK45", "RK23", "DOP853", "Radau", "BDF", "LSODA"]
   },
   "radar": {
+    "counts": 200,
     "noise": {
       "rho": 100,
       "theta": 0,
