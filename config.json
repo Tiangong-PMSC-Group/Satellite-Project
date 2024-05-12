@@ -1,7 +1,7 @@
 {
     "sim_config":{
         "dt":{
-        "main_dt": 0.2,
+        "main_dt": 1,
         "kalman_freq": 10,
         "radar_freq": 5,
         "radar_los": 1
@@ -45,7 +45,7 @@
         "comment": "drag_coefficient hasn't been decided",
         "initial_conditions":{
             "distance": 6778136,
-            "polar_angle": 1.57079,
+            "polar_angle": 0.78,
             "azimuthal_angle": 0,
             "comment": "Just included some random initial conditions, change later. Can be overwritten in the code"
         }
