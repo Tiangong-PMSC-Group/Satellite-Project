@@ -9,15 +9,16 @@ from config import config
 ##### Converters #####
 
 def c_to_p(state):
-    """Changes the coordinates from Cartesian to Polar
+    """Changes the coordinates from Cartesian to 2D Polar or 3D Spherical
 
     Args:
         state (np.array): Cartesian coordinates array 
 
     Returns:
-        np.array: Polar coordinates array
+        np.array:  2D Polar (rho, polar) or 3D Spherical (rho, polar, azimuthal) array
     """
 
+    #dimension of input array (3D or 2D)
     dims = np.size(state)
 
     if dims == 3:
@@ -25,10 +26,9 @@ def c_to_p(state):
         y = state[1]
         z = state[2]
 
-
         rho = np.sqrt(x**2 + y**2 + z**2)  # Radial distance
-        #theta = np.arccos(z / rho)          # Inclination angle (polar angle) from the z-axis
-        #phi = np.arctan2(y, x)              # Azimuthal angle from the x-axis
+
+        #calculates the polar angle measured from the x-axis
         if x == y == 0:
             assert True, "Point lies on the the z-axis, Azimuthal angle cannot be defined"
     
@@ -36,12 +36,14 @@ def c_to_p(state):
             assert True, "Point is on origin, Polar and Azimuthal angle cannot be defined"
         
         if z > 0:    
-            theta = np.arctan(np.sqrt(x**2 + y**2)/z)
+            polar = np.arctan(np.sqrt(x**2 + y**2)/z)
         elif z < 0:
-            theta = np.pi + np.arctan(np.sqrt(x**2 + y**2)/ z)
+            polar = np.pi + np.arctan(np.sqrt(x**2 + y**2)/ z)
         elif z == 0:
-            theta = 0.5*np.pi
+            polar = 0.5*np.pi
         
+        #calculates the azimuthal angle measured from the orthogonal 
+        #projection of r onto the reference x-y plane is direction of x to y.
         #does np.arctan2(y,x) make the first 3 check redundant?
         if x > 0:
             azimuthal = np.arctan(y/x)
@@ -54,12 +56,13 @@ def c_to_p(state):
         elif x == 0 and y < 0:
             azimuthal = -0.5*np.pi
         
-        polar_state = np.array([rho, theta, azimuthal])
+        polar_state = np.array([rho, polar, azimuthal])
 
     elif dims == 2:
         
         x = state[0]
         y = state[1]
+
         rho = math.sqrt(x**2 + y**2)
         theta = math.atan2(y, x) 
         polar_state = np.array([rho, theta])
@@ -68,11 +71,11 @@ def c_to_p(state):
 
 
 
-def p_to_c(state):
-    """Changes the coordinates from Polar to Cartesian
+def p_to_c(state): 
+    """Changes the coordinates from 2D Polar or 3D Spherical to Cartesian
 
     Args:
-        state (np.array): Polar coordinates array
+        state (np.array): 2D Polar (rho, polar) or 3D Spherical (rho, polar, azimuthal) array
 
     Returns:
         np.array: Cartesian coordinates array
@@ -82,16 +85,17 @@ def p_to_c(state):
 
     if dims == 3:
         rho = state[0]
-        theta = state[1]
-        phi = state[2]
+        polar = state[1]
+        azimuthal = state[2]
 
         assert math.isinf(rho) == False, "TypeError: function receiving infinity instead of a number for Radius"
-        assert math.isinf(theta) == False, "TypeError: function receiving infinity instead of a number for Polar Angle"
-        assert math.isinf(phi) == False, "TypeError: function receiving infinity instead of a number for Azimuthal Angle"
+        assert math.isinf(polar) == False, "TypeError: function receiving infinity instead of a number for Polar Angle"
+        assert math.isinf(azimuthal) == False, "TypeError: function receiving infinity instead of a number for Azimuthal Angle"
 
-        x = rho * np.sin(theta) * np.cos(phi)
-        y = rho * np.sin(theta) * np.sin(phi)
-        z = rho * np.cos(theta)
+        x = rho * np.sin(polar) * np.cos(azimuthal)
+        y = rho * np.sin(polar) * np.sin(azimuthal)
+        z = rho * np.cos(polar)
+
         cartesian_state = np.array([x, y, z])
 
     elif dims == 2:
@@ -107,43 +111,37 @@ def p_to_c(state):
 
     return cartesian_state
 
-def orbit_to_xyz_bulk(states):    
+def satellite_to_xyz_bulk(states):    
     """Changes the coordinates from the Orbits spherical axis to Earths XYZ
 
     Args:
-        state (np.array([R, Polar, Azimuthal])): Satellite coordinates array in reference spherical obrit axis
+        state (np.array([np.array([rho1, polar1, aziumthal1]), ...])): Satellite coordinates array in reference spherical obrit axis
 
     Returns:
-        np.array([x, y, z]): Satellite coordinates array in refernce Earths XYZ
-    """    
-    R = states[0]
-    polar = states[1]
-    azimuthal = states[2]
-    
-    x = R*np.sin(polar)*np.cos(azimuthal)
-    y = R*np.cos(polar)
-    z = R*np.sin(polar)*np.sin(azimuthal)
+        np.array([np.array([x1, y1, z1]), ...]): Satellite coordinates array in refernce Earths XYZ
+    """   
+    bulk_array = np.zeros_like(states)
+    for i in range(len(bulk_array)):
+        x, z, y = p_to_c(states[i])
+        bulk_array[i] = np.array([x, y, z])
 
-    return np.array([x, y, z])
+    return bulk_array
 
 def earth_to_xyz_bulk(states):
     """Changes the coordinates from the Earths spherical axis to Earths XYZ
 
     Args:
-        state (np.array([R, Polar, Azimuthal])): Earth coordinates array in reference spherical Earth axis
+        state (np.array([np.array([rho1, polar1, aziumthal1]), ...])): Earth coordinates array in reference spherical Earth axis
 
     Returns:
-        np.array([x, y, z]): Earth coordinates array in refernce Earths XYZ
+        np.array([np.array([x1, y1, z1]), ...]): Earth coordinates array in refernce Earths XYZ
     """ 
-    R = states[0]
-    polar = states[1]
-    azimuthal = states[2]
-    
-    x = R*np.sin(polar)*np.cos(azimuthal)
-    y = R*np.sin(polar)*np.sin(azimuthal)
-    z = R*np.cos(polar)
+    bulk_array = np.zeros_like(states)
+    for i in range(len(bulk_array)):
+        x, y, z = p_to_c(states[i])
+        bulk_array[i] = np.array([x, y, z])
 
-    return np.array([x, y, z])
+    return bulk_array
 
 
 def spherical_to_spherical(state):
@@ -155,52 +153,53 @@ def spherical_to_spherical(state):
     Returns:
         np.array([R, Polar, Azimuthal]): Sperical coordinates array in one axis (Earth or Satellite)
     """
-    R_old = state[0]
-    polar_old = state[1]
-    azimuthal_old = state[2]
+    #R_old = state[0]
+    #polar_old = state[1]
+    #azimuthal_old = state[2]
 
-    assert math.isinf(R_old) == False, "TypeError: function receiving infinity instead of a number for Radius"
-    assert math.isinf(polar_old) == False, "TypeError: function receiving infinity instead of a number for Polar Angle"
-    assert math.isinf(azimuthal_old) == False, "TypeError: function receiving infinity instead of a number for Azimuthal Angle"
+    #assert math.isinf(R_old) == False, "TypeError: function receiving infinity instead of a number for Radius"
+    #assert math.isinf(polar_old) == False, "TypeError: function receiving infinity instead of a number for Polar Angle"
+    #assert math.isinf(azimuthal_old) == False, "TypeError: function receiving infinity instead of a number for Azimuthal Angle"
     
-    x = R_old*np.sin(polar_old)*np.cos(azimuthal_old)
-    y = R_old*np.cos(polar_old)
-    z = R_old*np.sin(polar_old)*np.sin(azimuthal_old)
+    #x = R_old*np.sin(polar_old)*np.cos(azimuthal_old)
+    #y = R_old*np.cos(polar_old)
+    #z = R_old*np.sin(polar_old)*np.sin(azimuthal_old)
     
-    if x == y == 0:
-        assert True, "Point lies on the the z-axis, Azimuthal angle cannot be defined"
+
+    x, z, y = p_to_c(state)     #convert to cartesian, while switching the y and z coordinates
+    rho, polar, azimuthal = c_to_p(np.array([x, y, z]))     #convert back to Sperical coordinates
+
+    #if x == y == 0:
+    #    assert True, "Point lies on the the z-axis, Azimuthal angle cannot be defined"
     
-    if x == y == z == 0:
-        assert True, "Point is on origin, Polar and Azimuthal angle cannot be defined"
+    #if x == y == z == 0:
+    #    assert True, "Point is on origin, Polar and Azimuthal angle cannot be defined"
     
-    R_new = np.sqrt(x**2 + y**2 + z**2)
-    if z > 0:    
-        polar_new = np.arctan(np.sqrt(x**2 + y**2)/z)
-    elif z < 0:
-        polar_new = np.pi + np.arctan(np.sqrt(x**2 + y**2)/ z)
-    elif z == 0:
-        polar_new = 0.5*np.pi
+    #R_new = np.sqrt(x**2 + y**2 + z**2)
+    #if z > 0:    
+    #    polar_new = np.arctan(np.sqrt(x**2 + y**2)/z)
+    #elif z < 0:
+    #    polar_new = np.pi + np.arctan(np.sqrt(x**2 + y**2)/ z)
+    #elif z == 0:
+    #    polar_new = 0.5*np.pi
 
     
     #does np.arctan2(y,x) make the first 3 check redundant?
-    if x > 0:
-        azimuthal_new = np.arctan(y/x)
-    elif x < 0 and y >= 0:
-        azimuthal_new = np.arctan(y/x) + np.pi
-    elif x < 0 and y < 0:
-        azimuthal_new = np.arctan(y/x) - np.pi
-    elif x == 0 and y > 0:
-        azimuthal_new = 0.5*np.pi
-    elif x == 0 and y < 0:
-        azimuthal_new = -0.5*np.pi
+    #if x > 0:
+    #    azimuthal_new = np.arctan(y/x)
+    #elif x < 0 and y >= 0:
+    #    azimuthal_new = np.arctan(y/x) + np.pi
+    #elif x < 0 and y < 0:
+    #    azimuthal_new = np.arctan(y/x) - np.pi
+    #elif x == 0 and y > 0:
+    #    azimuthal_new = 0.5*np.pi
+    #elif x == 0 and y < 0:
+    #    azimuthal_new = -0.5*np.pi
     
-    return np.array([R_new, polar_new, azimuthal_new])
+    return np.array([rho, polar, azimuthal])
 
 
 ####################################################
-
-
-
 
 
 def random_points_on_ellipse(earth, num_points):
@@ -214,16 +213,16 @@ def random_points_on_ellipse(earth, num_points):
         longitude = random.uniform(-180, 180)
 
         # Convert to radians
-        phi = np.radians(latitude)
-        lambda_ = np.radians(longitude)
+        polar = np.radians(latitude)
+        azimuthal = np.radians(longitude)
 
         # Calculate the prime vertical radius
-        N = earth.re / np.sqrt(1 - e2 * np.sin(phi) ** 2)
+        N = earth.re / np.sqrt(1 - e2 * np.sin(polar) ** 2)
 
         # Convert to geocentric Cartesian coordinates
-        x = N * np.cos(phi) * np.cos(lambda_)
-        y = N * np.cos(phi) * np.sin(lambda_)
-        z = (N * (1 - e2)) * np.sin(phi)
+        x = N * np.cos(polar) * np.cos(azimuthal)
+        y = N * np.cos(polar) * np.sin(azimuthal)
+        z = (N * (1 - e2)) * np.sin(polar)
 
         # Append the converted polar coordinates of the point
         points.append(c_to_p(np.array([x, y, z])))
