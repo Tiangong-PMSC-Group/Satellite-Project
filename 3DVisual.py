@@ -47,7 +47,7 @@ class VisualisationPlotly:
 
         texture = np.asarray(Image.open('earth.jpg').resize((200, 200))).T
         x, y, z = self.sphere(texture)
-        return go.Surface(x=x, y=y, z=z, surfacecolor=texture, colorscale=colorscale, opacity=0.5)
+        return go.Surface(x=x, y=y, z=z, surfacecolor=texture, colorscale=colorscale, opacity=0.5,showscale=False)
 
     def create_earth_surface1(self):
         u = np.linspace(0, 2 * np.pi, 100)
@@ -63,7 +63,7 @@ class VisualisationPlotly:
             return go.Scatter3d(
                 x=x, y=y, z=z, mode='markers',
                 marker=dict(color=color, size=5, symbol='circle', opacity=0.5),
-                name="Final Location"
+                name=f"Final Location ({color})"
             )
         return None
 
@@ -75,8 +75,8 @@ class VisualisationPlotly:
             x2, y2, z2 = zip(*states2[:progress_index]) if progress_index > 0 else ([], [], [])
 
             frame_data = [
-                go.Scatter3d(x=x1, y=y1, z=z1, mode='lines', line=dict(color=color1, width=2), opacity=0.5),
-                go.Scatter3d(x=x2, y=y2, z=z2, mode='lines', line=dict(color=color2, width=2), opacity=0.5)
+                go.Scatter3d(x=x1, y=y1, z=z1, mode='lines', line=dict(color=color1, width=4), opacity=0.7, name="real trace"),
+                go.Scatter3d(x=x2, y=y2, z=z2, mode='lines', line=dict(color=color2, width=4), opacity=0.7, name="predicted trace"),
             ]
 
             if progress == 100:
@@ -99,12 +99,12 @@ class VisualisationPlotly:
 
         earth_surface = self.create_earth_surface()
         fig.add_trace(earth_surface)
-        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='red', width=2), opacity=0.5))
-        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='green', width=2), opacity=0.5))
-        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='markers'))
-        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='markers'))
+        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='green', width=4), opacity=0.7, name='Trace 1'))
+        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='red', width=4), opacity=0.7, name='Trace 2'))
+        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='markers', name='Real crash Pos'))
+        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='markers', name='Predicted crash Pos'))
 
-        fig.frames = self.create_trajectory_frames(self.states1, self.states2, 'red', 'green')
+        fig.frames = self.create_trajectory_frames(self.states1, self.states2, 'green', 'red')
 
         sliders = [{
             'pad': {"t": 30},
@@ -129,7 +129,8 @@ class VisualisationPlotly:
                      'label': 'Start Fall',
                      'method': 'animate'},
                     {'args': [[None], {'frame': {'duration': 0, 'redraw': False},
-                                       'mode': 'immediate', 'transition': {'duration': 0}}],
+                                       'mode': 'immediate',
+                                       'transition': {'duration': 0}}],
                      'label': 'Pause',
                      'method': 'animate'}
                 ],
@@ -144,6 +145,7 @@ class VisualisationPlotly:
             }]
         )
         fig.show()
+
 
 def polar_plot(states1, states2):
     rho_from_states1 = [state[0] for state in states1]
@@ -222,7 +224,7 @@ def main(use_real_data=True):
     for state in states2:
         polar_predict_state.append(utilities.c_to_p(state))
 
-    polar_plot(polar_real_state, polar_predict_state)
+    # polar_plot(polar_real_state, polar_predict_state)
 
 
-main(False)
+main(True)
