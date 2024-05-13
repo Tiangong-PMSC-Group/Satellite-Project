@@ -4,6 +4,8 @@ import matplotlib.gridspec as gridspec
 import numpy as np
 import plotly.graph_objects as go
 from PIL import Image
+
+from RadarSystem import RadarSystem
 from config import config
 from Earth import Earth
 from main import Main
@@ -14,9 +16,12 @@ matplotlib.use('TkAgg')
 duration_time =10
 transition_time = 10
 class VisualisationPlotly:
-    def __init__(self, states1, states2):
+    def __init__(self, states1, states2, radar_positions):
         self.states1 = states1
         self.states2 = states2
+        self.radar_positions = []
+        for pos in radar_positions:
+            self.radar_positions.append(utilities.p_to_c(pos))
         self.re = Earth().re
         self.rp = Earth().rp
         self.show_range = 8000000
@@ -47,7 +52,7 @@ class VisualisationPlotly:
 
         texture = np.asarray(Image.open('earth.jpg').resize((200, 200))).T
         x, y, z = self.sphere(texture)
-        return go.Surface(x=x, y=y, z=z, surfacecolor=texture, colorscale=colorscale, opacity=0.5,showscale=False)
+        return go.Surface(x=x, y=y, z=z, surfacecolor=texture, colorscale=colorscale, opacity=0.65,showscale=False)
 
     def create_earth_surface1(self):
         u = np.linspace(0, 2 * np.pi, 100)
@@ -103,7 +108,12 @@ class VisualisationPlotly:
         fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='red', width=4), opacity=0.7, name='Trace 2'))
         fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='markers', name='Real crash Pos'))
         fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='markers', name='Predicted crash Pos'))
-
+        radar_x, radar_y, radar_z = zip(*self.radar_positions)
+        fig.add_trace(go.Scatter3d(
+            x=radar_x, y=radar_y, z=radar_z, mode='markers',
+            marker=dict(color='yellow', size=2, symbol='diamond', opacity=0.3),
+            name='Radar Positions'
+        ))
         fig.frames = self.create_trajectory_frames(self.states1, self.states2, 'green', 'red')
 
         sliders = [{
@@ -222,8 +232,8 @@ def main(use_real_data=True):
         orbit_radius = Earth().re + 1500000
         states2 = [(orbit_radius * np.cos(t), orbit_radius * np.sin(t), 0) for t in theta]
 
-
-    visual_plotly = VisualisationPlotly(states1, states2)
+    '''TODO Need Real Radar system'''
+    visual_plotly = VisualisationPlotly(states1, states2,RadarSystem(Earth(),200).get_radar_positions())
     visual_plotly.visualise()
 
     polar_real_state = []

@@ -109,6 +109,8 @@ class RadarSystem(IRadarSystem):
 
         return points
 
+    def get_radar_positions(self):
+        return [radar.position for radar in self.radars]
 
 
 '''
