@@ -11,7 +11,7 @@ add a field here is very convenient to let data pass through classes
 @dataclass
 class SatelliteState:
     def __init__(self, pos: np.ndarray, cov: np.ndarray = None, velocity: np.ndarray = None, acceleration: np.ndarray = None):
-        self.pos = pos
+        self.pos = pos #in earths spherical system
         self.cov = cov
         self.velocity = velocity
         self.acceleration = acceleration
@@ -22,6 +22,14 @@ class SatelliteState:
         return np.concatenate([self.pos, self.velocity, self.acceleration])
     
     def get_state_sat_plane(self):
+        """
+
+        Args:
+            state (np.array()): Spherical coordinates earth
+
+        Returns:
+            np.array([R, Polar, Azimuthal]): Spherical coordinates satellite
+        """
         new_pos = utilities.spherical_to_spherical(self.pos)
         return np.array([new_pos[0], self.velocity[0], new_pos[1], self.velocity[1]])
 
