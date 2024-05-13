@@ -111,6 +111,43 @@ def p_to_c(state):
 
     return cartesian_state
 
+def earth_to_orbit(states):
+    '''ShEs BAck
+    Args:
+        state (np.array([rho, polar, aziumthal1]): Satellite coordinates array in reference spherical earth axis
+
+    Returns:
+        np.array([rho, polar]): Satellite polar array, defined in known orbital inclination angle
+    '''
+    x, z, y = p_to_c(states)
+    
+    if x == y == 0:
+        assert True, "Point lies on the the z-axis, Azimuthal angle cannot be defined"
+    
+    if x == y == z == 0:
+        assert True, "Point is on origin, Polar and Azimuthal angle cannot be defined"
+    
+    rho = np.sqrt(x**2 + y**2 + z**2)
+    
+    if z > 0 and x > 0:    
+        polar = np.arctan(np.sqrt(x**2 + y**2)/z)
+    elif z < 0 and x > 0:
+        polar = np.pi + np.arctan(np.sqrt(x**2 + y**2)/ z)
+    elif z < 0 and x < 0:
+        polar = np.pi - np.arctan(np.sqrt(x**2 + y**2)/ z)
+    elif z > 0 and x < 0:
+        polar = 2*np.pi - np.arctan(np.sqrt(x**2 + y**2)/ z)
+    elif z == 0  and x > 0:
+        polar = 0.5*np.pi
+    elif z == 0 and x < 0:
+        polar = 1.5*np.pi
+    elif z < 0 and x == 0:
+        polar = np.pi
+    elif z > 0 and x == 0:
+        polar = 0
+    
+    return np.array([rho, polar])
+
 
 def satellite_to_xyz_bulk(states):    
     """Changes the coordinates from the Orbits spherical axis to Earths XYZ
@@ -145,6 +182,7 @@ def earth_to_xyz_bulk(states):
     return bulk_array
 
 
+#HEar me out orbit_to_earth2.0?? :3
 def spherical_to_spherical(state):
     """Changes the coordinates from one Spherical axis to Spherical another axis
 
