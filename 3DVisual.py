@@ -57,13 +57,13 @@ class VisualisationPlotly:
         z = self.rp * np.outer(np.ones(np.size(u)), np.cos(v))
         return go.Surface(x=x, y=y, z=z, opacity=0.5, colorscale='Blues', showscale=False)
 
-    def highlight_last_points(self, states, color):
+    def highlight_last_points(self, states, color,name):
         if len(states) > 1:
             x, y, z = zip(*states[-1:])
             return go.Scatter3d(
                 x=x, y=y, z=z, mode='markers',
                 marker=dict(color=color, size=5, symbol='circle', opacity=0.5),
-                name=f"Final Location ({color})"
+                name=name
             )
         return None
 
@@ -75,13 +75,13 @@ class VisualisationPlotly:
             x2, y2, z2 = zip(*states2[:progress_index]) if progress_index > 0 else ([], [], [])
 
             frame_data = [
-                go.Scatter3d(x=x1, y=y1, z=z1, mode='lines', line=dict(color=color1, width=4), opacity=0.7, name="real trace"),
-                go.Scatter3d(x=x2, y=y2, z=z2, mode='lines', line=dict(color=color2, width=4), opacity=0.7, name="predicted trace"),
+                go.Scatter3d(x=x1, y=y1, z=z1, mode='lines', line=dict(color=color1, width=4), opacity=0.7, name="real trace        "),
+                go.Scatter3d(x=x2, y=y2, z=z2, mode='lines', line=dict(color=color2, width=4, dash='dash'), opacity=0.7, name="predicted trace       "),
             ]
 
             if progress == 100:
-                last_point1 = self.highlight_last_points(states1, color1)
-                last_point2 = self.highlight_last_points(states2, color2)
+                last_point1 = self.highlight_last_points(states1, color1,"Real crash Pos")
+                last_point2 = self.highlight_last_points(states2, color2,"Predicted crash Pos")
                 if last_point1:
                     frame_data.append(last_point1)
                 if last_point2:
