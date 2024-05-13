@@ -89,7 +89,7 @@ class Main():
         self.Phi_simulation = [np.pi/2 for i in self.rad_simulation]
     
 
-    def prediction(self):
+    def predict(self):
 
         sim_lenght = len(self.simulation.y[0])
 
