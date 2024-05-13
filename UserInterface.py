@@ -2,35 +2,68 @@ import subprocess
 import tkinter as tk
 from config import config, save_config
 
+import tkinter as tk
+from tkinter import messagebox
+
+def is_float(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+
+
 def on_button_click():
-    # for widget in root.winfo_children():
-    #     if widget != button:
-    #         widget.grid_remove()
+    try:
+        # Collect input values
+        radar_counts = input_radar.get()
+        satellite_mass = input_satellite_mass.get()
+        satellite_area = input_satellite_area.get()
+        satellite_drag = input_satellite_drag.get()
+        satellite_distance = input_satellite_distance.get()
+        satellite_angle = input_satellite_angle.get()
+        time_interval = input_time_interval.get()
+        kalman_frequency = input_kalman_frequency.get()
+        radar_frequency = input_radar_frequency.get()
+        radar_noise_distance = input_radar_noise_distance.get()
+        radar_noise_polar = input_radar_noise_polar.get()
+        radar_noise_azimuth = input_radar_noise_azimuth.get()
 
-    config['radar']['counts'] = int(input_radar.get())
-    config['satellite']['mass'] = float(input_satellite_mass.get())
-    config['satellite']['area'] = float(input_satellite_area.get())
-    config['satellite']['drag_coefficient'] = float(input_satellite_drag.get())
-    config['satellite']['initial_conditions']['distance'] = float(input_satellite_distance.get())
-    save_config(config)
+        # Validate inputs
+        # Add your validation logic here if needed
 
-    button.config(text="simulation running...")
-    button.config(fg='red')
-    root.update()
-    # process = subprocess.Popen(["python", "/Users/han/Documents/GitHub/Satellite-Project/Visualization.py"])
-    # subprocess.Popen(["python", "/Users/han/Documents/GitHub/Satellite-Project/Visualization.py"])
-    # subprocess.run(["python", "/Users/han/Documents/GitHub/Satellite-Project/Visualization.py"], check=True)
-    subprocess.run(["python", "3DVisual.py"], check=True)
-    # subprocess.run(["python", "Visualization.py"], check=True)
+        # Update configuration
+        config['radar']['counts'] = int(radar_counts)
+        config['satellite']['mass'] = float(satellite_mass)
+        config['satellite']['area'] = float(satellite_area)
+        config['satellite']['drag_coefficient'] = float(satellite_drag)
+        config['satellite']['initial_conditions']['distance'] = float(satellite_distance)
+        config['satellite']['initial_conditions']['polar_angle'] = float(satellite_angle)
+        config['sim_config']['dt']['main_dt'] = float(time_interval)
+        config['sim_config']['dt']['kalman_freq'] = int(kalman_frequency)
+        config['sim_config']['dt']['radar_freq'] = int(radar_frequency)
+        config['radar']['noise']['rho'] = float(radar_noise_distance)
+        config['radar']['noise']['theta'] = float(radar_noise_polar)
+        config['radar']['noise']['phi'] = float(radar_noise_azimuth)
 
-    # subprocess.run(["jupyter", "nbconvert", "--to", "notebook", "--execute",
-    #                 "--inplace", "/Users/han/Documents/GitHub/Satellite-Project/3DVisual.ipynb"], check=True)
-    
-    button.config(text="finished, please check the display window.")
-    root.update()
+        save_config(config)
 
-    
-    root.after(3000, root.destroy)
+        # Run simulation script if needed
+        button.config(text="Simulation running...", fg='red')
+        root.update()
+
+        subprocess.run(["python", "3DVisual.py"], check=True)
+        # subprocess.run(["python", "main.py"], check=True)
+        # Update button state
+        button.config(text="Finished, please check the display window.")
+        root.update()
+
+        # Close window after 3 seconds
+        root.after(3000, root.destroy)
+
+    except Exception as e:
+        messagebox.showerror("Error", f"An error occurred: {e}")
+        return
 
 
 root = tk.Tk()
@@ -47,7 +80,7 @@ i = 0
 
 # i=i+1
 
-label1 = tk.Label(root, text="number od radars:", justify="left", anchor="w")
+label1 = tk.Label(root, text="number of radars:", justify="left", anchor="w")
 label1.grid(row=i, column=0, padx=10, pady=(0, 0), sticky='w')
 input_radar = tk.Entry(root)
 input_radar.insert(0, config['radar']['counts'])
@@ -93,6 +126,48 @@ label3.grid(row=i, column=0, padx=10, pady=(0, 0), sticky='w')
 input_satellite_angle = tk.Entry(root)
 input_satellite_angle.insert(0, config['satellite']['initial_conditions']['polar_angle'])
 input_satellite_angle.grid(row=i, column=1, padx=(0, 10), pady=(0, 0))
+
+i=i+1
+label3 = tk.Label(root, text="time interval(s):", justify="left", anchor="w")
+label3.grid(row=i, column=0, padx=10, pady=(0, 0), sticky='w')
+input_time_interval = tk.Entry(root)
+input_time_interval.insert(0, config['sim_config']['dt']['main_dt'])
+input_time_interval.grid(row=i, column=1, padx=(0, 10), pady=(0, 0))
+
+i=i+1
+label3 = tk.Label(root, text="kalman frequency:", justify="left", anchor="w")
+label3.grid(row=i, column=0, padx=10, pady=(0, 0), sticky='w')
+input_kalman_frequency = tk.Entry(root)
+input_kalman_frequency.insert(0, config['sim_config']['dt']['kalman_freq'])
+input_kalman_frequency.grid(row=i, column=1, padx=(0, 10), pady=(0, 0))
+
+i=i+1
+label3 = tk.Label(root, text="radar frequency:", justify="left", anchor="w")
+label3.grid(row=i, column=0, padx=10, pady=(0, 0), sticky='w')
+input_radar_frequency = tk.Entry(root)
+input_radar_frequency.insert(0, config['sim_config']['dt']['radar_freq'])
+input_radar_frequency.grid(row=i, column=1, padx=(0, 10), pady=(0, 0))
+
+i=i+1
+label3 = tk.Label(root, text="radar noise for distance:", justify="left", anchor="w")
+label3.grid(row=i, column=0, padx=10, pady=(0, 0), sticky='w')
+input_radar_noise_distance = tk.Entry(root)
+input_radar_noise_distance.insert(0, config['radar']['noise']['rho'])
+input_radar_noise_distance.grid(row=i, column=1, padx=(0, 10), pady=(0, 0))
+
+i=i+1
+label3 = tk.Label(root, text="radar noise for polar:", justify="left", anchor="w")
+label3.grid(row=i, column=0, padx=10, pady=(0, 0), sticky='w')
+input_radar_noise_polar = tk.Entry(root)
+input_radar_noise_polar.insert(0, config['radar']['noise']['theta'])
+input_radar_noise_polar.grid(row=i, column=1, padx=(0, 10), pady=(0, 0))
+
+i=i+1
+label3 = tk.Label(root, text="radar noise for azimuth:", justify="left", anchor="w")
+label3.grid(row=i, column=0, padx=10, pady=(0, 0), sticky='w')
+input_radar_noise_azimuth = tk.Entry(root)
+input_radar_noise_azimuth.insert(0, config['radar']['noise']['phi'])
+input_radar_noise_azimuth.grid(row=i, column=1, padx=(0, 10), pady=(0, 0))
 
 i=i+1
 
