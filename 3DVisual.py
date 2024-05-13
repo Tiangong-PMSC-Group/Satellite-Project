@@ -15,6 +15,12 @@ import plotly.graph_objects as go
 from Earth import Earth
 import numpy as np
 
+import plotly.graph_objects as go
+from Earth import Earth
+import numpy as np
+
+transition_time = 10
+duration_time = 10
 class VisualisationPlotly:
     def __init__(self, states1, states2):
         self.states1 = states1
@@ -29,23 +35,10 @@ class VisualisationPlotly:
         x = self.re * np.outer(np.cos(u), np.sin(v))
         y = self.re * np.outer(np.sin(u), np.sin(v))
         z = self.rp * np.outer(np.ones(np.size(u)), np.cos(v))
-        return go.Surface(x=x, y=y, z=z, opacity=0.5, colorscale='Blues',showscale=False)
-
-    def create_trajectory(self, states, color, progress=100, opacity=1.0):
-        progress_index = int(len(states) * progress / 100)
-        x, y, z = zip(*states[:progress_index])
-        return go.Scatter3d(
-            x=x,
-            y=y,
-            z=z,
-            mode='lines',
-            line=dict(color=color, width=2),
-            opacity=opacity,
-            name="Real Satellite Trajectory"
-        )
+        return go.Surface(x=x, y=y, z=z, opacity=1, colorscale='Blues', showscale=False)
 
     def highlight_last_points(self, states, color):
-        # Extract last two points
+        # Extract last point
         if len(states) > 1:
             x, y, z = zip(*states[-1:])
             return go.Scatter3d(
@@ -53,36 +46,106 @@ class VisualisationPlotly:
                 y=y,
                 z=z,
                 mode='markers',
-                marker=dict(color=color, size=5, symbol='circle',opacity=0.5 ),
+                marker=dict(color=color, size=5, symbol='circle', opacity=0.5),
                 name="Final Location"
             )
         return None
 
-    def visualise(self, progress=100):
+    def create_trajectory_frames(self, states1, states2, color1, color2):
+        frames = []
+        earth_surface = self.create_earth_surface()
+        for progress in range(101):
+            progress_index = int(len(states1) * progress / 100)
+            x1, y1, z1 = zip(*states1[:progress_index]) if progress_index > 0 else ([], [], [])
+            x2, y2, z2 = zip(*states2[:progress_index]) if progress_index > 0 else ([], [], [])
+
+            frame_data = [
+                earth_surface,
+                go.Scatter3d(x=x1, y=y1, z=z1, mode='lines', line=dict(color=color1, width=2), opacity=0.5),
+                go.Scatter3d(x=x2, y=y2, z=z2, mode='lines', line=dict(color=color2, width=2), opacity=0.5)
+            ]
+
+            # At 100% progress, add last point highlights
+            if progress == 100:
+                last_point1 = self.highlight_last_points(states1, color1)
+                last_point2 = self.highlight_last_points(states2, color2)
+                if last_point1:
+                    frame_data.append(last_point1)
+                if last_point2:
+                    frame_data.append(last_point2)
+            else:
+                frame_data.append(go.Scatter3d(x=[], y=[], z=[], mode='markers'))
+                frame_data.append(go.Scatter3d(x=[], y=[], z=[], mode='markers'))
+
+            frames.append(go.Frame(data=frame_data, name=str(progress)))
+
+        return frames
+
+    def visualise(self):
         fig = go.Figure()
-        fig.add_trace(self.create_earth_surface())
-        fig.add_trace(self.create_trajectory(self.states1, 'red', progress, opacity=0.8))
-        fig.add_trace(self.create_trajectory(self.states2, 'green', progress, opacity=0.6))
-        fig.add_trace(self.highlight_last_points(self.states1, 'red'))
-        fig.add_trace(self.highlight_last_points(self.states2, 'green'))
+
+        # Initial plot to setup the space and static elements
+        earth_surface = self.create_earth_surface()
+        fig.add_trace(earth_surface)
+        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='red', width=2), opacity=0.5))
+        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='green', width=2), opacity=0.5))
+        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='markers'))
+        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='markers'))
+        # Add frames for both trajectories
+        fig.frames = self.create_trajectory_frames(self.states1, self.states2, 'red', 'green')
+
+        # Setup sliders and buttons for animation control
+        sliders = [{
+            'pad': {"t": 30},
+            'steps': [{'args': [[str(k)], {'frame': {'duration': duration_time, 'redraw': True},
+                                           'mode': 'immediate', 'transition': {'duration': transition_time}}],
+                       'label': str(k), 'method': 'animate'} for k in range(101)]
+        }]
 
         fig.update_layout(
+            sliders=sliders,
             scene=dict(
                 xaxis=dict(range=[-self.show_range, self.show_range], autorange=False),
                 yaxis=dict(range=[-self.show_range, self.show_range], autorange=False),
                 zaxis=dict(range=[-self.show_range, self.show_range], autorange=False),
                 aspectmode='cube'
             ),
-            title="Satellite Trajectory Visualization"
+            title="Satellite Trajectory Visualization",
+            updatemenus=[{
+                'buttons': [
+                    {'args': [None, {'frame': {'duration': duration_time, 'redraw': True},
+                                     'fromcurrent': True, 'transition': {'duration': transition_time}}],
+                     'label': 'Start Fall',
+                     'method': 'animate'},
+                    {'args': [[None], {'frame': {'duration': 0, 'redraw': False},
+                                       'mode': 'immediate',
+                                       'transition': {'duration': 0}}],
+                     'label': 'Pause',
+                     'method': 'animate'}
+                ],
+                'direction': 'left',
+                'pad': {'r': 10, 't': 87},
+                'showactive': False,
+                'type': 'buttons',
+                'x': 0.1,
+                'xanchor': 'right',
+                'y': 0,
+                'yanchor': 'top'
+            }]
         )
         fig.show()
 
 
-
+# Use this class
 orbit_radius = Earth().re + 1000000
 theta = np.linspace(0, 2 * np.pi, 100)
 states1 = [(orbit_radius * np.cos(t), orbit_radius * np.sin(t), 0) for t in theta]
+orbit_radius = Earth().re + 1500000
 states2 = [(orbit_radius * np.cos(t), orbit_radius * np.sin(t), 0) for t in theta]
+
+visual_plotly = VisualisationPlotly(states1, states2)
+visual_plotly.visualise()
+
 
 polar_real_state = []
 for state in states1:
@@ -91,10 +154,6 @@ for state in states1:
 polar_predict_state = []
 for state in states2:
     polar_predict_state.append(utilities.c_to_p(state))
-
-visual_plotly = VisualisationPlotly(states1, states2)
-interact(visual_plotly.visualise, progress=IntSlider(min=0, max=100, step=1, value=100, description='Progress'))
-
 def polar_plot(states1, states2):
 
     rho_from_states1 = [state[0] for state in states1]
@@ -126,4 +185,4 @@ def polar_plot(states1, states2):
     plt.tight_layout()
     plt.show()
 
-# polar_plot(polar_real_state, polar_predict_state)
+polar_plot(polar_real_state, polar_predict_state)
