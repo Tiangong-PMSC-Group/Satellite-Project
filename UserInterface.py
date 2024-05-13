@@ -52,8 +52,9 @@ def on_button_click():
         button.config(text="Simulation running...", fg='red')
         root.update()
 
+        subprocess.run(["python", "run_main.py"], check=True)
         subprocess.run(["python", "3DVisual.py"], check=True)
-        # subprocess.run(["python", "main.py"], check=True)
+
         # Update button state
         button.config(text="Finished, please check the display window.")
         root.update()

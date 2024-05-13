@@ -2,6 +2,9 @@ import matplotlib
 
 import utilities
 from PIL import Image
+
+from run_main import real_x, real_y, real_z
+
 matplotlib.use('TkAgg')
 
 import plotly.graph_objects as go
@@ -162,23 +165,7 @@ class VisualisationPlotly:
 
 
 # Use this class
-orbit_radius = Earth().re + 1000000
-theta = np.linspace(0, 2 * np.pi, 100)
-states1 = [(orbit_radius * np.cos(t), orbit_radius * np.sin(t), 0) for t in theta]
-orbit_radius = Earth().re + 1500000
-states2 = [(orbit_radius * np.cos(t), orbit_radius * np.sin(t), 0) for t in theta]
 
-visual_plotly = VisualisationPlotly(states1, states2)
-visual_plotly.visualise()
-
-
-polar_real_state = []
-for state in states1:
-    polar_real_state.append(utilities.c_to_p(state))
-
-polar_predict_state = []
-for state in states2:
-    polar_predict_state.append(utilities.c_to_p(state))
 
 
 
@@ -224,5 +211,26 @@ def polar_plot(states1, states2):
     plt.show()
 
 
+x = real_x
+y = real_y
+z = real_z
+orbit_radius = Earth().re + 1000000
+theta = np.linspace(0, 2 * np.pi, 100)
+# states1 = [(orbit_radius * np.cos(t), orbit_radius * np.sin(t), 0) for t in theta]
+states1 = list(zip(x, y, z))
+orbit_radius = Earth().re + 1500000
+states2 = [(orbit_radius * np.cos(t), orbit_radius * np.sin(t), 0) for t in theta]
+states2 = list(zip(x, y, z))
+visual_plotly = VisualisationPlotly(states1, states2)
+visual_plotly.visualise()
+
+
+polar_real_state = []
+for state in states1:
+    polar_real_state.append(utilities.c_to_p(state))
+
+polar_predict_state = []
+for state in states2:
+    polar_predict_state.append(utilities.c_to_p(state))
 
 polar_plot(polar_real_state, polar_predict_state)
