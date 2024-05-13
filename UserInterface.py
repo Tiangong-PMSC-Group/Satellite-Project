@@ -5,14 +5,6 @@ from config import config, save_config
 import tkinter as tk
 from tkinter import messagebox
 
-def is_float(value):
-    try:
-        float(value)
-        return True
-    except ValueError:
-        return False
-
-
 def on_button_click():
     try:
         # Collect input values
@@ -30,7 +22,42 @@ def on_button_click():
         radar_noise_azimuth = input_radar_noise_azimuth.get()
 
         # Validate inputs
-        # Add your validation logic here if needed
+        if not radar_counts.isdigit():
+            messagebox.showerror("Input Error", "Radar counts must be a whole number.")
+            return
+        if not is_float(satellite_mass):
+            messagebox.showerror("Input Error", "Satellite mass must be a numeric value.")
+            return
+        if not is_float(satellite_area):
+            messagebox.showerror("Input Error", "Satellite area must be a numeric value.")
+            return
+        if not is_float(satellite_drag):
+            messagebox.showerror("Input Error", "Satellite drag coefficient must be a numeric value.")
+            return
+        if not is_float(satellite_distance):
+            messagebox.showerror("Input Error", "Satellite distance must be a numeric value.")
+            return
+        if not is_float(satellite_angle):
+            messagebox.showerror("Input Error", "Satellite angle must be a numeric value.")
+            return
+        if not is_float(time_interval):
+            messagebox.showerror("Input Error", "Time interval must be a numeric value.")
+            return
+        if not kalman_frequency.isdigit():
+            messagebox.showerror("Input Error", "Kalman frequency must be a whole number.")
+            return
+        if not radar_frequency.isdigit():
+            messagebox.showerror("Input Error", "Radar frequency must be a whole number.")
+            return
+        if not is_float(radar_noise_distance):
+            messagebox.showerror("Input Error", "Radar noise distance must be a numeric value.")
+            return
+        if not is_float(radar_noise_polar):
+            messagebox.showerror("Input Error", "Radar noise polar must be a numeric value.")
+            return
+        if not is_float(radar_noise_azimuth):
+            messagebox.showerror("Input Error", "Radar noise azimuth must be a numeric value.")
+            return
 
         # Update configuration
         config['radar']['counts'] = int(radar_counts)
@@ -66,20 +93,21 @@ def on_button_click():
         messagebox.showerror("Error", f"An error occurred: {e}")
         return
 
+def is_float(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+
+
 
 root = tk.Tk()
 
-# root.geometry("400x300")  
-
-# root.resizable(width=False, height=False)
 label_left_pad = 0
 
 i = 0
-# label_radar = tk.Label(root, text="radar ", justify="left", anchor="w")
-# label_radar.grid(row=i, column=0, padx=label_left_pad, pady=(0, 0), sticky='w')
 
-
-# i=i+1
 
 label1 = tk.Label(root, text="number of radars:", justify="left", anchor="w")
 label1.grid(row=i, column=0, padx=10, pady=(0, 0), sticky='w')
@@ -87,9 +115,7 @@ input_radar = tk.Entry(root)
 input_radar.insert(0, config['radar']['counts'])
 input_radar.grid(row=i, column=1, padx=(0, 10), pady=(0, 0))  
 
-# i = i + 1
-# label_radar_hint = tk.Label(root, text="hint arfgbaieufbiwraubgiuwuefiawuebfiauw eriguieruygueriytgf", justify="left", anchor="w")
-# label_radar_hint.grid(row=i, column=0, columnspan=2, padx=10, pady=(0, 0), sticky='w')
+
 
 
 i=i+1
