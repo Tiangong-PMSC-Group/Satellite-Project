@@ -35,7 +35,7 @@ class VisualisationPlotly:
         x = self.re * np.outer(np.cos(u), np.sin(v))
         y = self.re * np.outer(np.sin(u), np.sin(v))
         z = self.rp * np.outer(np.ones(np.size(u)), np.cos(v))
-        return go.Surface(x=x, y=y, z=z, opacity=1, colorscale='Blues', showscale=False)
+        return go.Surface(x=x, y=y, z=z, opacity=0.5, colorscale='Blues', showscale=False)
 
     def highlight_last_points(self, states, color):
         # Extract last point
@@ -154,6 +154,12 @@ for state in states1:
 polar_predict_state = []
 for state in states2:
     polar_predict_state.append(utilities.c_to_p(state))
+
+
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+import numpy as np
+
 def polar_plot(states1, states2):
 
     rho_from_states1 = [state[0] for state in states1]
@@ -162,27 +168,38 @@ def polar_plot(states1, states2):
     polar_from_states2 = [state[2] for state in states2]
 
 
-    fig, axs = plt.subplots(2, 1, figsize=(10, 9))
-    print(polar_from_states2)
-
-    axs[0].plot(range(len(states1)), rho_from_states1, label='Real Distance', marker='o')
-    axs[0].plot(range(len(states1)), rho_from_states2, label='Predicted Distance', linestyle='--')
-    axs[0].set_title('Distance Between Satellite And The Origin Of The Earth Over Time')
-    axs[0].set_xlabel('Time Steps')
-    axs[0].set_ylabel('Distance(m)')
-    axs[0].legend()
-    axs[0].grid(True)
+    plt.figure(figsize=(10, 8))
+    gs = gridspec.GridSpec(2, 1, height_ratios=[1, 1])
 
 
-    axs[1].plot(range(len(states1)), polar_from_states1, label='Polar Of Real Trajactory', marker='o')
-    axs[1].plot(range(len(states1)), polar_from_states2, label='Polar Of Predicted Trajactory', linestyle='--')
-    axs[1].set_title('Polar Over Time')
-    axs[1].set_xlabel('Time Steps')
-    axs[1].set_ylabel('Polar')
-    axs[1].legend()
-    axs[1].grid(True)
+    ax1 = plt.subplot(gs[0])
+    ax1.plot(range(len(states1)), rho_from_states1, label='Real Distance', marker='o')
+    ax1.plot(range(len(states1)), rho_from_states2, label='Predicted Distance', linestyle='--')
+    ax1.set_title('Distance Between Satellite And The Origin Of The Earth Over Time')
+    ax1.set_xlabel('Time Steps')
+    ax1.set_ylabel('Distance (m)')
+    ax1.legend()
+    ax1.grid(True)
+
+
+    ax2 = plt.subplot(gs[1], projection='polar')
+    rad = np.array(polar_from_states1)
+    R = np.array(rho_from_states1)
+    rad2 = np.array(polar_from_states2)
+    R2 = np.array(rho_from_states2)
+    rad3 = rad2
+    R3 = R2
+
+    colors = plt.cm.rainbow(np.linspace(0, 1, len(R2)))
+    ax2.plot(rad, R, c='b', linestyle="dashed", label='Real Trajectory')
+    # ax2.scatter(rad2, R2, c=colors, s=5, label='Predicted Points')
+    ax2.plot(rad3, R3, c='g', linestyle="dashed", label='Predicted Trajectory')
+    ax2.set_title('Polar Plot Over Time')
+    ax2.legend()
 
     plt.tight_layout()
     plt.show()
+
+
 
 polar_plot(polar_real_state, polar_predict_state)
