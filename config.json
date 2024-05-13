@@ -19,8 +19,8 @@
     "radar": {
         "counts": 200,
         "noise": {
-            "rho": 100,
-            "theta": 0,
+            "rho": 200,
+            "theta": 0.1,
             "phi": 0
         }
     },
