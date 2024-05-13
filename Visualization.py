@@ -18,7 +18,7 @@ class Visualisation:
         self.x_positions = x_positions
         self.y_positions = y_positions
         self.z_positions = z_positions
-        self.radarSystem = RadarSystem(500, Earth())
+        self.radarSystem = RadarSystem( Earth())
 
 
     re = Earth().re
