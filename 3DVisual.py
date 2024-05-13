@@ -135,7 +135,7 @@ class VisualisationPlotly:
                      'method': 'animate'}
                 ],
                 'direction': 'left',
-                'pad': {'r': 10, 't': 87},
+                'pad': {'r': 10, 't': 110},
                 'showactive': False,
                 'type': 'buttons',
                 'x': 0.1,
@@ -156,15 +156,17 @@ def polar_plot(states1, states2):
     plt.figure(figsize=(10, 8))
     gs = gridspec.GridSpec(2, 1, height_ratios=[1, 1])
 
+    # Plotting the distance over time
     ax1 = plt.subplot(gs[0])
     ax1.plot(range(len(states1)), rho_from_states1, label='Real Distance', marker='o')
     ax1.plot(range(len(states1)), rho_from_states2, label='Predicted Distance', linestyle='--')
     ax1.set_title('Distance Between Satellite And The Origin Of The Earth Over Time')
     ax1.set_xlabel('Time Steps')
     ax1.set_ylabel('Distance (m)')
-    ax1.legend()
+    ax1.legend(loc='upper right')
     ax1.grid(True)
 
+    # Plotting the polar plot
     ax2 = plt.subplot(gs[1], projection='polar')
     rad = np.array(polar_from_states1)
     R = np.array(rho_from_states1)
@@ -174,13 +176,21 @@ def polar_plot(states1, states2):
     R3 = R2
 
     colors = plt.cm.rainbow(np.linspace(0, 1, len(R2)))
-    ax2.plot(rad, R, c='b', linestyle="dashed", label='Real Trajectory')
-    ax2.plot(rad3, R3, c='g', linestyle="dashed", label='Predicted Trajectory')
+
+    # Set the color and linewidth for the polar plot grid and ticks
+    ax2.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
+    ax2.tick_params(axis='both', which='both', colors='gray', width=0.5)
+
+    # Plot the traces
+    ax2.plot(rad, R, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
+    ax2.plot(rad3, R3, c='g', linestyle="dashed", label='Predicted Trajectory', linewidth=2)
+
     ax2.set_title('Polar Plot Over Time')
-    ax2.legend()
+    ax2.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
 
     plt.tight_layout()
     plt.show()
+
 
 def main(use_real_data=True):
     if use_real_data:
@@ -224,7 +234,7 @@ def main(use_real_data=True):
     for state in states2:
         polar_predict_state.append(utilities.c_to_p(state))
 
-    # polar_plot(polar_real_state, polar_predict_state)
+    polar_plot(polar_real_state, polar_predict_state)
 
 
 main(True)
