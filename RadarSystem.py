@@ -62,7 +62,7 @@ class RadarSystem(IRadarSystem):
         radars = [self.radars[i] for i in range(len(self.radars)) if self.radars[i].is_time(current_time)]
         results = []
         for radar in radars:
-            find = radar.line_of_sight(sat_pos, self.earth.ellipse_equation)
+            find = radar.line_of_sight(utilities.spherical_to_spherical(sat_pos), self.earth.ellipse_equation)
             if find:
                 result = radar.detect_satellite_pos_short(sat_pos, current_time)
                 results.append(result)
