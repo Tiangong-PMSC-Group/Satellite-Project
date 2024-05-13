@@ -1,21 +1,18 @@
 import matplotlib
-
-import utilities
-from PIL import Image
-
-from run_main import real_x, real_y, real_z
-
-matplotlib.use('TkAgg')
-
-import plotly.graph_objects as go
-from Earth import Earth
-
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
+import plotly.graph_objects as go
+from PIL import Image
+from config import config
+from Earth import Earth
+from main import Main
+import utilities
 
+matplotlib.use('TkAgg')
+
+duration_time =10
 transition_time = 10
-duration_time = 10
 class VisualisationPlotly:
     def __init__(self, states1, states2):
         self.states1 = states1
@@ -30,34 +27,27 @@ class VisualisationPlotly:
         theta = np.linspace(0, 2 * np.pi, N_lat)
         phi = np.linspace(0, np.pi, N_lon)
 
-        # Set up coordinates for points on the sphere
         x0 = self.re * np.outer(np.cos(theta), np.sin(phi))
         y0 = self.re * np.outer(np.sin(theta), np.sin(phi))
         z0 = self.rp * np.outer(np.ones(N_lat), np.cos(phi))
 
-        # Set up trace
         return x0, y0, z0
 
     def create_earth_surface(self):
         colorscale = [[0.0, 'rgb(30, 59, 117)'],
-
                       [0.1, 'rgb(46, 68, 21)'],
                       [0.2, 'rgb(74, 96, 28)'],
                       [0.3, 'rgb(115,141,90)'],
                       [0.4, 'rgb(122, 126, 75)'],
-
                       [0.6, 'rgb(122, 126, 75)'],
                       [0.7, 'rgb(141,115,96)'],
                       [0.8, 'rgb(223, 197, 170)'],
                       [0.9, 'rgb(237,214,183)'],
-
                       [1.0, 'rgb(255, 255, 255)']]
 
         texture = np.asarray(Image.open('earth.jpg').resize((200, 200))).T
         x, y, z = self.sphere(texture)
-        return go.Surface(x=x, y=y, z=z,
-                          surfacecolor=texture,
-                          colorscale=colorscale)
+        return go.Surface(x=x, y=y, z=z, surfacecolor=texture, colorscale=colorscale, opacity=0.5)
 
     def create_earth_surface1(self):
         u = np.linspace(0, 2 * np.pi, 100)
@@ -68,14 +58,10 @@ class VisualisationPlotly:
         return go.Surface(x=x, y=y, z=z, opacity=0.5, colorscale='Blues', showscale=False)
 
     def highlight_last_points(self, states, color):
-        # Extract last point
         if len(states) > 1:
             x, y, z = zip(*states[-1:])
             return go.Scatter3d(
-                x=x,
-                y=y,
-                z=z,
-                mode='markers',
+                x=x, y=y, z=z, mode='markers',
                 marker=dict(color=color, size=5, symbol='circle', opacity=0.5),
                 name="Final Location"
             )
@@ -93,7 +79,6 @@ class VisualisationPlotly:
                 go.Scatter3d(x=x2, y=y2, z=z2, mode='lines', line=dict(color=color2, width=2), opacity=0.5)
             ]
 
-            # At 100% progress, add last point highlights
             if progress == 100:
                 last_point1 = self.highlight_last_points(states1, color1)
                 last_point2 = self.highlight_last_points(states2, color2)
@@ -105,24 +90,22 @@ class VisualisationPlotly:
                 frame_data.append(go.Scatter3d(x=[], y=[], z=[], mode='markers'))
                 frame_data.append(go.Scatter3d(x=[], y=[], z=[], mode='markers'))
 
-            frames.append(go.Frame(data=frame_data, name=str(progress),traces=[1,2,3,4]))
+            frames.append(go.Frame(data=frame_data, name=str(progress), traces=[1, 2, 3, 4]))
 
         return frames
 
     def visualise(self):
         fig = go.Figure()
 
-        # Initial plot to setup the space and static elements
         earth_surface = self.create_earth_surface()
         fig.add_trace(earth_surface)
         fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='red', width=2), opacity=0.5))
         fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='green', width=2), opacity=0.5))
         fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='markers'))
         fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='markers'))
-        # Add frames for both trajectories
+
         fig.frames = self.create_trajectory_frames(self.states1, self.states2, 'red', 'green')
 
-        # Setup sliders and buttons for animation control
         sliders = [{
             'pad': {"t": 30},
             'steps': [{'args': [[str(k)], {'frame': {'duration': duration_time, 'redraw': True},
@@ -146,8 +129,7 @@ class VisualisationPlotly:
                      'label': 'Start Fall',
                      'method': 'animate'},
                     {'args': [[None], {'frame': {'duration': 0, 'redraw': False},
-                                       'mode': 'immediate',
-                                       'transition': {'duration': 0}}],
+                                       'mode': 'immediate', 'transition': {'duration': 0}}],
                      'label': 'Pause',
                      'method': 'animate'}
                 ],
@@ -163,24 +145,14 @@ class VisualisationPlotly:
         )
         fig.show()
 
-
-# Use this class
-
-
-
-
-
 def polar_plot(states1, states2):
-
     rho_from_states1 = [state[0] for state in states1]
     polar_from_states1 = [state[2] for state in states1]
     rho_from_states2 = [state[0] for state in states2]
     polar_from_states2 = [state[2] for state in states2]
 
-
     plt.figure(figsize=(10, 8))
     gs = gridspec.GridSpec(2, 1, height_ratios=[1, 1])
-
 
     ax1 = plt.subplot(gs[0])
     ax1.plot(range(len(states1)), rho_from_states1, label='Real Distance', marker='o')
@@ -190,7 +162,6 @@ def polar_plot(states1, states2):
     ax1.set_ylabel('Distance (m)')
     ax1.legend()
     ax1.grid(True)
-
 
     ax2 = plt.subplot(gs[1], projection='polar')
     rad = np.array(polar_from_states1)
@@ -202,7 +173,6 @@ def polar_plot(states1, states2):
 
     colors = plt.cm.rainbow(np.linspace(0, 1, len(R2)))
     ax2.plot(rad, R, c='b', linestyle="dashed", label='Real Trajectory')
-    # ax2.scatter(rad2, R2, c=colors, s=5, label='Predicted Points')
     ax2.plot(rad3, R3, c='g', linestyle="dashed", label='Predicted Trajectory')
     ax2.set_title('Polar Plot Over Time')
     ax2.legend()
@@ -210,27 +180,49 @@ def polar_plot(states1, states2):
     plt.tight_layout()
     plt.show()
 
+def main(use_real_data=True):
+    if use_real_data:
+        main = Main(200)
+        main.simulate()
+        main.predict()
+        R, rad, R2, rad2, R3, rad3 = main.output()
+        # fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
+        # ax.plot(rad, R - 6300000, c='b')
+        #
+        # plt.show()
 
-x = real_x
-y = real_y
-z = real_z
-orbit_radius = Earth().re + 1000000
-theta = np.linspace(0, 2 * np.pi, 100)
-# states1 = [(orbit_radius * np.cos(t), orbit_radius * np.sin(t), 0) for t in theta]
-states1 = list(zip(x, y, z))
-orbit_radius = Earth().re + 1500000
-states2 = [(orbit_radius * np.cos(t), orbit_radius * np.sin(t), 0) for t in theta]
-states2 = list(zip(x, y, z))
-visual_plotly = VisualisationPlotly(states1, states2)
-visual_plotly.visualise()
+        trd = [np.pi / 2 - config['satellite']['initial_conditions']['polar_angle']] * len(R)
+        real_states_earth_cord = np.array([utilities.spherical_to_spherical(np.array([R, rad, trd]).T[i]) for i in range(len(R))])
+        real_x, real_y, real_z = utilities.earth_to_xyz_bulk(real_states_earth_cord).T
+
+        # fig = plt.figure()
+        # ax = fig.add_subplot(1, 1, 1, projection='3d')
+        # plot = ax.scatter(real_x, real_y, real_z)
+        # plt.show()
+        states1 = list(zip(real_x, real_y, real_z))
+        '''TODO real Predict Data'''
+        states2 = list(zip(real_x, real_y, real_z))
+    else:
+        orbit_radius = Earth().re + 1000000
+        theta = np.linspace(0, 2 * np.pi, 100)
+        states1 = [(orbit_radius * np.cos(t), orbit_radius * np.sin(t), 0) for t in theta]
+
+        orbit_radius = Earth().re + 1500000
+        states2 = [(orbit_radius * np.cos(t), orbit_radius * np.sin(t), 0) for t in theta]
 
 
-polar_real_state = []
-for state in states1:
-    polar_real_state.append(utilities.c_to_p(state))
+    visual_plotly = VisualisationPlotly(states1, states2)
+    visual_plotly.visualise()
 
-polar_predict_state = []
-for state in states2:
-    polar_predict_state.append(utilities.c_to_p(state))
+    polar_real_state = []
+    for state in states1:
+        polar_real_state.append(utilities.c_to_p(state))
 
-polar_plot(polar_real_state, polar_predict_state)
+    polar_predict_state = []
+    for state in states2:
+        polar_predict_state.append(utilities.c_to_p(state))
+
+    polar_plot(polar_real_state, polar_predict_state)
+
+
+main(False)
