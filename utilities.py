@@ -159,6 +159,9 @@ def spherical_to_spherical(state):
     
     return np.array([rho, polar, azimuthal])
 
+def bulk():
+    pass
+
 
 ####################################################
 
