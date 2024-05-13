@@ -1,22 +1,14 @@
 import matplotlib
 
 import utilities
-
+from PIL import Image
 matplotlib.use('TkAgg')
+
 import plotly.graph_objects as go
 from Earth import Earth
-import numpy as np
-from ipywidgets import interact, IntSlider
-import numpy as np
+
 import matplotlib.pyplot as plt
-from Earth import Earth
-
-import plotly.graph_objects as go
-from Earth import Earth
-import numpy as np
-
-import plotly.graph_objects as go
-from Earth import Earth
+import matplotlib.gridspec as gridspec
 import numpy as np
 
 transition_time = 10
@@ -29,7 +21,42 @@ class VisualisationPlotly:
         self.rp = Earth().rp
         self.show_range = 8000000
 
+    def sphere(self, texture):
+        N_lat = int(texture.shape[0])
+        N_lon = int(texture.shape[1])
+        theta = np.linspace(0, 2 * np.pi, N_lat)
+        phi = np.linspace(0, np.pi, N_lon)
+
+        # Set up coordinates for points on the sphere
+        x0 = self.re * np.outer(np.cos(theta), np.sin(phi))
+        y0 = self.re * np.outer(np.sin(theta), np.sin(phi))
+        z0 = self.rp * np.outer(np.ones(N_lat), np.cos(phi))
+
+        # Set up trace
+        return x0, y0, z0
+
     def create_earth_surface(self):
+        colorscale = [[0.0, 'rgb(30, 59, 117)'],
+
+                      [0.1, 'rgb(46, 68, 21)'],
+                      [0.2, 'rgb(74, 96, 28)'],
+                      [0.3, 'rgb(115,141,90)'],
+                      [0.4, 'rgb(122, 126, 75)'],
+
+                      [0.6, 'rgb(122, 126, 75)'],
+                      [0.7, 'rgb(141,115,96)'],
+                      [0.8, 'rgb(223, 197, 170)'],
+                      [0.9, 'rgb(237,214,183)'],
+
+                      [1.0, 'rgb(255, 255, 255)']]
+
+        texture = np.asarray(Image.open('earth.jpg').resize((200, 200))).T
+        x, y, z = self.sphere(texture)
+        return go.Surface(x=x, y=y, z=z,
+                          surfacecolor=texture,
+                          colorscale=colorscale)
+
+    def create_earth_surface1(self):
         u = np.linspace(0, 2 * np.pi, 100)
         v = np.linspace(0, np.pi, 100)
         x = self.re * np.outer(np.cos(u), np.sin(v))
@@ -53,14 +80,12 @@ class VisualisationPlotly:
 
     def create_trajectory_frames(self, states1, states2, color1, color2):
         frames = []
-        earth_surface = self.create_earth_surface()
         for progress in range(101):
             progress_index = int(len(states1) * progress / 100)
             x1, y1, z1 = zip(*states1[:progress_index]) if progress_index > 0 else ([], [], [])
             x2, y2, z2 = zip(*states2[:progress_index]) if progress_index > 0 else ([], [], [])
 
             frame_data = [
-                earth_surface,
                 go.Scatter3d(x=x1, y=y1, z=z1, mode='lines', line=dict(color=color1, width=2), opacity=0.5),
                 go.Scatter3d(x=x2, y=y2, z=z2, mode='lines', line=dict(color=color2, width=2), opacity=0.5)
             ]
@@ -77,7 +102,7 @@ class VisualisationPlotly:
                 frame_data.append(go.Scatter3d(x=[], y=[], z=[], mode='markers'))
                 frame_data.append(go.Scatter3d(x=[], y=[], z=[], mode='markers'))
 
-            frames.append(go.Frame(data=frame_data, name=str(progress)))
+            frames.append(go.Frame(data=frame_data, name=str(progress),traces=[1,2,3,4]))
 
         return frames
 
@@ -156,9 +181,7 @@ for state in states2:
     polar_predict_state.append(utilities.c_to_p(state))
 
 
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
-import numpy as np
+
 
 def polar_plot(states1, states2):
 
