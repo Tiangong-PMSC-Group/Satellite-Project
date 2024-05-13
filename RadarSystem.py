@@ -16,6 +16,7 @@ from Earth import Earth
 # @singleton
 class RadarSystem(IRadarSystem):
     radar_dt = config['sim_config']['dt']['main_dt']
+    radar_los_frequency = config['sim_config']['dt']['radar_los']
     earth_angular_velocity = 2 * math.pi / 86400
     angular_change = radar_dt * earth_angular_velocity
     last_time = 0
@@ -59,6 +60,9 @@ class RadarSystem(IRadarSystem):
 #         return results
 
     def try_detect_satellite(self, sat_pos, current_time) -> list[SatelliteState]:
+        results = []
+        if current_time - self.last_time < self.radar_los_frequency:
+            return results
         self.update_radar_positions(current_time - self.last_time)
         self.last_time = current_time
         radars = [self.radars[i] for i in range(len(self.radars)) if self.radars[i].is_time(current_time)]
