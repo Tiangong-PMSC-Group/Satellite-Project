@@ -25,7 +25,7 @@ earth = Earth()
 # Initialize RadarSystem
 # Beijing Aerospace Command and Control Center
 
-BACC =  RadarSystem(2, Earth()) 
+BACC =  RadarSystem(Earth(),counts=2)
 
 
 # Initialize Satellite
