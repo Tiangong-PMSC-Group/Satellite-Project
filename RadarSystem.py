@@ -1,7 +1,4 @@
 import math
-import random
-from typing import List
-
 import numpy as np
 
 from Interface.IRadarSystem import IRadarSystem
@@ -14,15 +11,17 @@ from Earth import Earth
 
 """A class control all radars to make them detect satellite positions periodically"""
 class RadarSystem(IRadarSystem):
-
+    # Radar system parameters from the configuration
     radar_dt = config['sim_config']['dt']['main_dt']
     radar_los_frequency = config['sim_config']['dt']['radar_los']
-    earth_angular_velocity = 2 * math.pi / 86400
-    angular_change = radar_dt * earth_angular_velocity
-    last_time = 0
+    earth_angular_velocity = 2 * math.pi / 86400  # Earth's angular velocity (radians per second)
+    angular_change = radar_dt * earth_angular_velocity  # Angular change per radar_dt
+    last_time = 0  # Initialize the last time to zero
 
-    def __init__(self, earth, counts= None, seed=None, random_pos=True):
+    def __init__(self, earth, counts=None, seed=None, random_pos=True):
+        # Initialize the radar system with the given parameters
         self.earth = earth
+        # Set the radar count either from the provided value or the configuration
         if counts is None:
             self.counts = config['radar']['counts']
         else:
@@ -30,7 +29,9 @@ class RadarSystem(IRadarSystem):
         if seed is not None:
             np.random.seed(seed)
 
+        # Determine whether to use random positions for the radars or evenly distribute radar positions on the equator
         self.random_pos = random_pos
+        # Initialize the radar positions
         self.init_radar_positions()
 
         

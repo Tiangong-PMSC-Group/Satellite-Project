@@ -28,11 +28,15 @@ class VisualisationPlotly:
 
     # Create Earth Sphere Data
     def sphere(self, texture):
+        # Get the number of latitude and longitude points
         N_lat = int(texture.shape[0])
         N_lon = int(texture.shape[1])
+
+        # Create arrays for theta (azimuthal angle) and phi (polar angle)
         theta = np.linspace(0, 2 * np.pi, N_lat)
         phi = np.linspace(0, np.pi, N_lon)
 
+        # Calculate the Cartesian coordinates for the sphere surface
         x0 = self.re * np.outer(np.cos(theta), np.sin(phi))
         y0 = self.re * np.outer(np.sin(theta), np.sin(phi))
         z0 = self.rp * np.outer(np.ones(N_lat), np.cos(phi))
@@ -41,6 +45,7 @@ class VisualisationPlotly:
 
     # Create Earth Surface Data, Utilizing Real Earth Imagery
     def create_earth_surface(self):
+        # Define the color scale for the Earth's surface
         colorscale = [[0.0, 'rgb(30, 59, 117)'],
                       [0.1, 'rgb(46, 68, 21)'],
                       [0.2, 'rgb(74, 96, 28)'],
@@ -52,13 +57,16 @@ class VisualisationPlotly:
                       [0.9, 'rgb(237,214,183)'],
                       [1.0, 'rgb(255, 255, 255)']]
 
+        # Load and resize the texture image for the Earth
         texture = np.asarray(Image.open('earth.jpg').resize((200, 200))).T
-        x, y, z = self.sphere(texture)
-        return go.Surface(x=x, y=y, z=z, surfacecolor=texture, colorscale=colorscale, opacity=0.85,showscale=False)
+        x, y, z = self.sphere(texture)  # Generate sphere coordinates
+        return go.Surface(x=x, y=y, z=z, surfacecolor=texture, colorscale=colorscale, opacity=0.85, showscale=False)
 
     # Find the position where satellite hit the earth
-    def highlight_last_points(self, states, color,name):
+    def highlight_last_points(self, states, color, name):
+        # Check if there are enough states to highlight the last point
         if len(states) > 1:
+            # Get the coordinates of the last state
             x, y, z = zip(*states[-1:])
             return go.Scatter3d(
                 x=x, y=y, z=z, mode='markers',
@@ -70,49 +78,70 @@ class VisualisationPlotly:
     # Create trajectory animation data
     def create_trajectory_frames(self, states1, states2, color1, color2):
         frames = []
+        # Iterate through 101 progress points to create frames(0-100)
         for progress in range(101):
+            # Calculate the index up to which the states should be included based on progress
             progress_index = int(len(states1) * progress / 100)
+            # Unpack the states up to the progress index for both trajectories
             x1, y1, z1 = zip(*states1[:progress_index]) if progress_index > 0 else ([], [], [])
             x2, y2, z2 = zip(*states2[:progress_index]) if progress_index > 0 else ([], [], [])
 
+            # Create frame data of trajectorys
             frame_data = [
-                go.Scatter3d(x=x1, y=y1, z=z1, mode='lines', line=dict(color=color1, width=4), opacity=0.7, name="real trace        "),
-                go.Scatter3d(x=x2, y=y2, z=z2, mode='lines', line=dict(color=color2, width=4, dash='dash'), opacity=0.7, name="predicted trace       "),
+                go.Scatter3d(x=x1, y=y1, z=z1, mode='lines', line=dict(color=color1, width=4), opacity=0.7,
+                             name="real trace        "),
+                go.Scatter3d(x=x2, y=y2, z=z2, mode='lines', line=dict(color=color2, width=4, dash='dash'), opacity=0.7,
+                             name="predicted trace       "),
             ]
 
+            # Highlight the location of satellite hit on the earth the progress is at 100%
             if progress == 100:
-                last_point1 = self.highlight_last_points(states1, color1,"Real crash Pos")
-                last_point2 = self.highlight_last_points(states2, color2,"Predicted crash Pos")
+                last_point1 = self.highlight_last_points(states1, color1, "Real crash Pos")
+                last_point2 = self.highlight_last_points(states2, color2, "Predicted crash Pos")
                 if last_point1:
                     frame_data.append(last_point1)
                 if last_point2:
                     frame_data.append(last_point2)
             else:
+                # Otherwise add a placeholder trace.
                 frame_data.append(go.Scatter3d(x=[], y=[], z=[], mode='markers'))
                 frame_data.append(go.Scatter3d(x=[], y=[], z=[], mode='markers'))
-
+            # Add the frame to the list of frames
             frames.append(go.Frame(data=frame_data, name=str(progress), traces=[1, 2, 3, 4]))
 
         return frames
 
     # Show the 3D earth and trajectory
     def visualise(self):
+        # Create a new figure for visualization
         fig = go.Figure()
 
+        # Add Earth's surface to the figure
         earth_surface = self.create_earth_surface()
         fig.add_trace(earth_surface)
-        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='yellow', width=6), opacity=0.8, name='Trace 1'))
-        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='red', width=6), opacity=0.8, name='Trace 2'))
+
+        # Add empty traces for real and predicted satellite trajectories
+        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='yellow', width=6), opacity=0.8,
+                                   name='Trace 1'))
+        fig.add_trace(
+            go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='red', width=6), opacity=0.8, name='Trace 2'))
+
+        # Add empty markers for real and predicted crash positions
         fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='markers', name='Real crash Pos'))
         fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='markers', name='Predicted crash Pos'))
+
+        # Add radar positions to the figure
         radar_x, radar_y, radar_z = zip(*self.radar_positions)
         fig.add_trace(go.Scatter3d(
             x=radar_x, y=radar_y, z=radar_z, mode='markers',
             marker=dict(color='pink', size=2, symbol='diamond', opacity=0.8),
             name='Radar Positions'
         ))
+
+        # Create frames for the animation of trajectories
         fig.frames = self.create_trajectory_frames(self.states1, self.states2, 'yellow', 'red')
 
+        # Define the slider for the animation
         sliders = [{
             'pad': {"t": 30},
             'steps': [{'args': [[str(k)], {'frame': {'duration': duration_time, 'redraw': True},
@@ -120,6 +149,7 @@ class VisualisationPlotly:
                        'label': str(k), 'method': 'animate'} for k in range(101)]
         }]
 
+        # Update the layout of the figure
         fig.update_layout(
             sliders=sliders,
             scene=dict(
@@ -151,7 +181,9 @@ class VisualisationPlotly:
                 'yanchor': 'top'
             }]
         )
+        # Display the figure
         fig.show()
+
 
 # Plot static plots of the trajectories
 def polar_plot(states1, states2):
