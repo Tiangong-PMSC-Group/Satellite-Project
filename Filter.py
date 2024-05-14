@@ -5,48 +5,17 @@ import utilities as ut
 
 
 class LinearKalmanFilter():
-    def __init__(self, mean_0, cov_0, transition_matrix, observation_matrix, observation_noise = 1, process_noise = 0):
-        """_summary_
+    def __init__(self, mean_0, cov_0, transition_matrix, observation_matrix, observation_noise = np.eye(2), process_noise = np.eye(6)):
+        """Generates the Linear Kalman Filter class.
 
         Args:
-            mean_0 (_type_): _description_
-            cov_0 (_type_): _description_
-            transition_matrix (_type_): _description_
-            observation_matrix (_type_): _description_
-            observation_noise (int, optional): _description_. Defaults to 1.
-            process_noise (int, optional): _description_. Defaults to 0.
+            mean_0 (numpy.array): initial guess of state 
+            cov_0 (numpy.array): initial guess of state covariances
+            transition_matrix (numpy.array): physics informed discretized dynamics
+            observation_matrix (numpy.array): matrix of measurements coming in
+            observation_noise (numpy.array, optional): noise of observations. Defaults to np.eye(2).
+            process_noise (numpy.arrayt, optional): noise of the Kalman process. Defaults to np.eye(6).
         """
-
-        
-        '''
-        n_stat = number of total states
-        n_mes = number of measured states
-
-        m0 - inital guess of the means (Column Vector n_stat x 1)
-        Cov0 - intial covariance matrix, how good is the first guess (Square Matrix n_stat x n_stat)
-
-        F - state transition matrix, the physics per timestep (Square Matrix n_stat x n_stat)
-        H - observation matrix (Binary Column Vector n_mes x n_stat)
-        R - covariance of observation noise (n_mes x n_mes) noise of RADAR
-        Q - covariance of process noise (n_stat x n_stat) noise of ATMOSPHERE/PHYSICS 
-
-        measurement - data recieved (Column Vector n x 1), look at update_mean(self, y)
-
-
-        ### ### ### Operational Loop: ### ### ###
-
-        1. Intialise/Reset the Filter
-
-        2. If you DON'T recieve data (y):
-            2.a. LKM_forecast()
-
-        3. If you received data (y):
-            3.a. LKM_update()
-
-        4. Carry out 2 and 3 until exit condition is met.
-        
-        P.S. m and C are public variables so you can always access them through a = LKM.C and LKM.m
-        '''
 
         if mean_0.ndim == 1:
             self.m = mean_0[:, np.newaxis]
@@ -62,11 +31,28 @@ class LinearKalmanFilter():
 
 
     def forecast_mean(self, transition_matrix = None):
+        """Forecasts the LKF state.
+
+        Args:
+            transition_matrix (numpy.array): transition matrix of the system. Defaults to None
+
+        Returns:
+            numpy.array: forecast mean by 1 dt
+        """
         if transition_matrix is None:
             transition_matrix = self.F
         return (transition_matrix) @ self.m
         
     def forecast_cov(self, transition_matrix = None, process_noise = None):
+        """Forecasts the LKF covariance matrix.
+
+        Args:
+            transition_matrix (numpy.array): transition matrix of the system. Defaults to None
+            process_noise (numpy.array): matrix of the Kalman process noise. Defaults to None
+
+        Returns:
+            numpy.array: forecast covariance by 1 dt
+        """
         if transition_matrix is None:
             transition_matrix = self.F
         if process_noise is None:
@@ -76,6 +62,14 @@ class LinearKalmanFilter():
     
     #The place where you feed the new recieved data in; y (Column Vector n x 1)
     def update_mean(self, measurement):
+        """Updates the LKF state.
+
+        Args:
+            measurement (numpy.array): measurement which corresponds to the observation matrix
+
+        Returns:
+            numpy.array: updated LKF state using the measurement
+        """
         K = self.get_kalman_gain()
         #print(K)
         #print(measurement)
@@ -85,22 +79,51 @@ class LinearKalmanFilter():
         return self.m + K @ (measurement - self.H @ self.m)
         
     def update_cov(self):
+        """Updates the LKF covariance matrix.
+
+        Returns:
+            numpy.array: updated LKF covariance matrix using the measurement
+        """
         K = self.get_kalman_gain()
         return self.C - K @ self.H @ self.C
         
     def get_kalman_gain(self):
+        """Calcualtes the Kalman gain.
+
+        Returns:
+            numpy.array: Kalman gain
+        """
         #CHANGE THIS LINE TO SOLVE INSTEAD OF LINALG.INV
         return self.C @ self.H.T @ np.linalg.inv(self.H @ self.C @ self.H.T + self.R)
         #K = self.C @ self.H.T @ np.linalg.solve(self.H @ self.C @ self.H.T + self.R, self.R)
 
     # Project without new information
     def forecast(self, transition_matrix = None):
+        """Forecasts the LKF state and covariance matrix.
+
+        Args:
+            transition_matrix (numpy.array): transition matrix of the system. Defaults to None
+
+        Returns:
+            numpy.array: forecast mean by 1 dt
+            numpy.array: forecast covariance by 1 dt
+        """
+
         self.m = self.forecast_mean(transition_matrix)
         self.C = self.forecast_cov(transition_matrix)
         return self.m, self.C
 
     # Receive the information
     def update(self, measurement):
+        """Updates the LKF covariance matrix and state.
+
+        Args:
+            measurement (numpy.array): measurement which corresponds to the observation matrix
+
+        Returns:
+            numpy.array: updated LKF covariance matrix using the measurement
+            numpy.array: updated LKF state using the measurement
+        """
         if measurement.ndim == 1:
             measurement = measurement[:, np.newaxis]
         
@@ -109,13 +132,31 @@ class LinearKalmanFilter():
         return self.m, self.C
 
     def reset(self, m0, Cov0):
+        """Resets the LKF state and covariance matrix
+
+        Args:
+            m0 (numpy.array): new LKF state
+            Cov0 (numpy.array): new LKF covariance matrix
+        """
         self.m = m0
         self.C = Cov0
 
 
 class ExtendedKalmanFilter(LinearKalmanFilter):
-    def __init__(self, mean_0, cov_0, planet, observation_matrix = None, observation_noise = 1, process_noise = 0):
-        
+    
+    def __init__(self, mean_0, cov_0, planet, observation_matrix = None, observation_noise = np.eye(2), process_noise = np.eye(6)):
+        """Generates the Extended Kalman Filter class.
+
+        Args:
+            mean_0 (numpy.array): initial guess of state 
+            cov_0 (numpy.array): initial guess of state covariances
+            planet (Earth Object): object of the planet currently simulated
+            transition_matrix (numpy.array): physics informed discretized dynamics
+            observation_matrix (numpy.array): matrix of measurements coming in. Defaults to None.
+            observation_noise (numpy.array, optional): noise of observations. Defaults to np.eye(2).
+            process_noise (numpy.arrayt, optional): noise of the Kalman process. Defaults to np.eye(6).
+        """
+
         self.R = observation_noise
         self.Q = process_noise
         self.C = cov_0
@@ -142,13 +183,14 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         self.Me = config['earth']['mass']
 
         self.F, rho = self.get_F()
-
-
-    def get_H(self):
-        H = np.zeros([2, 6])
-        return H
     
     def get_F(self):
+        """Calculates the transition matrix and density.
+
+        Returns:
+            numpy.array: discretised transition matrix for the ith step of EKF
+            float: atmospheric density according to the EKF state
+        """
         sat_coords = np.array([self.m[0][0], self.m[3][0], self.orbital_angle])
         earth_coords = ut.spherical_to_spherical(sat_coords)
         res = self.planet.distance_to_surface(state=earth_coords)
@@ -184,6 +226,14 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         return F, rho
 
     def forecast_mean(self, rho):
+        """Forecasts the EKF state.
+
+        Args:
+            rho (float): atmospheric density at ith step
+
+        Returns:
+            numpy.array: forecast EKF state by 1 dt 
+        """
 
         '''TODO:
         2. - Add Runge Kutta to this (CURRENTLY: LEAPFROG EULER FORWARD)
@@ -202,7 +252,12 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         return m
     
     def forecast(self):
+        """Forecasts the EKF state and covariance matrix.
 
+        Returns:
+            numpy.array: forecast EKF state by 1 dt 
+            numpy.array: forecast EKF covariance by 1 dt
+        """
         F, rho = self.get_F()
         self.m = self.forecast_mean(rho=rho)
         self.C = self.forecast_cov(transition_matrix=F, process_noise=None)

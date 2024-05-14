@@ -9,6 +9,11 @@ class Radar():
     frequency = config['sim_config']['dt']['radar_freq']
 
     def __init__(self, position):
+        """Creates a Radar object.
+
+        Args: 
+            position (numpy.array): starting position of the radar in Earth polar coordinates
+        """
         # Initialize the radar with its position
         self.position = position
         # Initialize the last ping time to zero
@@ -18,12 +23,15 @@ class Radar():
 
 
     def line_of_sight(self, Sat_Pos, Earth_Eqn):
-        '''
-        Check whether radar can detect the satellite
-        Sat - Satellite Position
-        Earth - Earth Ellipse Equation
-        '''
+        """Check if the radar can see the Satellite.
 
+        Args: 
+            Sat_Pos (numpy.array): satellite position in Earth polar coordinates
+            Earth_Eqn (Object Eath Function): objects function which returns point property
+
+        Returns:
+            bool: True if in LOS, False otherwise
+        """
         #Build the iterative line towards satellite in Cartesian 
         x = ut.p_to_c(Sat_Pos)
         p = ut.p_to_c(self.position)
@@ -43,7 +51,14 @@ class Radar():
 
         
     def is_time(self, current_time)-> SatelliteState:
-        ''' Check the frequency. See if the radar can get the exact position of the satellite at this time.'''
+        """Check the frequency. See if the radar can get the exact position of the satellite at this time.
+
+        Args: 
+            current_time (float): current value of time in the simutlation
+
+        Returns:
+            bool: True if enough time has passed, False otherwise
+        """
         if current_time - self.last_ping > self.frequency:
             return True
         else:
@@ -57,12 +72,13 @@ class Radar():
 
 
     def add_noise(self,position):
-        """
-        Adds Gaussian noise to a satellite position with different noise levels for each dimension.
+        """Adds Gaussian noise to a satellite position with different noise levels for each dimension.
 
-        :param position: Original position of the satellite (numpy array or list).
-        :param noise_levels: List of standard deviations of the Gaussian noise for each dimension.
-        :return: Noisy position.
+        Args: 
+            position (numpy.array): original position of the satellite
+
+        Returns:
+            numpy.array: noisy position according to noise_levels
         """
         if len(position) == 2:
             noise_levels = np.array([config['radar']['noise']['rho'],config['radar']['noise']['theta']])

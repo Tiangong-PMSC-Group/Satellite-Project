@@ -17,6 +17,14 @@ transition_time = 10
 # 3D Visualization
 class VisualisationPlotly:
     def __init__(self, states1, states2, radar_positions):
+        """Creates an instance of the Visualisation plot class.
+
+        Args: 
+            states1 (numpy.array): states of the satellite
+            states2 (numpy.array): states of the radars data
+            radar_positions (numpy.array): positions of the radatrs
+        """
+
         self.states1 = states1
         self.states2 = states2
         self.radar_positions = []
@@ -28,6 +36,16 @@ class VisualisationPlotly:
 
     # Create Earth Sphere Data
     def sphere(self, texture):
+        """Creates the Earth graph.
+
+        Args: 
+            texture (numpy.array): surface texture of the Earth 
+
+        Returns:
+            float: texture's x coords
+            float: texture's y coords
+            float: texture's z coords
+        """
         # Get the number of latitude and longitude points
         N_lat = int(texture.shape[0])
         N_lon = int(texture.shape[1])
@@ -45,6 +63,12 @@ class VisualisationPlotly:
 
     # Create Earth Surface Data, Utilizing Real Earth Imagery
     def create_earth_surface(self):
+        """Creates the Earth surface image.
+
+        Returns:
+            Surface Object: updates the surface with image
+        """
+
         # Define the color scale for the Earth's surface
         colorscale = [[0.0, 'rgb(30, 59, 117)'],
                       [0.1, 'rgb(46, 68, 21)'],
@@ -64,6 +88,18 @@ class VisualisationPlotly:
 
     # Find the position where satellite hit the earth
     def highlight_last_points(self, states, color, name):
+        """Shows last point of impact for Kalman and ODE.
+
+        Args:
+            states (numpy.array): predicted and simulated states
+            color (HEX / string): color of the last point
+            name (string): name of the last point
+
+        Returns:
+            None
+                or
+            Scatter Object: plots a point at specific locations
+        """
         # Check if there are enough states to highlight the last point
         if len(states) > 1:
             # Get the coordinates of the last state
@@ -77,6 +113,17 @@ class VisualisationPlotly:
 
     # Create trajectory animation data
     def create_trajectory_frames(self, states1, states2, color1, color2):
+        """Creates discretised frame of the predicted and simulated paths.
+
+        Args:
+            states1 (numpy.array): states of the satellite predictions
+            states2 (numpy.array): states of the satellite simulations
+            color1 (HEX / string): color of the predictions
+            color2 (HEX / string): color of the simulations
+
+        Returns:
+            Frame Obejects: frames to be displayed
+        """
         frames = []
         # Iterate through 101 progress points to create frames(0-100)
         for progress in range(101):
@@ -113,6 +160,8 @@ class VisualisationPlotly:
 
     # Show the 3D earth and trajectory
     def visualise(self):
+        """Visualising function for centralised calling
+        """
         # Create a new figure for visualization
         fig = go.Figure()
 
@@ -187,6 +236,12 @@ class VisualisationPlotly:
 
 # Plot static plots of the trajectories
 def polar_plot(states1, states2):
+    """Generates a plot in polar coordinates.
+
+    Args:
+        states1 (numpy.array): states of the satellite predictions
+        states2 (numpy.array): states of the satellite simulations
+    """
     rho_from_states1 = [state[0] for state in states1]
     polar_from_states1 = [state[2] for state in states1]
     rho_from_states2 = [state[0] for state in states2]
@@ -227,6 +282,8 @@ def polar_plot(states1, states2):
 
 
 def main():
+    """Generates the simulation and its environment.
+    """
     # Run simulation
     main = Main(200)
     main.simulate()

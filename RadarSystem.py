@@ -19,6 +19,15 @@ class RadarSystem(IRadarSystem):
     last_time = 0  # Initialize the last time to zero
 
     def __init__(self, earth, counts=None, seed=None, random_pos=True):
+        """Creates RadarSystem class.
+
+        Args: 
+            earth (Class Object): Earth class object
+            counts (int): number of radars inside of the radar system
+            seed (int): particular random seed to be used
+            random_pos (bool): if positions are random or not
+        """
+
         # Initialize the radar system with the given parameters
         self.earth = earth
         # Set the radar count either from the provided value or the configuration
@@ -34,10 +43,12 @@ class RadarSystem(IRadarSystem):
         # Initialize the radar positions
         self.init_radar_positions()
 
-        
-    ''' Initialize radar positions, supporting two modes: 
-    evenly distributed on the equator or randomly distributed on the Earth's surface '''
+
     def init_radar_positions(self):
+        """Initializes radar positions, supporting two modes:
+        evenly distributed on the equator or randomly distributed on the Earth's surface
+        """
+
         if self.random_pos is True:
             points = utilities.random_points_on_ellipse(Earth(), self.counts)
         else:
@@ -49,8 +60,17 @@ class RadarSystem(IRadarSystem):
         self.radars = radars
 
 
-    ''' Attempt to detect the satellite position '''
     def try_detect_satellite(self, sat_pos, current_time) -> list[SatelliteState]:
+        """Attempts to detect the satellite position.
+
+        Args: 
+            sat_pos (numpy.array): satellite position in Earth polar coordinates
+            current_time (float): current time value of the simulation
+
+        Returns:
+            np.array: noisy positions of the satellite
+        """
+
         results = []
         # The radar can only check whether the satellite is in it's detectable range at a certain frequency,
         # which is controlled by radar_los_frequency
@@ -77,14 +97,27 @@ class RadarSystem(IRadarSystem):
                 results.append(result)
         return results
 
-    ''' Update radar positions due to Earth's rotation '''
     def update_radar_positions(self,time_steps):
+        """Update radar positions due to Earth's rotation.
+
+        Args: 
+            time_steps (int): number of passed time steps
+        """
         for item in self.radars:
             new_state = item.position[2] + self.angular_change * time_steps
             item.position[2] = new_state % (2 * np.pi)
 
-    '''Evenly distribute radar positions on the equator '''
     def random_points_on_equator(self,earth, num_points):
+        """Evenly distribute radar positions on the equator.
+
+        Args: 
+            earth (Class Object): Earth class from Earth file
+            num_points (int): number of desired points on the equator
+
+        Returns:
+            numpy.array: 3D array of positions on the equator
+        """
+
         points = []
         # Interval between points in degrees
         interval = 360 / num_points
@@ -113,8 +146,12 @@ class RadarSystem(IRadarSystem):
 
         return points
 
-    '''Return radar positions '''
     def get_radar_positions(self):
+        """Returns radar positions
+
+        Returns:
+            numpy.array: 3D array of positions of the radars
+        """
         return [radar.position for radar in self.radars]
 
 

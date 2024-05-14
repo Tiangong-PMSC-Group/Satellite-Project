@@ -12,10 +12,10 @@ def c_to_p(state):
     """Changes the coordinates from Cartesian to 2D Polar or 3D Spherical
 
     Args:
-        state (np.array): Cartesian coordinates array 
+        state (numpy.array): Cartesian coordinates array 
 
     Returns:
-        np.array:  2D Polar (rho, polar) or 3D Spherical (rho, polar, azimuthal) array
+        numpy.array:  2D Polar (rho, polar) or 3D Spherical (rho, polar, azimuthal) array
     """
 
     #dimension of input array (3D or 2D)
@@ -78,10 +78,10 @@ def p_to_c(state):
     """Changes the coordinates from 2D Polar or 3D Spherical to Cartesian
 
     Args:
-        state (np.array): 2D Polar (rho, polar) or 3D Spherical (rho, polar, azimuthal) array
+        state (numpy.array): 2D Polar (rho, polar) or 3D Spherical (rho, polar, azimuthal) array
 
     Returns:
-        np.array: Cartesian coordinates array
+        numpy.array: Cartesian coordinates array
     """
 
     dims = np.size(state)
@@ -115,12 +115,13 @@ def p_to_c(state):
     return cartesian_state
 
 def earth_to_orbit(states):
-    '''ShEs BAck
+    '''Convrets from Earth polar coordinates into satellite polar coordinates
+
     Args:
-        state (np.array([rho, polar, aziumthal1]): Satellite coordinates array in reference spherical earth axis
+        states (numpy.array([rho, polar, aziumthal1]): Satellite coordinates array in reference spherical earth axis
 
     Returns:
-        np.array([rho, polar]): Satellite polar array, defined in known orbital inclination angle
+        numpy.array([rho, polar]): Satellite polar array, defined in known orbital inclination angle
     '''
     x, z, y = p_to_c(states)
     
@@ -153,10 +154,10 @@ def satellite_to_xyz_bulk(states):
     """Changes the coordinates from the Orbits spherical axis to Earths XYZ
 
     Args:
-        state (np.array([np.array([rho1, polar1, aziumthal1]), ...])): Satellite coordinates array in reference spherical obrit axis
+        state (numpy.array([numpy.array([rho1, polar1, aziumthal1]), ...])): Satellite coordinates array in reference spherical obrit axis
 
     Returns:
-        np.array([np.array([x1, y1, z1]), ...]): Satellite coordinates array in refernce Earths XYZ
+        numpy.array([numpy.array([x1, y1, z1]), ...]): Satellite coordinates array in refernce Earths XYZ
     """   
     bulk_array = np.zeros_like(states)
     for i in range(len(bulk_array)):
@@ -169,10 +170,10 @@ def earth_to_xyz_bulk(states):
     """Changes the coordinates from the Earths spherical axis to Earths XYZ
 
     Args:
-        state (np.array([np.array([rho1, polar1, aziumthal1]), ...])): Earth coordinates array in reference spherical Earth axis
+        state (numpy.array([numpy.array([rho1, polar1, aziumthal1]), ...])): Earth coordinates array in reference spherical Earth axis
 
     Returns:
-        np.array([np.array([x1, y1, z1]), ...]): Earth coordinates array in refernce Earths XYZ
+        numpy.array([numpy.array([x1, y1, z1]), ...]): Earth coordinates array in refernce Earths XYZ
     """ 
     bulk_array = np.zeros_like(states)
     for i in range(len(bulk_array)):
@@ -187,10 +188,10 @@ def spherical_to_spherical(state):
     """Changes the coordinates from one Spherical axis to Spherical another axis
 
     Args:
-        state (np.array([R, Polar, Azimuthal])): Sperical coordinates array in one axis (Earth or Satellite)
+        state (numpy.array([R, Polar, Azimuthal])): Sperical coordinates array in one axis (Earth or Satellite)
 
     Returns:
-        np.array([R, Polar, Azimuthal]): Sperical coordinates array in one axis (Earth or Satellite)
+        numpy.array([R, Polar, Azimuthal]): Sperical coordinates array in one axis (Earth or Satellite)
     """
     x, z, y = p_to_c(state)     #convert to cartesian, while switching the y and z coordinates
     rho, polar, azimuthal = c_to_p(np.array([x, y, z]))     #convert back to Sperical coordinates
@@ -205,6 +206,15 @@ def bulk():
 
 
 def random_points_on_ellipse(earth, num_points):
+    """Adds a number of randomly distributes points on Earths surface
+
+    Args:
+        earth (Earth Object): a class object Earth
+        num_points (int): number of points
+
+    Returns:
+        numpy.array: array of points with 3D polar positions
+    """ 
     points = []
     for _ in range(num_points):
         # Squared first eccentricity
@@ -232,6 +242,16 @@ def random_points_on_ellipse(earth, num_points):
 
 
 def distance_on_surface(point1, point2):
+    """Calculates arc value between two points.
+
+    Args:
+        point1 (numpy.array): a point on Earth
+        point2 (numpy.array): a ponit on Earth
+
+    Returns:
+        float: closest distance through ellipsoid
+    """ 
+
     # Checked against https://www.onlineconversion.com/map_greatcircle_distance.htm
     # Minimum difference probabily due to different earth major axis.
     # Receive points in polar coordinates, remove the radial distance

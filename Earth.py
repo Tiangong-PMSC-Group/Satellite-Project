@@ -9,11 +9,8 @@ from config import config
 #@singleton
 class Earth():
     def __init__(self):
-        
-        '''
-        Properties of the Earth and its position.
-        '''
-
+        """Pulls Earth's constants from the config file.
+        """
         self.re = config['earth']['major_axis']
         self.rp = config['earth']['minor_axis']
         self.omega = config['earth']['omega']
@@ -30,7 +27,7 @@ class Earth():
             z (float): Coordinate z
 
         Returns:
-            float: _description_
+            float: returns 0 if one the surface, >0 if above, 0< if below 
         """
         return (x**2)/(self.re**2) + (y**2)/(self.re**2) + (z**2)/(self.rp**2) - 1
 
@@ -39,27 +36,19 @@ class Earth():
         """Finds the minimum distance between the specified point and the ellipse
         using Newton's method.
 
-        NEEDS TO BE OPTIMISED FOR POLAR COORDINATES
-        '''
-
-        '''
-        x comes in as a set of 3D polar coordinates, since we want it to be in cartesian 
-
-        x1 - ellipse coordinate
-        x2 - satellite coordinates
-
         Args:
-            state (_type_): _description_
-            tolerance (_type_, optional): _description_. Defaults to 1e-6.
+            state (numpy.array): 3 dimensional position vector of satellite in Earth's polar coordinates  
+            tolerance (float, optional): tolerance of the value, maximum accetable error. Defaults to 1e-6.
             max_iterations (int, optional): _description_. Defaults to 1000.
 
         Returns:
-            float: minimun distance to Earth
+            dict: 
+                distance (float): absolute value of the distance to the surface of Earth
+                x (float): x value which is on the Earth ellipse
+                y (float): y value which is on the Earth ellipse
+                inside (bool): True is the point is inside the Earth, False if not
+                error (float): error of the Newton optimisation
         """
-
-        '''
-        
-        ''' 
 
         #We translate into the plane which is relevant to us
         x = np.asarray(state)
@@ -68,15 +57,16 @@ class Earth():
         x2 = ut.p_to_c(relevant_state)
         t = np.arctan2(x2[1], x2[0])
 
+        #Check if we are inside the ellipse.
         ell = (x[0] ** 2)/(self.re ** 2) + (x[1] ** 2)/(self.rp ** 2) -1
         inside = False
         if ell < 0: 
             inside = True
 
-            
         iterations = 0
         error = tol
-                
+        
+        #Iterative Newton's optimisation scheme.
         while (error >= tol) and (iterations < max_iter):
             cost = np.cos(t)
             sint = np.sin(t)
@@ -93,7 +83,7 @@ class Earth():
             iterations += 1
         
 
-        #Makes it return a point on the ellipse rather than the optimisation
+        #Makes it return an optimised point on the ellipse
         opt_x = self.re * np.cos(t)
         opt_y = self.rp * np.sin(t)
         distance = np.sqrt((x2[0] - opt_x)**2 + (x2[1] - opt_y)**2)
@@ -101,17 +91,15 @@ class Earth():
         return dict(distance = distance, x = opt_x, y = opt_y, inside = inside, error = error)
 
     def air_density(self, distance):
-        """_summary_
+        """Calculates the density of air for a given height from the surface of the Earth
 
         Args:
-            distance (_type_): _description_
+            distance (float): distance from the surface of the Earth to satellite
 
         Returns:
-            _type_: _description_
+            float: density of the atmosphere in SI units
         """
-        '''
-        Atmosphere code, gets you the density.
-        '''
+
         R = config['atmosphere']['gas_const']
         G = config['atmosphere']['gravity']
         M = config['atmosphere']['molar_mass']
@@ -131,7 +119,7 @@ class Earth():
 
 
 
-    ### Bonus Question
+    ### ### ### ### ### Bonus Question NOT FINISHED ### ### ### ### ###
 
     def create_city(center, density_param,):
         pass
