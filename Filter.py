@@ -197,7 +197,6 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         m[1] = self.m[1] + 0.5 * self.dt * self.m[2]
         m[4] = self.m[4] + 0.5 * self.dt * self.m[5]
 
-
         m[0] = self.m[0] + 0.5 * self.dt * self.m[1]
         m[3] = self.m[3] + 0.5 * self.dt * self.m[4]
 
