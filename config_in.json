@@ -19,7 +19,7 @@
     "radar": {
         "counts": 200,
         "noise": {
-            "rho": 6546840.0,
+            "rho": 100.0,
             "theta": 0.1,
             "phi": 0.0
         }
