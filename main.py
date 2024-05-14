@@ -29,10 +29,10 @@ class Main():
         self.phi = config['satellite']['initial_conditions']['azimuthal_angle']
 
 
-        self.angular_vel = 0.0011313 # Send to config
+        self.angular_vel = config['satellite']['initial_conditions']['angular_velocity']
         self.tang_vel = self.angular_vel * self.R
-        radial_velocity = 0
-        azimuthal_velocity = 0
+        radial_velocity = config['satellite']['initial_conditions']['radial_velocity']
+        azimuthal_velocity = config['satellite']['initial_conditions']['azimuthal_velocity']
 
         self.sat_state = SatelliteState(np.array([self.R, self.theta, self.phi]), np.array([0]), np.array([radial_velocity, self.tang_vel, azimuthal_velocity]), np.array([0]))
         self.tiagong = Satellite(self.sat_state, 0, earth=self.earth)
@@ -46,7 +46,9 @@ class Main():
         r_noise = config['radar']['noise']['rho']
         t_noise = config['radar']['noise']['theta']
         # Adjust this to initialize at a random point with the same noise as radar
-        self.mean_0 = np.array([self.R+100000, 0, 0, np.pi-3, 0, 0])
+        initial_r = config['satellite']['initial_conditions']['initial_r_guess']
+        initial_anlge = config['satellite']['initial_conditions']['initial_angle_guess']
+        self.mean_0 = np.array([initial_r , 0, 0, initial_anlge, 0, 0])
 
         # cov_0 = np.array([
         #     [3.98e8, 0, 0, 0, 0, 0],

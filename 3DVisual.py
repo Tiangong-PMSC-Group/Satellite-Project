@@ -13,6 +13,8 @@ matplotlib.use('TkAgg')
 
 duration_time =10
 transition_time = 10
+
+# 3D Visualization
 class VisualisationPlotly:
     def __init__(self, states1, states2, radar_positions):
         self.states1 = states1
@@ -24,6 +26,7 @@ class VisualisationPlotly:
         self.rp = Earth().rp
         self.show_range = 8000000
 
+    # Create Earth Sphere Data
     def sphere(self, texture):
         N_lat = int(texture.shape[0])
         N_lon = int(texture.shape[1])
@@ -36,6 +39,7 @@ class VisualisationPlotly:
 
         return x0, y0, z0
 
+    # Create Earth Surface Data, Utilizing Real Earth Imagery
     def create_earth_surface(self):
         colorscale = [[0.0, 'rgb(30, 59, 117)'],
                       [0.1, 'rgb(46, 68, 21)'],
@@ -50,16 +54,9 @@ class VisualisationPlotly:
 
         texture = np.asarray(Image.open('earth.jpg').resize((200, 200))).T
         x, y, z = self.sphere(texture)
-        return go.Surface(x=x, y=y, z=z, surfacecolor=texture, colorscale=colorscale, opacity=0.85,showscale=False)
+        return go.Surface(x=x, y=y, z=z, surfacecolor=texture, colorscale=colorscale, opacity=0.15,showscale=False)
 
-    def create_earth_surface1(self):
-        u = np.linspace(0, 2 * np.pi, 100)
-        v = np.linspace(0, np.pi, 100)
-        x = self.re * np.outer(np.cos(u), np.sin(v))
-        y = self.re * np.outer(np.sin(u), np.sin(v))
-        z = self.rp * np.outer(np.ones(np.size(u)), np.cos(v))
-        return go.Surface(x=x, y=y, z=z, opacity=0.5, colorscale='Blues', showscale=False)
-
+    # Find the position where satellite hit the earth
     def highlight_last_points(self, states, color,name):
         if len(states) > 1:
             x, y, z = zip(*states[-1:])
@@ -70,6 +67,7 @@ class VisualisationPlotly:
             )
         return None
 
+    # Create trajectory animation data
     def create_trajectory_frames(self, states1, states2, color1, color2):
         frames = []
         for progress in range(101):
@@ -97,6 +95,7 @@ class VisualisationPlotly:
 
         return frames
 
+    # Show the 3D earth and trajectory
     def visualise(self):
         fig = go.Figure()
 
@@ -154,7 +153,7 @@ class VisualisationPlotly:
         )
         fig.show()
 
-
+# Plot static plots of the trajectories
 def polar_plot(states1, states2):
     rho_from_states1 = [state[0] for state in states1]
     polar_from_states1 = [state[2] for state in states1]
@@ -174,7 +173,7 @@ def polar_plot(states1, states2):
     ax1.legend(loc='upper right')
     ax1.grid(True)
 
-    # Plotting the polar plot
+    # Plotting the polar and distance
     ax2 = plt.subplot(gs[1], projection='polar')
     rad = np.array(polar_from_states1)
     R = np.array(rho_from_states1)
@@ -196,11 +195,14 @@ def polar_plot(states1, states2):
 
 
 def main():
+    # Run simulation
     main = Main(200)
     main.simulate()
     main.predict()
+    # Get distance and polar datas from real simulator, predictor and radar
     R, rad, R2, rad2, R3, rad3 = main.output()
 
+    # Transform the data to the appropriate coordinate
     trd = [np.pi / 2 - config['satellite']['initial_conditions']['polar_angle']] * len(R)
     real_states_earth_cord = np.array(
         [utilities.spherical_to_spherical(np.array([R, rad, trd]).T[i]) for i in range(len(R))])
@@ -215,8 +217,7 @@ def main():
     states2 = list(zip(pred_x, pred_y, pred_z))
     radar_system = main.BACC
 
-
-
+    # Show 3D earth and trajectory
     visual_plotly = VisualisationPlotly(states1, states2,radar_system.get_radar_positions())
     visual_plotly.visualise()
 
@@ -228,6 +229,7 @@ def main():
     for state in states2:
         polar_predict_state.append(utilities.c_to_p(state))
 
+    # Show static plots of trajectories
     polar_plot(polar_real_state, polar_predict_state)
 
 
