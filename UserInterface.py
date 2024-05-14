@@ -26,7 +26,7 @@ def on_button_click():
             time_interval = input_time_interval.get()
             radar_frequency = input_radar_frequency.get()
         else:
-            path = 'config_' + str(file_number) + '.json'
+            path = 'configs/config_' + str(file_number) + '.json'
             config_i = load_config(path)
 
             satellite_distance = config_i['satellite']['initial_conditions']['distance']
@@ -34,8 +34,8 @@ def on_button_click():
             radar_counts = str(config_i['radar']['counts'])
             radar_noise_distance = config_i['radar']['noise']['rho']
             radar_noise_polar = config_i['radar']['noise']['theta']
-            prior_distance = config_i['satellite']['initial_conditions']['initial_r_guess']
-            prior_angle = config_i['satellite']['initial_conditions']['initial_angle_guess']
+            prior_distance = config_i['Kalman']['initial_r_guess']
+            prior_angle = config_i['Kalman']['initial_angle_guess']
             satellite_mass = config_i['satellite']['mass']
             satellite_area = config_i['satellite']['area']
             satellite_drag = config_i['satellite']['drag_coefficient']
@@ -91,8 +91,8 @@ def on_button_click():
         config['radar']['counts'] = int(radar_counts)
         config['radar']['noise']['rho'] = float(radar_noise_distance)
         config['radar']['noise']['theta'] = float(radar_noise_polar)
-        config['satellite']['initial_conditions']['initial_r_guess'] = float(prior_distance)
-        config['satellite']['initial_conditions']['initial_angle_guess'] = float(prior_angle)
+        config['Kalman']['initial_r_guess'] = float(prior_distance)
+        config['Kalman']['initial_angle_guess'] = float(prior_angle)
         config['satellite']['mass'] = float(satellite_mass)
         config['satellite']['area'] = float(satellite_area)
         config['satellite']['drag_coefficient'] = float(satellite_drag)
@@ -173,10 +173,10 @@ def reset_input_fields():
     input_radar_noise_polar.insert(0, config_in['radar']['noise']['theta'])
 
     input_prior_distance.delete(0, tk.END)
-    input_prior_distance.insert(0, config_in['satellite']['initial_conditions']['initial_r_guess'])
+    input_prior_distance.insert(0, config_in['Kalman']['initial_r_guess'])
 
     input_prior_angle.delete(0, tk.END)
-    input_prior_angle.insert(0, config_in['satellite']['initial_conditions']['initial_angle_guess'])
+    input_prior_angle.insert(0, config_in['Kalman']['initial_angle_guess'])
 
 
 def is_float(value):
@@ -208,6 +208,7 @@ if __name__ == "__main__":
     install_requirements()
 
     root = tk.Tk()  # Create main application window
+    root.title('Tiangong')
 
     # List of input labels and default values
     
@@ -217,8 +218,8 @@ if __name__ == "__main__":
               ("Number of radars:", config_in['radar']['counts']),
               ("Radar noise for distance (m):", config_in['radar']['noise']['rho']),
               ("Radar noise for angle (deg):", config_in['radar']['noise']['theta']),
-              ("Kalman prior for distance (m):", config_in['satellite']['initial_conditions']['initial_r_guess']),
-              ("Kalman prior for angle (deg):", config_in['satellite']['initial_conditions']['initial_angle_guess']),
+              ("Kalman prior for distance (m):", config_in['Kalman']['initial_r_guess']),
+              ("Kalman prior for angle (deg):", config_in['Kalman']['initial_angle_guess']),
               ("satellite mass (kg):", config_in['satellite']['mass']),
               ("satellite cross section (m2):", config_in['satellite']['area']),
               ("satellite drag coefficient:", config_in['satellite']['drag_coefficient']),

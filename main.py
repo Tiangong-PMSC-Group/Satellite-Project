@@ -35,56 +35,29 @@ class Main():
         azimuthal_velocity = config['satellite']['initial_conditions']['azimuthal_velocity']
 
         self.sat_state = SatelliteState(np.array([self.R, self.theta, self.phi]), np.array([0]), np.array([radial_velocity, self.tang_vel, azimuthal_velocity]), np.array([0]))
-        self.tiagong = Satellite(self.sat_state, 0, earth=self.earth)
+        self.tiangong = Satellite(self.sat_state, 0, earth=self.earth)
 
 
 
         # Initialize the Kalman Filter
         # tianhe is the chinese super computer
 
-        # Send those things to the config
-        r_noise = config['radar']['noise']['rho']
-        t_noise = config['radar']['noise']['theta']
         # Adjust this to initialize at a random point with the same noise as radar
-        initial_r = config['satellite']['initial_conditions']['initial_r_guess']
-        initial_anlge = config['satellite']['initial_conditions']['initial_angle_guess']
+        initial_r = config['Kalman']['initial_r_guess']
+        initial_anlge = config['Kalman']['initial_angle_guess']
         self.mean_0 = np.array([initial_r , 0, 0, initial_anlge, 0, 0])
 
-        # cov_0 = np.array([
-        #     [3.98e8, 0, 0, 0, 0, 0],
-        #     [0, 1.092e1, 0, 0, 0, 0],
-        #     [0, 0, 1e0, 0, 0, 0],
-        #     [0, 0, 0, 1.9533, 0, 0],
-        #     [0, 0, 0, 0, 5.194e-1, 0],
-        #     [0, 0, 0, 0, 0, 8.03e-2]
-        # ])
+        self.cov_0 = np.array(config['Kalman']['cov_matrix'])
 
-        self.cov_0 = np.array([
-            [1e4, 0, 0, 0, 0, 0],
-            [0, 1e1, 0, 0, 0, 0],
-            [0, 0, 1e0, 0, 0, 0],
-            [0, 0, 0, 1e1, 0, 0],
-            [0, 0, 0, 0, 1e0, 0],
-            [0, 0, 0, 0, 0, 1e-2]
-        ])
+        self.observation_noise = np.array(config['Kalman']['observation_noise'])
 
-        self.observation_noise = np.array([[2e2, 0],
-                    [0, 1e-1]])
-
-        self.Q = np.array([
-            [100, 0, 0, 0, 0, 0],
-            [0, 1, 0, 0, 0, 0],
-            [0, 0, 0.1, 0, 0, 0],
-            [0, 0, 0, 0.2, 0, 0],
-            [0, 0, 0, 0, 0.02, 0],
-            [0, 0, 0, 0, 0, 0.002]
-        ])
+        self.Q = np.array(config['Kalman']['Q_matrix'])
 
         self.tianhe = ExtendedKalmanFilter(self.mean_0, self.cov_0, self.earth, observation_noise=self.observation_noise, process_noise=self.Q)
 
     
     def simulate(self):
-        self.simulation = self.tiagong.simulate(10000000)
+        self.simulation = self.tiangong.simulate(10000000)
 
         self.R_simulation = self.simulation.y[0][:]
         self.rad_simulation = self.simulation.y[2][:]
@@ -105,7 +78,7 @@ class Main():
         for i in range(int(sim_lenght)):
             
             if i < sim_lenght:
-                current_state_satellite_cord = self.tiagong.get_position_at_t(i)
+                current_state_satellite_cord = self.tiangong.get_position_at_t(i)
                 #current_state_earth_cord = utilities.spherical_to_spherical(current_state_satellite_cord)
                 current_state_earth_cord = current_state_satellite_cord
                 noise_states_earth_cord = self.BACC.try_detect_satellite(current_state_earth_cord, i)

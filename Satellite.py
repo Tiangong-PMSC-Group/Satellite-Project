@@ -17,7 +17,7 @@ from copy import deepcopy
 
 
 #@singleton
-class Satellite(ISimulator):
+class Satellite():
     """Satellite Class
     """
     def __init__(self, true_state0, prior_state, filter=None, earth=None):

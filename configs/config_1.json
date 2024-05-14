@@ -171,6 +171,25 @@
             "comment": "Satellites position as described in earth's spherical coordinate system, azimuthal angle set at const 0, polar angle describing latitude from north pole (0, pi]"
         }
     },
+    "Kalman":{
+        "initial_r_guess": 6900000,
+        "initial_angle_guess": 0.14,
+        "cov_matrix": [
+            [1e4, 0, 0, 0, 0, 0],
+            [0, 1e1, 0, 0, 0, 0],
+            [0, 0, 1e0, 0, 0, 0],
+            [0, 0, 0, 1e1, 0, 0],
+            [0, 0, 0, 0, 1e0, 0],
+            [0, 0, 0, 0, 0, 1e-2]],
+        "observation_noise": [[2e2, 0],[0, 1e-1]],
+        "Q_matrix": [
+            [100, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0],
+            [0, 0, 0.1, 0, 0, 0],
+            [0, 0, 0, 0.2, 0, 0],
+            [0, 0, 0, 0, 0.02, 0],
+            [0, 0, 0, 0, 0, 0.002]]
+    },
     "city": {
         "density_params": [
             14,
