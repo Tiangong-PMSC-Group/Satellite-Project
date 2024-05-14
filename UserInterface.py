@@ -112,7 +112,7 @@ def on_button_click():
         #reset_input_fields()
 
     except Exception as e:
-        messagebox.showerror("Error", f"An error occurred: {e}")
+        messagebox.showerror("Error", f"The simulation broked likely due to bad initial values. Please, check your inputs and try again.")
     
     finally:
         # Reset input fields and button state

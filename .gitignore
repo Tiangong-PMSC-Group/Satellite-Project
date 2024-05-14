@@ -7,7 +7,7 @@ __pycache__/
 *.pyc[cod]
 *.pyo[cod]
 
-interface/__pycache__/
+Interface/__pycache__/
 *.py[cod]
 *.pyc[cod]
 *.pyo[cod]
