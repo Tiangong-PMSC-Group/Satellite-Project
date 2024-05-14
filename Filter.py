@@ -191,14 +191,16 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
 
         m = np.zeros(6)
         
+        m[0] = self.m[0] + self.dt * self.m[1]
+        m[3] = self.m[3] + self.dt * self.m[4]
+        
+        
+        m[1] = self.m[1] + self.dt * self.m[2]
+        m[4] = self.m[4] + self.dt * self.m[5]
+
         m[2] = -self.G  * self.Me * 1/(self.m[0] ** 2) + self.m[0] * self.m[4] ** 2
         m[5] = -0.5 * rho * self.m[0] * (self.m[4] ** 2) * self.As * self.Cd/self.ms
 
-        m[1] = self.m[1] + 0.5 * self.dt * self.m[2]
-        m[4] = self.m[4] + 0.5 * self.dt * self.m[5]
-
-        m[0] = self.m[0] + 0.5 * self.dt * self.m[1]
-        m[3] = self.m[3] + 0.5 * self.dt * self.m[4]
 
         m = m[:, np.newaxis]
         return m
