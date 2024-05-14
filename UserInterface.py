@@ -11,34 +11,39 @@ def on_button_click():
         print(file_number)
         if file_number == str(0):
             # Collect input values from entries
+
+            # Collect input values from entries
+            satellite_distance = input_satellite_distance.get()
+            satellite_angle = input_satellite_angle.get()
             radar_counts = input_radar.get()
+            radar_noise_distance = input_radar_noise_distance.get()
+            radar_noise_polar = input_radar_noise_polar.get()
+            prior_distance = input_prior_distance.get()
+            prior_angle = input_prior_angle.get()
             satellite_mass = input_satellite_mass.get()
             satellite_area = input_satellite_area.get()
             satellite_drag = input_satellite_drag.get()
-            satellite_distance = input_satellite_distance.get()
-            satellite_angle = input_satellite_angle.get()
             time_interval = input_time_interval.get()
-            kalman_frequency = input_kalman_frequency.get()
             radar_frequency = input_radar_frequency.get()
-            radar_noise_distance = input_radar_noise_distance.get()
-            radar_noise_polar = input_radar_noise_polar.get()
-            radar_noise_azimuth = input_radar_noise_azimuth.get()
         else:
             path = 'config_' + str(file_number) + '.json'
             config_i = load_config(path)
 
+            satellite_distance = config_i['satellite']['initial_conditions']['distance']
+            satellite_angle = config_i['satellite']['initial_conditions']['polar_angle']
             radar_counts = str(config_i['radar']['counts'])
+            radar_noise_distance = config_i['radar']['noise']['rho']
+            radar_noise_polar = config_i['radar']['noise']['theta']
+            prior_distance = config_i['satellite']['initial_conditions']['initial_r_guess']
+            prior_angle = config_i['satellite']['initial_conditions']['initial_angle_guess']
             satellite_mass = config_i['satellite']['mass']
             satellite_area = config_i['satellite']['area']
             satellite_drag = config_i['satellite']['drag_coefficient']
-            satellite_distance = config_i['satellite']['initial_conditions']['distance']
-            satellite_angle = config_i['satellite']['initial_conditions']['polar_angle']
             time_interval = config_i['sim_config']['dt']['main_dt']
-            kalman_frequency = str(config_i['sim_config']['dt']['kalman_freq'])
-            radar_frequency = str(config_i['sim_config']['dt']['radar_freq'])
-            radar_noise_distance = config_i['radar']['noise']['rho']
-            radar_noise_polar = config_i['radar']['noise']['theta']
-            radar_noise_azimuth = config_i['radar']['noise']['phi']
+            radar_frequency = config_i['sim_config']['dt']['radar_freq']
+
+
+
 
         # Check inputs
         if not radar_counts.isdigit():
@@ -62,9 +67,6 @@ def on_button_click():
         if not is_float(time_interval):
             messagebox.showerror("Input Error", "Time interval must be a numeric value.")
             return
-        if not kalman_frequency.isdigit():
-            messagebox.showerror("Input Error", "Kalman frequency must be a whole number.")
-            return
         if not radar_frequency.isdigit():
             messagebox.showerror("Input Error", "Radar frequency must be a whole number.")
             return
@@ -74,23 +76,29 @@ def on_button_click():
         if not is_float(radar_noise_polar):
             messagebox.showerror("Input Error", "Radar noise polar must be a numeric value.")
             return
-        if not is_float(radar_noise_azimuth):
-            messagebox.showerror("Input Error", "Radar noise azimuth must be a numeric value.")
+        if not is_float(prior_distance):
+            messagebox.showerror("Input Error", "Prior distance must be a numeric value.")
+            return
+        if not is_float(prior_angle):
+            messagebox.showerror("Input Error", "Prior angle must be a numeric value.")
             return
 
+
         # Update configuration with validated values
+
+        config['satellite']['initial_conditions']['distance'] = float(satellite_distance)
+        config['satellite']['initial_conditions']['polar_angle'] = float(satellite_angle)
         config['radar']['counts'] = int(radar_counts)
+        config['radar']['noise']['rho'] = float(radar_noise_distance)
+        config['radar']['noise']['theta'] = float(radar_noise_polar)
+        config['satellite']['initial_conditions']['initial_r_guess'] = float(prior_distance)
+        config['satellite']['initial_conditions']['initial_angle_guess'] = float(prior_angle)
         config['satellite']['mass'] = float(satellite_mass)
         config['satellite']['area'] = float(satellite_area)
         config['satellite']['drag_coefficient'] = float(satellite_drag)
-        config['satellite']['initial_conditions']['distance'] = float(satellite_distance)
-        config['satellite']['initial_conditions']['polar_angle'] = float(satellite_angle)
         config['sim_config']['dt']['main_dt'] = float(time_interval)
-        config['sim_config']['dt']['kalman_freq'] = int(kalman_frequency)
-        config['sim_config']['dt']['radar_freq'] = int(radar_frequency)
-        config['radar']['noise']['rho'] = float(radar_noise_distance)
-        config['radar']['noise']['theta'] = float(radar_noise_polar)
-        config['radar']['noise']['phi'] = float(radar_noise_azimuth)
+        config['sim_config']['dt']['radar_freq'] = float(radar_frequency)
+
 
         save_config(config)  # Save updated config
 
@@ -155,9 +163,6 @@ def reset_input_fields():
     input_time_interval.delete(0, tk.END)
     input_time_interval.insert(0, config_in['sim_config']['dt']['main_dt'])
 
-    input_kalman_frequency.delete(0, tk.END)
-    input_kalman_frequency.insert(0, config_in['sim_config']['dt']['kalman_freq'])
-
     input_radar_frequency.delete(0, tk.END)
     input_radar_frequency.insert(0, config_in['sim_config']['dt']['radar_freq'])
 
@@ -167,8 +172,12 @@ def reset_input_fields():
     input_radar_noise_polar.delete(0, tk.END)
     input_radar_noise_polar.insert(0, config_in['radar']['noise']['theta'])
 
-    input_radar_noise_azimuth.delete(0, tk.END)
-    input_radar_noise_azimuth.insert(0, config_in['radar']['noise']['phi'])
+    input_prior_distance.delete(0, tk.END)
+    input_prior_distance.insert(0, config_in['satellite']['initial_conditions']['initial_r_guess'])
+
+    input_prior_angle.delete(0, tk.END)
+    input_prior_angle.insert(0, config_in['satellite']['initial_conditions']['initial_angle_guess'])
+
 
 def is_float(value):
     """Check if a value can be converted to a float."""
@@ -201,19 +210,20 @@ if __name__ == "__main__":
     root = tk.Tk()  # Create main application window
 
     # List of input labels and default values
-    inputs = [("use default config file?", 0),
-              ("number of radars:", config_in['radar']['counts']),
-              ("satellite mass:", config_in['satellite']['mass']),
-              ("satellite cross section:", config_in['satellite']['area']),
+    
+    inputs = [("Default simulation (0 for input below):", 0),
+              ("Initial satellite distance (m):", config_in['satellite']['initial_conditions']['distance']),
+              ("Initial satellite orbital inclination (deg):", config_in['satellite']['initial_conditions']['polar_angle']),
+              ("Number of radars:", config_in['radar']['counts']),
+              ("Radar noise for distance (m):", config_in['radar']['noise']['rho']),
+              ("Radar noise for angle (deg):", config_in['radar']['noise']['theta']),
+              ("Kalman prior for distance (m):", config_in['satellite']['initial_conditions']['initial_r_guess']),
+              ("Kalman prior for angle (deg):", config_in['satellite']['initial_conditions']['initial_angle_guess']),
+              ("satellite mass (kg):", config_in['satellite']['mass']),
+              ("satellite cross section (m2):", config_in['satellite']['area']),
               ("satellite drag coefficient:", config_in['satellite']['drag_coefficient']),
-              ("initial satellite distance:", config_in['satellite']['initial_conditions']['distance']),
-              ("initial satellite polar angle:", config_in['satellite']['initial_conditions']['polar_angle']),
-              ("time interval(s):", config_in['sim_config']['dt']['main_dt']),
-              ("kalman frequency:", config_in['sim_config']['dt']['kalman_freq']),
-              ("radar frequency:", config_in['sim_config']['dt']['radar_freq']),
-              ("radar noise for distance:", config_in['radar']['noise']['rho']),
-              ("radar noise for polar:", config_in['radar']['noise']['theta']),
-              ("radar noise for azimuth:", config_in['radar']['noise']['phi'])
+              ("Timestep size (sec)", config_in['sim_config']['dt']['main_dt']),
+              ("Radar update frequency (*dt)", config_in['sim_config']['dt']['radar_freq']),
               ]
 
     # Create label and entry widgets for each input
@@ -223,10 +233,11 @@ if __name__ == "__main__":
         entries.append(entry)
 
     # Unpack entries into individual variables for easier access
-    (input_file, input_radar, input_satellite_mass, input_satellite_area, input_satellite_drag,
-     input_satellite_distance, input_satellite_angle, input_time_interval,
-     input_kalman_frequency, input_radar_frequency, input_radar_noise_distance,
-     input_radar_noise_polar, input_radar_noise_azimuth) = entries
+    (input_file, input_satellite_distance, input_satellite_angle, input_radar, 
+     input_radar_noise_distance, input_radar_noise_polar, input_prior_distance, 
+     input_prior_angle, input_satellite_mass, input_satellite_area, input_satellite_drag, 
+     input_time_interval, input_radar_frequency) = entries
+
 
     # Create and grid the Start button
     button = tk.Button(root, text="Start", command=on_button_click)
