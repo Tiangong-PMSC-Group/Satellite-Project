@@ -45,7 +45,6 @@ class Radar():
     def is_time(self, current_time)-> SatelliteState:
         ''' Check the frequency. See if the radar can get the exact position of the satellite at this time.'''
         if current_time - self.last_ping > self.frequency:
-            self.last_ping = current_time
             return True
         else:
             return False
