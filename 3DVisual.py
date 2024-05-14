@@ -193,7 +193,7 @@ def polar_plot(states1, states2):
 
     # Plot the traces
     ax2.plot(rad, R, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
-    ax2.plot(rad3, R3, c='g', linestyle="dashed", label='Predicted Trajectory', linewidth=2)
+    ax2.plot(rad3, R3, c='r', linestyle="dashed", label='Predicted Trajectory', linewidth=2)
 
     ax2.set_title('Polar Plot Over Time')
     ax2.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
