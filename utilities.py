@@ -31,10 +31,10 @@ def c_to_p(state):
 
         #calculates the polar angle measured from the x-axis
         if x == y == 0:
-            assert True, "Point lies on the the z-axis, Azimuthal angle cannot be defined"
+            assert True, "Point lies on the the z-axis, Azimuthal angle cannot be defined, try a new inclination!"
     
         if x == y == z == 0:
-            assert True, "Point is on origin, Polar and Azimuthal angle cannot be defined"
+            assert True, "Point is on the origin, therefore Polar and Azimuthal angles cannot be defined, how did you manage that?"
         
         if z > 0:    
             polar = np.arctan(np.sqrt(x**2 + y**2)/z)
@@ -89,9 +89,9 @@ def p_to_c(state):
         polar = state[1]
         azimuthal = state[2]
 
-        assert math.isinf(rho) == False, "TypeError: function receiving infinity instead of a number for Radius"
-        assert math.isinf(polar) == False, "TypeError: function receiving infinity instead of a number for Polar Angle"
-        assert math.isinf(azimuthal) == False, "TypeError: function receiving infinity instead of a number for Azimuthal Angle"
+        assert math.isinf(rho) == False, "Unstable Orbit: a function is receiving an infinte radius of orbit, try some different values!"
+        assert math.isinf(polar) == False, "Unstable Orbit: a function is receiving an undefined polar angle, try some different values!"
+        assert math.isinf(azimuthal) == False, "Unstable Orbit: a function is receiving an undefined azimuthal angle, try some different values!"
 
         x = rho * np.sin(polar) * np.cos(azimuthal)
         y = rho * np.sin(polar) * np.sin(azimuthal)
@@ -103,8 +103,8 @@ def p_to_c(state):
         rho = state[0]
         theta = state[1]
 
-        assert math.isinf(rho) == False, "TypeError: function receiving infinity instead of a number for Radius"
-        assert math.isinf(theta) == False, "TypeError: function receiving infinity instead of a number for Polar Angle"
+        assert math.isinf(rho) == False, "Unstable Orbit: a function is receiving an infinte radius of orbit, try some different values!"
+        assert math.isinf(theta) == False, "Unstable Orbit: a function is receiving an undefined polar angle, try some different values!"
 
         x = rho * np.cos(theta)
         y = rho * np.sin(theta)
@@ -123,10 +123,10 @@ def earth_to_orbit(states):
     x, z, y = p_to_c(states)
     
     if x == y == 0:
-        assert True, "Point lies on the the z-axis, Azimuthal angle cannot be defined"
+        assert True, "Point lies on the the z-axis, azimuthal angle cannot be defined, try again!"
     
     if x == y == z == 0:
-        assert True, "Point is on origin, Polar and Azimuthal angle cannot be defined"
+        assert True, "Point is on the origin, therefore the polar and azimuthal angles cannot be defined, how did you manage that?"
     
     rho = np.sqrt(x**2 + y**2 + z**2)
     
