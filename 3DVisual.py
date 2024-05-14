@@ -52,7 +52,7 @@ class VisualisationPlotly:
 
         texture = np.asarray(Image.open('earth.jpg').resize((200, 200))).T
         x, y, z = self.sphere(texture)
-        return go.Surface(x=x, y=y, z=z, surfacecolor=texture, colorscale=colorscale, opacity=0.65,showscale=False)
+        return go.Surface(x=x, y=y, z=z, surfacecolor=texture, colorscale=colorscale, opacity=0.85,showscale=False)
 
     def create_earth_surface1(self):
         u = np.linspace(0, 2 * np.pi, 100)
@@ -104,17 +104,17 @@ class VisualisationPlotly:
 
         earth_surface = self.create_earth_surface()
         fig.add_trace(earth_surface)
-        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='green', width=4), opacity=0.7, name='Trace 1'))
-        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='red', width=4), opacity=0.7, name='Trace 2'))
+        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='yellow', width=6), opacity=0.8, name='Trace 1'))
+        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='red', width=6), opacity=0.8, name='Trace 2'))
         fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='markers', name='Real crash Pos'))
         fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='markers', name='Predicted crash Pos'))
         radar_x, radar_y, radar_z = zip(*self.radar_positions)
         fig.add_trace(go.Scatter3d(
             x=radar_x, y=radar_y, z=radar_z, mode='markers',
-            marker=dict(color='yellow', size=2, symbol='diamond', opacity=0.3),
+            marker=dict(color='pink', size=2, symbol='diamond', opacity=0.8),
             name='Radar Positions'
         ))
-        fig.frames = self.create_trajectory_frames(self.states1, self.states2, 'green', 'red')
+        fig.frames = self.create_trajectory_frames(self.states1, self.states2, 'yellow', 'red')
 
         sliders = [{
             'pad': {"t": 30},
@@ -227,8 +227,9 @@ def main(use_real_data=True):
         # plot = ax.scatter(real_x, real_y, real_z)
         # plt.show()
         states1 = list(zip(real_x, real_y, real_z))
-        '''TODO real Predict Data'''
         states2 = list(zip(pred_x, pred_y, pred_z))
+        radar_system = main.BACC
+
     else:
         orbit_radius = Earth().re + 1000000
         theta = np.linspace(0, 2 * np.pi, 100)
@@ -236,9 +237,9 @@ def main(use_real_data=True):
 
         orbit_radius = Earth().re + 1500000
         states2 = [(orbit_radius * np.cos(t), orbit_radius * np.sin(t), 0) for t in theta]
+        radar_system = RadarSystem(Earth(), 200)
 
-    '''TODO Need Real Radar system'''
-    visual_plotly = VisualisationPlotly(states1, states2,RadarSystem(Earth(),200).get_radar_positions())
+    visual_plotly = VisualisationPlotly(states1, states2,radar_system.get_radar_positions())
     visual_plotly.visualise()
 
     polar_real_state = []
