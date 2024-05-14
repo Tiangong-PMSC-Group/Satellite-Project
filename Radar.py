@@ -1,21 +1,25 @@
 import numpy as np
-import math
 import utilities as ut
 from SatelliteState import SatelliteState
 from config import config
 
 
 class Radar():
+    # Radar detection frequency from the configuration
     frequency = config['sim_config']['dt']['radar_freq']
 
     def __init__(self, position):
+        # Initialize the radar with its position
         self.position = position
+        # Initialize the last ping time to zero
         self.last_ping = 0
+        # Variable to store the detected satellite position
         self.sate_pos_detected = None
 
-    # If the radar can detect the satellite, update sat position and last ping.
+
     def line_of_sight(self, Sat_Pos, Earth_Eqn):
         '''
+        Check whether radar can detect the satellite
         Sat - Satellite Position
         Earth - Earth Ellipse Equation
         '''
@@ -29,32 +33,24 @@ class Radar():
         v0 = v0 / mag
 
         #Checks if the line from dish to satellite goes into Earth.
-        for t in range(10)[1:]:  #decrease if working for less comp time
+        for t in range(10)[1:]:
             LOS_p = p + v0 * t
             if Earth_Eqn(LOS_p[0], LOS_p[1], LOS_p[2]) < 0:
                 return False
 
         # If no LOS break, return True
         return True
-    
 
-    def detect_satellite_pos(self, Sat_Pos, current_time)-> SatelliteState:
-        if current_time - self.last_ping > self.frequency:
-            sate_pos_detected = self.add_noise(Sat_Pos)
-            self.last_ping = current_time
-            return SatelliteState(sate_pos_detected)
-            # print(sate_pos_detected)
-        else:
-            return None
         
     def is_time(self, current_time)-> SatelliteState:
+        ''' Check the frequency. See if the radar can get the exact position of the satellite at this time.'''
         if current_time - self.last_ping > self.frequency:
-            self.last_ping = current_time
             return True
         else:
             return False
         
     def detect_satellite_pos_short(self, Sat_Pos, current_time)-> SatelliteState:
+        '''Get the position of the satellite and add Gaussian noise'''
         sate_pos_detected = self.add_noise(Sat_Pos)
         self.last_ping = current_time
         return SatelliteState(sate_pos_detected)
