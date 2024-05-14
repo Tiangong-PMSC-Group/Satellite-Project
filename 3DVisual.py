@@ -50,7 +50,7 @@ class VisualisationPlotly:
 
         texture = np.asarray(Image.open('earth.jpg').resize((200, 200))).T
         x, y, z = self.sphere(texture)
-        return go.Surface(x=x, y=y, z=z, surfacecolor=texture, colorscale=colorscale, opacity=0.85,showscale=False)
+        return go.Surface(x=x, y=y, z=z, surfacecolor=texture, colorscale=colorscale, opacity=0.15,showscale=False)
 
     def create_earth_surface1(self):
         u = np.linspace(0, 2 * np.pi, 100)

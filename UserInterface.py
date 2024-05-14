@@ -1,7 +1,7 @@
 import subprocess
 import tkinter as tk
 from tkinter import messagebox
-from config import config, save_config
+from config import config, config_in, save_config
 
 def on_button_click():
     """Handle button click event, validate input, update config, and run scripts."""
@@ -125,18 +125,18 @@ if __name__ == "__main__":
 
     # List of input labels and default values
     inputs = [
-        ("number of radars:", config['radar']['counts']),
-        ("satellite mass:", config['satellite']['mass']),
-        ("satellite cross section:", config['satellite']['area']),
-        ("satellite drag coefficient:", config['satellite']['drag_coefficient']),
-        ("initial satellite distance:", config['satellite']['initial_conditions']['distance']),
-        ("initial satellite polar angle:", config['satellite']['initial_conditions']['polar_angle']),
-        ("time interval(s):", config['sim_config']['dt']['main_dt']),
-        ("kalman frequency:", config['sim_config']['dt']['kalman_freq']),
-        ("radar frequency:", config['sim_config']['dt']['radar_freq']),
-        ("radar noise for distance:", config['radar']['noise']['rho']),
-        ("radar noise for polar:", config['radar']['noise']['theta']),
-        ("radar noise for azimuth:", config['radar']['noise']['phi'])
+        ("number of radars:", config_in['radar']['counts']),
+        ("satellite mass:", config_in['satellite']['mass']),
+        ("satellite cross section:", config_in['satellite']['area']),
+        ("satellite drag coefficient:", config_in['satellite']['drag_coefficient']),
+        ("initial satellite distance:", config_in['satellite']['initial_conditions']['distance']),
+        ("initial satellite polar angle:", config_in['satellite']['initial_conditions']['polar_angle']),
+        ("time interval(s):", config_in['sim_config']['dt']['main_dt']),
+        ("kalman frequency:", config_in['sim_config']['dt']['kalman_freq']),
+        ("radar frequency:", config_in['sim_config']['dt']['radar_freq']),
+        ("radar noise for distance:", config_in['radar']['noise']['rho']),
+        ("radar noise for polar:", config_in['radar']['noise']['theta']),
+        ("radar noise for azimuth:", config_in['radar']['noise']['phi'])
     ]
 
     # Create label and entry widgets for each input
