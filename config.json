@@ -63,7 +63,7 @@
     "comment": "drag_coefficient hasn't been decided",
     "initial_conditions": {
       "distance": 6778136.0,
-      "polar_angle": 0.15,
+      "polar_angle": 1.2,
       "azimuthal_angle": 0,
       "comment": "Satellites position as described in earth's spherical coordinate system, azimuthal angle set at const 0, polar angle describing latitude from north pole (0, pi]"
     }
