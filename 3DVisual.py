@@ -169,7 +169,7 @@ def polar_plot(states1, states2):
     # Plotting the distance over time
     ax1 = plt.subplot(gs[0])
     ax1.plot(range(len(states1)), rho_from_states1, label='Real Distance', marker='o')
-    ax1.plot(range(len(states1)), rho_from_states2, label='Predicted Distance', linestyle='--')
+    ax1.plot(range(len(states2)), rho_from_states2, label='Predicted Distance', linestyle='--')
     ax1.set_title('Distance Between Satellite And The Origin Of The Earth Over Time')
     ax1.set_xlabel('Time Steps')
     ax1.set_ylabel('Distance (m)')
@@ -217,13 +217,18 @@ def main(use_real_data=True):
         real_states_earth_cord = np.array([utilities.spherical_to_spherical(np.array([R, rad, trd]).T[i]) for i in range(len(R))])
         real_x, real_y, real_z = utilities.earth_to_xyz_bulk(real_states_earth_cord).T
 
+        trd = [np.pi / 2 - config['satellite']['initial_conditions']['polar_angle']] * len(R2)
+        predict_states_earth_cord = np.array(
+            [utilities.spherical_to_spherical(np.array([R2, rad2, trd]).T[i]) for i in range(len(R2))])
+        pred_x, pred_y, pred_z = utilities.earth_to_xyz_bulk(predict_states_earth_cord).T
+
         # fig = plt.figure()
         # ax = fig.add_subplot(1, 1, 1, projection='3d')
         # plot = ax.scatter(real_x, real_y, real_z)
         # plt.show()
         states1 = list(zip(real_x, real_y, real_z))
         '''TODO real Predict Data'''
-        states2 = list(zip(real_x, real_y, real_z))
+        states2 = list(zip(pred_x, pred_y, pred_z))
     else:
         orbit_radius = Earth().re + 1000000
         theta = np.linspace(0, 2 * np.pi, 100)

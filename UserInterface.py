@@ -78,7 +78,7 @@ def on_button_click():
         button.config(text="Simulation running...", fg='red')
         root.update()
 
-        subprocess.run(["python", "run_main.py"], check=True)
+        # subprocess.run(["python", "run_main.py"], check=True)
         subprocess.run(["python", "3DVisual.py"], check=True)
 
         # Update button state after scripts run
@@ -142,4 +142,4 @@ for i, (label_text, default_value) in enumerate(inputs):
 button = tk.Button(root, text="Start", command=on_button_click)
 button.grid(row=len(inputs), column=0, columnspan=2, pady=5)
 
-root.mainloop()  
+root.mainloop()
