@@ -4,8 +4,6 @@ import matplotlib.gridspec as gridspec
 import numpy as np
 import plotly.graph_objects as go
 from PIL import Image
-
-from RadarSystem import RadarSystem
 from config import config
 from Earth import Earth
 from main import Main
@@ -182,18 +180,13 @@ def polar_plot(states1, states2):
     R = np.array(rho_from_states1)
     rad2 = np.array(polar_from_states2)
     R2 = np.array(rho_from_states2)
-    rad3 = rad2
-    R3 = R2
 
-    colors = plt.cm.rainbow(np.linspace(0, 1, len(R2)))
-
-    # Set the color and linewidth for the polar plot grid and ticks
     ax2.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
     ax2.tick_params(axis='both', which='both', colors='gray', width=0.5)
 
     # Plot the traces
     ax2.plot(rad, R, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
-    ax2.plot(rad3, R3, c='r', linestyle="dashed", label='Predicted Trajectory', linewidth=2)
+    ax2.plot(rad2, R2, c='r', linestyle="dashed", label='Predicted Trajectory', linewidth=2)
 
     ax2.set_title('Polar Plot Over Time')
     ax2.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
@@ -202,42 +195,27 @@ def polar_plot(states1, states2):
     plt.show()
 
 
-def main(use_real_data=True):
-    if use_real_data:
-        main = Main(200)
-        main.simulate()
-        main.predict()
-        R, rad, R2, rad2, R3, rad3 = main.output()
-        # fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
-        # ax.plot(rad, R - 6300000, c='b')
-        #
-        # plt.show()
+def main():
+    main = Main(200)
+    main.simulate()
+    main.predict()
+    R, rad, R2, rad2, R3, rad3 = main.output()
 
-        trd = [np.pi / 2 - config['satellite']['initial_conditions']['polar_angle']] * len(R)
-        real_states_earth_cord = np.array([utilities.spherical_to_spherical(np.array([R, rad, trd]).T[i]) for i in range(len(R))])
-        real_x, real_y, real_z = utilities.earth_to_xyz_bulk(real_states_earth_cord).T
+    trd = [np.pi / 2 - config['satellite']['initial_conditions']['polar_angle']] * len(R)
+    real_states_earth_cord = np.array(
+        [utilities.spherical_to_spherical(np.array([R, rad, trd]).T[i]) for i in range(len(R))])
+    real_x, real_y, real_z = utilities.earth_to_xyz_bulk(real_states_earth_cord).T
 
-        trd = [np.pi / 2 - config['satellite']['initial_conditions']['polar_angle']] * len(R2)
-        predict_states_earth_cord = np.array(
-            [utilities.spherical_to_spherical(np.array([R2, rad2, trd]).T[i]) for i in range(len(R2))])
-        pred_x, pred_y, pred_z = utilities.earth_to_xyz_bulk(predict_states_earth_cord).T
+    trd = [np.pi / 2 - config['satellite']['initial_conditions']['polar_angle']] * len(R2)
+    predict_states_earth_cord = np.array(
+        [utilities.spherical_to_spherical(np.array([R2, rad2, trd]).T[i]) for i in range(len(R2))])
+    pred_x, pred_y, pred_z = utilities.earth_to_xyz_bulk(predict_states_earth_cord).T
 
-        # fig = plt.figure()
-        # ax = fig.add_subplot(1, 1, 1, projection='3d')
-        # plot = ax.scatter(real_x, real_y, real_z)
-        # plt.show()
-        states1 = list(zip(real_x, real_y, real_z))
-        states2 = list(zip(pred_x, pred_y, pred_z))
-        radar_system = main.BACC
+    states1 = list(zip(real_x, real_y, real_z))
+    states2 = list(zip(pred_x, pred_y, pred_z))
+    radar_system = main.BACC
 
-    else:
-        orbit_radius = Earth().re + 1000000
-        theta = np.linspace(0, 2 * np.pi, 100)
-        states1 = [(orbit_radius * np.cos(t), orbit_radius * np.sin(t), 0) for t in theta]
 
-        orbit_radius = Earth().re + 1500000
-        states2 = [(orbit_radius * np.cos(t), orbit_radius * np.sin(t), 0) for t in theta]
-        radar_system = RadarSystem(Earth(), 200)
 
     visual_plotly = VisualisationPlotly(states1, states2,radar_system.get_radar_positions())
     visual_plotly.visualise()
@@ -253,4 +231,4 @@ def main(use_real_data=True):
     polar_plot(polar_real_state, polar_predict_state)
 
 
-main(True)
+main()
