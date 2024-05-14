@@ -108,38 +108,51 @@ def create_label_entry(root, text, row, default_value):
     entry.grid(row=row, column=1, padx=(0, 10), pady=(0, 0))
     return entry
 
-root = tk.Tk()  # Create main application window
 
-# List of input labels and default values
-inputs = [
-    ("number of radars:", config['radar']['counts']),
-    ("satellite mass:", config['satellite']['mass']),
-    ("satellite cross section:", config['satellite']['area']),
-    ("satellite drag coefficient:", config['satellite']['drag_coefficient']),
-    ("initial satellite distance:", config['satellite']['initial_conditions']['distance']),
-    ("initial satellite polar angle:", config['satellite']['initial_conditions']['polar_angle']),
-    ("time interval(s):", config['sim_config']['dt']['main_dt']),
-    ("kalman frequency:", config['sim_config']['dt']['kalman_freq']),
-    ("radar frequency:", config['sim_config']['dt']['radar_freq']),
-    ("radar noise for distance:", config['radar']['noise']['rho']),
-    ("radar noise for polar:", config['radar']['noise']['theta']),
-    ("radar noise for azimuth:", config['radar']['noise']['phi'])
-]
+import subprocess
+import sys
 
-# Create label and entry widgets for each input
-entries = []
-for i, (label_text, default_value) in enumerate(inputs):
-    entry = create_label_entry(root, label_text, i, default_value)
-    entries.append(entry)
+def install_requirements():
+    try:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
+    except subprocess.CalledProcessError as e:
+        print(f"Error occurred while installing requirements: {e}")
 
-# Unpack entries into individual variables for easier access
-(input_radar, input_satellite_mass, input_satellite_area, input_satellite_drag,
- input_satellite_distance, input_satellite_angle, input_time_interval,
- input_kalman_frequency, input_radar_frequency, input_radar_noise_distance,
- input_radar_noise_polar, input_radar_noise_azimuth) = entries
+if __name__ == "__main__":
+    install_requirements()
+        
+    root = tk.Tk()  # Create main application window
 
-# Create and grid the Start button
-button = tk.Button(root, text="Start", command=on_button_click)
-button.grid(row=len(inputs), column=0, columnspan=2, pady=5)
+    # List of input labels and default values
+    inputs = [
+        ("number of radars:", config['radar']['counts']),
+        ("satellite mass:", config['satellite']['mass']),
+        ("satellite cross section:", config['satellite']['area']),
+        ("satellite drag coefficient:", config['satellite']['drag_coefficient']),
+        ("initial satellite distance:", config['satellite']['initial_conditions']['distance']),
+        ("initial satellite polar angle:", config['satellite']['initial_conditions']['polar_angle']),
+        ("time interval(s):", config['sim_config']['dt']['main_dt']),
+        ("kalman frequency:", config['sim_config']['dt']['kalman_freq']),
+        ("radar frequency:", config['sim_config']['dt']['radar_freq']),
+        ("radar noise for distance:", config['radar']['noise']['rho']),
+        ("radar noise for polar:", config['radar']['noise']['theta']),
+        ("radar noise for azimuth:", config['radar']['noise']['phi'])
+    ]
 
-root.mainloop()
+    # Create label and entry widgets for each input
+    entries = []
+    for i, (label_text, default_value) in enumerate(inputs):
+        entry = create_label_entry(root, label_text, i, default_value)
+        entries.append(entry)
+
+    # Unpack entries into individual variables for easier access
+    (input_radar, input_satellite_mass, input_satellite_area, input_satellite_drag,
+    input_satellite_distance, input_satellite_angle, input_time_interval,
+    input_kalman_frequency, input_radar_frequency, input_radar_noise_distance,
+    input_radar_noise_polar, input_radar_noise_azimuth) = entries
+
+    # Create and grid the Start button
+    button = tk.Button(root, text="Start", command=on_button_click)
+    button.grid(row=len(inputs), column=0, columnspan=2, pady=5)
+
+    root.mainloop()

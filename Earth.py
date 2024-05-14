@@ -6,7 +6,7 @@ import utilities as ut
 from config import config
 
 
-@singleton
+#@singleton
 class Earth():
     def __init__(self):
         
