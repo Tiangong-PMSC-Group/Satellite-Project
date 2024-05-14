@@ -54,7 +54,7 @@ class VisualisationPlotly:
 
         texture = np.asarray(Image.open('earth.jpg').resize((200, 200))).T
         x, y, z = self.sphere(texture)
-        return go.Surface(x=x, y=y, z=z, surfacecolor=texture, colorscale=colorscale, opacity=0.15,showscale=False)
+        return go.Surface(x=x, y=y, z=z, surfacecolor=texture, colorscale=colorscale, opacity=0.85,showscale=False)
 
     # Find the position where satellite hit the earth
     def highlight_last_points(self, states, color,name):

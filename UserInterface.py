@@ -1,27 +1,51 @@
 import subprocess
 import tkinter as tk
 from tkinter import messagebox
-from config import config, config_in, save_config
+from config import config, config_in, save_config, load_config
 
 def on_button_click():
     """Handle button click event, validate input, update config, and run scripts."""
     try:
+
+        file_number = input_file.get()
+        print(file_number)
+        if file_number == str(0):
         # Collect input values from entries
-        radar_counts = input_radar.get()
-        satellite_mass = input_satellite_mass.get()
-        satellite_area = input_satellite_area.get()
-        satellite_drag = input_satellite_drag.get()
-        satellite_distance = input_satellite_distance.get()
-        satellite_angle = input_satellite_angle.get()
-        time_interval = input_time_interval.get()
-        kalman_frequency = input_kalman_frequency.get()
-        radar_frequency = input_radar_frequency.get()
-        radar_noise_distance = input_radar_noise_distance.get()
-        radar_noise_polar = input_radar_noise_polar.get()
-        radar_noise_azimuth = input_radar_noise_azimuth.get()
+            radar_counts = input_radar.get()
+            satellite_mass = input_satellite_mass.get()
+            satellite_area = input_satellite_area.get()
+            satellite_drag = input_satellite_drag.get()
+            satellite_distance = input_satellite_distance.get()
+            satellite_angle = input_satellite_angle.get()
+            time_interval = input_time_interval.get()
+            kalman_frequency = input_kalman_frequency.get()
+            radar_frequency = input_radar_frequency.get()
+            radar_noise_distance = input_radar_noise_distance.get()
+            radar_noise_polar = input_radar_noise_polar.get()
+            radar_noise_azimuth = input_radar_noise_azimuth.get()
+
+        else:
+            print('Enter')
+            path = 'config_'+str(file_number)+'.json'
+            config_i = load_config(path)
+
+            radar_counts = config_i['radar']['counts']
+            satellite_mass = config_i['satellite']['mass']
+            satellite_area = config_i['satellite']['area']
+            satellite_drag = config_i['satellite']['drag_coefficient']
+            satellite_distance = config_i['satellite']['initial_conditions']['distance']
+            satellite_angle = config_i['satellite']['initial_conditions']['polar_angle']
+            time_interval = config_i['sim_config']['dt']['main_dt']
+            kalman_frequency = config_i['sim_config']['dt']['kalman_freq']
+            radar_frequency = config_i['sim_config']['dt']['radar_freq']
+            radar_noise_distance = config_i['radar']['noise']['rho']
+            radar_noise_polar = config_i['radar']['noise']['theta']
+            radar_noise_azimuth = config_i['radar']['noise']['phi']
+
+
 
         # Check inputs
-        if not radar_counts.isdigit():
+        if not isinstance(radar_counts, int):
             messagebox.showerror("Input Error", "Radar counts must be a whole number.")
             return
         if not is_float(satellite_mass):
@@ -42,10 +66,10 @@ def on_button_click():
         if not is_float(time_interval):
             messagebox.showerror("Input Error", "Time interval must be a numeric value.")
             return
-        if not kalman_frequency.isdigit():
+        if not isinstance(kalman_frequency, int):
             messagebox.showerror("Input Error", "Kalman frequency must be a whole number.")
             return
-        if not radar_frequency.isdigit():
+        if not isinstance(radar_frequency, int):
             messagebox.showerror("Input Error", "Radar frequency must be a whole number.")
             return
         if not is_float(radar_noise_distance):
@@ -124,7 +148,7 @@ if __name__ == "__main__":
     root = tk.Tk()  # Create main application window
 
     # List of input labels and default values
-    inputs = [
+    inputs = [("use deafult config file?", 0),
         ("number of radars:", config_in['radar']['counts']),
         ("satellite mass:", config_in['satellite']['mass']),
         ("satellite cross section:", config_in['satellite']['area']),
@@ -139,6 +163,9 @@ if __name__ == "__main__":
         ("radar noise for azimuth:", config_in['radar']['noise']['phi'])
     ]
 
+
+
+
     # Create label and entry widgets for each input
     entries = []
     for i, (label_text, default_value) in enumerate(inputs):
@@ -146,7 +173,7 @@ if __name__ == "__main__":
         entries.append(entry)
 
     # Unpack entries into individual variables for easier access
-    (input_radar, input_satellite_mass, input_satellite_area, input_satellite_drag,
+    (input_file, input_radar, input_satellite_mass, input_satellite_area, input_satellite_drag,
     input_satellite_distance, input_satellite_angle, input_time_interval,
     input_kalman_frequency, input_radar_frequency, input_radar_noise_distance,
     input_radar_noise_polar, input_radar_noise_azimuth) = entries
