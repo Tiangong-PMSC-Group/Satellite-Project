@@ -11,3 +11,4 @@ Interface/__pycache__/
 *.py[cod]
 *.pyc[cod]
 *.pyo[cod]
+/Interface/__pycache__
