@@ -25,19 +25,18 @@ def on_button_click():
             radar_noise_azimuth = input_radar_noise_azimuth.get()
 
         else:
-            print('Enter')
             path = 'config_'+str(file_number)+'.json'
             config_i = load_config(path)
 
-            radar_counts = config_i['radar']['counts']
+            radar_counts = float(config_i['radar']['counts'])
             satellite_mass = config_i['satellite']['mass']
             satellite_area = config_i['satellite']['area']
             satellite_drag = config_i['satellite']['drag_coefficient']
             satellite_distance = config_i['satellite']['initial_conditions']['distance']
             satellite_angle = config_i['satellite']['initial_conditions']['polar_angle']
             time_interval = config_i['sim_config']['dt']['main_dt']
-            kalman_frequency = config_i['sim_config']['dt']['kalman_freq']
-            radar_frequency = config_i['sim_config']['dt']['radar_freq']
+            kalman_frequency = float(config_i['sim_config']['dt']['kalman_freq'])
+            radar_frequency = float(config_i['sim_config']['dt']['radar_freq'])
             radar_noise_distance = config_i['radar']['noise']['rho']
             radar_noise_polar = config_i['radar']['noise']['theta']
             radar_noise_azimuth = config_i['radar']['noise']['phi']
@@ -45,7 +44,7 @@ def on_button_click():
 
 
         # Check inputs
-        if not isinstance(radar_counts, int):
+        if not radar_counts.isdigit():
             messagebox.showerror("Input Error", "Radar counts must be a whole number.")
             return
         if not is_float(satellite_mass):
@@ -66,10 +65,10 @@ def on_button_click():
         if not is_float(time_interval):
             messagebox.showerror("Input Error", "Time interval must be a numeric value.")
             return
-        if not isinstance(kalman_frequency, int):
+        if not kalman_frequency.isdigit():
             messagebox.showerror("Input Error", "Kalman frequency must be a whole number.")
             return
-        if not isinstance(radar_frequency, int):
+        if not radar_frequency.isdigit():
             messagebox.showerror("Input Error", "Radar frequency must be a whole number.")
             return
         if not is_float(radar_noise_distance):
