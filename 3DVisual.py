@@ -290,12 +290,11 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
 
     # Plot the traces
     ax3.plot(rad, true_heights, c='b', linestyle="dashed", label='Real Trajectory', linewidth=2)
-    ax3.scatter(rad3, radar_heights, c='g', label='Radar Data', s = 8)
+    ax3.scatter(rad3, radar_heights, c='g', label='Radar Data', s = 8, zorder = 10)
 
     ax3.set_title('Angle vs Distance')
     ax3.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
 
-    plt.tight_layout()
     plt.show()
 
 
@@ -307,7 +306,7 @@ def main():
     main.simulate()
     main.predict()
     # Get distance and polar datas from real simulator, predictor and radar
-    R, rad, R2, rad2, R3, rad3 = main.output()
+    R, rad, R2, rad2, R3, rad3, var_r, var_phi = main.output()
 
     # Transform the data to the appropriate coordinate
     trd = [np.pi / 2 - config['satellite']['initial_conditions']['polar_angle']] * len(R)
