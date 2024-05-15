@@ -73,6 +73,7 @@ class Main():
         m = deepcopy(self.mean_0)
         m = np.array([m[0], m[3]])
         predicted_states_satellite_cord = [m]
+        predicted_cov_matrix = []
         radar_states_satellite_cord = [m]
 
 
@@ -103,12 +104,15 @@ class Main():
             new_state_satellite_cord = [forecast[0][0][0], forecast[0][3][0]]
 
             predicted_states_satellite_cord += new_state_satellite_cord,
+            predicted_cov_matrix += self.tianhe.forecast()[1]
+
 
 
         self.R_predi, self.rad_predi = np.array(predicted_states_satellite_cord[:]).T
         self.R_radar, self.rad_radar = np.array(radar_states_satellite_cord[1:]).T
+        self.predicted_cov_matrix = np.array(predicted_cov_matrix)
 
 
 
     def output(self):
-        return [self.R_simulation, self.rad_simulation, self.R_predi, self.rad_predi, self.R_radar, self.rad_radar]
+        return [self.R_simulation, self.rad_simulation, self.R_predi, self.rad_predi, self.R_radar, self.rad_radar, self.predicted_cov_matrix]

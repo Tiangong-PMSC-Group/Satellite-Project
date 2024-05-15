@@ -1,12 +1,11 @@
 import numpy as np
 import math 
 import matplotlib.pyplot as plt
-from decorators import singleton
 import utilities as ut
 from config import config
 
 
-#@singleton
+
 class Earth():
     def __init__(self):
         """Pulls Earth's constants from the config file.
