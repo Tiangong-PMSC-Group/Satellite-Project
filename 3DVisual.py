@@ -290,7 +290,7 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
 
     # Plot the traces
     ax3.plot(rad, true_heights, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
-    ax3.scatter(rad3, radar_heights, c='g', linestyle="dashed", label='Radar Data', linewidth=2)
+    ax3.scatter(rad3, radar_heights, c='g', linestyle="dashed", label='Radar Data', s = 5)
 
     ax3.set_title('Angle vs Distance')
     ax3.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
