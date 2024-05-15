@@ -262,8 +262,8 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
 
     # Plotting the distance over time
     ax1 = plt.subplot(gs[0,:])
-    ax1.plot(range(len(R)), R, label='Real Distance', marker='o')
-    ax1.plot(range(len(R2)), R2, label='Predicted Distance', linestyle='--')
+    ax1.plot(range(len(R)), R, label='Real Radius of Orbit', marker='o')
+    ax1.plot(range(len(R2)), R2, label='Predicted Radius of Orbit', linestyle='--')
     ax1.set_title('Distance Between Satellite And The Origin Of The Earth Over Time')
     ax1.set_xlabel('Time Steps')
     ax1.set_ylabel('Distance (m)')
@@ -289,8 +289,8 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     ax3.tick_params(axis='both', which='both', colors='gray', width=0.5)
 
     # Plot the traces
-    ax3.plot(rad, true_heights, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
-    ax3.scatter(rad3, radar_heights, c='g', linestyle="dashed", label='Radar Data', s = 5)
+    ax3.plot(rad, true_heights, c='b', linestyle="dashed", label='Real Trajectory', linewidth=2)
+    ax3.scatter(rad3, radar_heights, c='g', label='Radar Data', s = 8)
 
     ax3.set_title('Angle vs Distance')
     ax3.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
