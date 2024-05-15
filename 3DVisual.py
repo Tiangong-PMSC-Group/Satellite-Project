@@ -235,7 +235,7 @@ class VisualisationPlotly:
 
 
 # Plot static plots of the trajectories
-def polar_plot(true_states_earth_coord, predicted_states_earth_coord, R, rad, R2, rad2):
+def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_states_earth_cord, R, rad, R2, rad2, rad3):
     """Generates a plot in polar coordinates.
 
     Args:
@@ -246,6 +246,7 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, R, rad, R2
 
     pred_heights = np.zeros(len(predicted_states_earth_coord))
     true_heights = np.zeros(len(true_states_earth_coord))
+    radar_heights = np.zeros(len(radar_states_earth_cord))
 
     for i in range(len(pred_heights)):
         pred_heights[i] = earth.distance_to_surface(predicted_states_earth_coord[i])['distance']
@@ -253,11 +254,23 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, R, rad, R2
     for i in range(len(true_heights)):
         true_heights[i] = earth.distance_to_surface(true_states_earth_coord[i])['distance']
 
-    plt.figure(figsize=(10, 8))
-    gs = gridspec.GridSpec(2, 1, height_ratios=[1, 1])
+    for i in range(len(radar_heights)):
+        radar_heights[i] = earth.distance_to_surface(radar_states_earth_cord[i])['distance']
+
+    #plt.figure(figsize=(10, 8))
+    #gs = gridspec.GridSpec(2, 1, height_ratios=[1, 1])
+
+    fig, axs = plt.subplot_mosaic('''
+    AA
+    BC
+    ''', figsize=(10, 10))
+
+    ax1 = axs['A']
+    ax2 = axs['B']
+    ax3 = axs['C']
 
     # Plotting the distance over time
-    ax1 = plt.subplot(gs[0])
+    #ax1 = plt.subplot(gs[0])
     ax1.plot(range(len(R)), R, label='Real Distance', marker='o')
     ax1.plot(range(len(R2)), R2, label='Predicted Distance', linestyle='--')
     ax1.set_title('Distance Between Satellite And The Origin Of The Earth Over Time')
@@ -267,8 +280,8 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, R, rad, R2
     ax1.grid(True)
 
     # Plotting the polar and distance
-    ax2 = plt.subplot(gs[1], projection='polar')
-
+    axs['B'] = plt.subplot(projection='polar')
+    
     ax2.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
     ax2.tick_params(axis='both', which='both', colors='gray', width=0.5)
 
@@ -278,6 +291,19 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, R, rad, R2
 
     ax2.set_title('Angle vs Distance')
     ax2.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
+
+    axs['C']= plt.subplot(projection='polar')
+
+    ax3.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
+    ax3.tick_params(axis='both', which='both', colors='gray', width=0.5)
+
+    # Plot the traces
+    ax3.plot(rad, true_heights, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
+    ax3.plot(rad3, radar_heights, c='g', linestyle="dashed", label='Radar Data', linewidth=2)
+
+    ax3.set_title('Angle vs Distance')
+    ax3.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
+
 
     plt.tight_layout()
     plt.show()
@@ -304,6 +330,10 @@ def main():
         [utilities.spherical_to_spherical(np.array([R2, rad2, trd]).T[i]) for i in range(len(R2))])
     pred_x, pred_y, pred_z = utilities.earth_to_xyz_bulk(predict_states_earth_cord).T
 
+    trd = [np.pi / 2 - config['satellite']['initial_conditions']['polar_angle']] * len(R3)
+    radar_states_earth_cord = np.array(
+        [utilities.spherical_to_spherical(np.array([R3, rad3, trd]).T[i]) for i in range(len(R3))])
+    
     states1 = list(zip(real_x, real_y, real_z))
     states2 = list(zip(pred_x, pred_y, pred_z))
     radar_system = main.BACC
@@ -313,7 +343,7 @@ def main():
     visual_plotly.visualise()
 
     # Show static plots of trajectories
-    polar_plot(real_states_earth_cord, predict_states_earth_cord, R, rad, R2, rad2)
+    polar_plot(real_states_earth_cord, predict_states_earth_cord, radar_states_earth_cord, R, rad, R2, rad2, rad3)
 
 
 main()
