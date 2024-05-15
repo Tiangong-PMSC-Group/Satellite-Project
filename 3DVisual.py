@@ -235,13 +235,23 @@ class VisualisationPlotly:
 
 
 # Plot static plots of the trajectories
-def polar_plot(R, rad, R2, rad2):
+def polar_plot(true_states_earth_coord, predicted_states_earth_coord, R, rad, R2, rad2):
     """Generates a plot in polar coordinates.
 
     Args:
         states1 (numpy.array): states of the satellite predictions
         states2 (numpy.array): states of the satellite simulations
     """
+    earth = Earth()
+
+    pred_heights = np.zeros(len(predicted_states_earth_coord))
+    true_heights = np.zeros(len(true_states_earth_coord))
+
+    for i in range(len(pred_heights)):
+        pred_heights[i] = earth.distance_to_surface(predicted_states_earth_coord[i])['distance']
+
+    for i in range(len(true_heights)):
+        true_heights[i] = earth.distance_to_surface(true_states_earth_coord[i])['distance']
 
     plt.figure(figsize=(10, 8))
     gs = gridspec.GridSpec(2, 1, height_ratios=[1, 1])
@@ -263,8 +273,8 @@ def polar_plot(R, rad, R2, rad2):
     ax2.tick_params(axis='both', which='both', colors='gray', width=0.5)
 
     # Plot the traces
-    ax2.plot(rad, R, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
-    ax2.plot(rad2, R2, c='r', linestyle="dashed", label='Predicted Trajectory', linewidth=2)
+    ax2.plot(rad, true_heights, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
+    ax2.plot(rad2, pred_heights, c='r', linestyle="dashed", label='Predicted Trajectory', linewidth=2)
 
     ax2.set_title('Angle vs Distance')
     ax2.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
@@ -303,7 +313,7 @@ def main():
     visual_plotly.visualise()
 
     # Show static plots of trajectories
-    polar_plot(R, rad, R2, rad2)
+    polar_plot(real_states_earth_cord, predict_states_earth_cord, R, rad, R2, rad2)
 
 
 main()
