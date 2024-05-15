@@ -12,3 +12,4 @@ Interface/__pycache__/
 *.pyc[cod]
 *.pyo[cod]
 /Interface/__pycache__
+Interface/__pycache__/IRadarSystem.cpython-311.pyc
