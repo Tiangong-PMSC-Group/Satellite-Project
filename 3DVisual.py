@@ -137,7 +137,7 @@ class VisualisationPlotly:
             frame_data = [
                 go.Scatter3d(x=x1, y=y1, z=z1, mode='lines', line=dict(color=color1, width=7), opacity=0.7,
                              name="real trace        "),
-                go.Scatter3d(x=x2, y=y2, z=z2, mode='lines', line=dict(color=color2, width=7, dash='dash'), opacity=0.7,
+                go.Scatter3d(x=x2, y=y2, z=z2, mode='lines', line=dict(color=color2, width=7, dash='dash'), opacity=0.9,
                              name="predicted trace       "),
             ]
 
