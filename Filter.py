@@ -203,20 +203,22 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         F[1,2] = self.dt
 
         # THIRD ROW #
-        F[2,0] = (2 * self.G * self.Me * 1/(self.m[0] ** 3)) + (self.m[4]) ** 2
-        F[2,4] = 2 * self.m[0] * self.m[4]
+        F[2,0] = (2 * self.G * self.Me * 1/(self.m[0] ** 3)) - (self.m[4] ** 2)/(self.m[0] ** 2)
+        F[2,4] = 2 * self.m[4]/self.m[0]
 
         # FORTH ROW #
         F[3,3] = 1
-        F[3,4] = self.dt
+        F[3,4] = self.dt / self.m[0]
+        F[3,0] = -self.dt * self.m[4]/(self.m[0]**2)
 
         # FIFTH ROW #
         F[4, 4] = 1
         F[4, 5] = self.dt
 
         # SIXTH ROW #
-        F[5,0] = self.As * self.Cd/self.ms *  -0.5 * rho * self.m[4] ** 2 
-        F[5,4] = -rho * self.m[0] * self.m[4] * self.As * self.Cd/self.ms
+        F[5,0] = -self.m[4] * self.m[1] / (self.m[0] ** 2)
+        F[5,1] = self.m[4] / self.m[0]
+        F[5,4] = (-rho * self.m[4] * self.As * self.Cd/self.ms) + (self.m[1]/self.m[0])
 
         return F, rho
 
@@ -235,19 +237,18 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         '''
 
         m = np.zeros(6)
+
         m[0] = self.m[0] + self.dt * self.m[1]
-        m[3] = self.m[3] + self.dt * self.m[4]
-
         m[1] = self.m[1] + self.dt * self.m[2]
-        m[4] = self.m[4] + self.dt * self.m[5]
+        m[2] = (-self.G * self.Me)/(self.m[0] ** 2) + (self.m[4] ** 2)/self.m[0]
 
-        m[2] = -self.G  * self.Me * 1/(self.m[0] ** 2) + self.m[0] * self.m[4] ** 2
-        m[5] = -0.5 * rho * self.m[0] * (self.m[4] ** 2) * self.As * self.Cd/self.ms
+        m[3] = self.m[3] + self.dt * self.m[4]/self.m[0]
+        m[4] = self.m[4] + self.dt * self.m[5]
+        m[5] = -0.5 * rho * self.m[4] ** 2 * self.As * self.Cd/self.ms + self.m[1] * self.m[4]/self.m[0]
 
         m = m[:, np.newaxis]
         return m
-
-    
+   
     def forecast(self):
         """Forecasts the EKF state and covariance matrix.
 
