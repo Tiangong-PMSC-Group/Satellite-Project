@@ -281,7 +281,6 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
 
     # Plotting the polar and distance
     axs['B'] = plt.subplot(projection='polar')
-    ax2.subplot(projection='polar')
     
     ax2.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
     ax2.tick_params(axis='both', which='both', colors='gray', width=0.5)
