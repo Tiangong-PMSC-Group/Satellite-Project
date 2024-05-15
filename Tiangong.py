@@ -214,7 +214,7 @@ if __name__ == "__main__":
     
     inputs = [("Default simulation (0 for input below):", 0),
               ("Initial satellite distance (m):", config_in['satellite']['initial_conditions']['distance']),
-              ("Initial satellite orbital inclination (deg):", config_in['satellite']['initial_conditions']['polar_angle']),
+              ("Initial satellite polar angle (deg):", config_in['satellite']['initial_conditions']['polar_angle']),
               ("Number of radars:", config_in['radar']['counts']),
               ("Radar noise for distance (m):", config_in['radar']['noise']['rho']),
               ("Radar noise for angle (deg):", config_in['radar']['noise']['theta']),

@@ -79,7 +79,7 @@ class Main():
             
             if i < sim_lenght:
                 current_state_satellite_cord = self.tiangong.get_position_at_t(i)
-                current_state_earth_cord = current_state_satellite_cord
+                #current_state_earth_cord = current_state_satellite_cord
                 noise_states_satellite_cord = self.BACC.try_detect_satellite(current_state_satellite_cord, i)
 
                 if len(noise_states_satellite_cord) > 0:
@@ -94,8 +94,10 @@ class Main():
                             #print( state_satellite_cord[:2])
                             radar_states_satellite_cord += state_satellite_cord[:2],
                             flag = 1
-                    
+
             forecast = self.tianhe.forecast()
+            #print(f'Forecast: {forecast[0]}')
+            #print(f'Simulation: {current_state_satellite_cord}')
             new_state_satellite_cord = [forecast[0][0][0], forecast[0][3][0]]
 
             predicted_states_satellite_cord += new_state_satellite_cord,
