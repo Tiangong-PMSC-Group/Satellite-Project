@@ -36,6 +36,10 @@ def c_to_p(state):
         if x == y == z == 0:
             assert False, "Point is on the origin, therefore the polar and azimuthal angles cannot be defined, how did you manage that?"
         
+        assert math.isinf(x) == False, "Unstable Orbit: a function is receiving an infinty instead of number, try some different values!"
+        assert math.isinf(y) == False, "Unstable Orbit: a function is receiving an infinty instead of number, try some different values!"
+        assert math.isinf(z) == False, "Unstable Orbit: a function is receiving an infinty instead of number, try some different values!"
+
         if z > 0:    
             polar = np.arctan(np.sqrt(x**2 + y**2)/z)
         elif z < 0:
