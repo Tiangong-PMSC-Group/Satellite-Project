@@ -106,7 +106,7 @@ class VisualisationPlotly:
             x, y, z = zip(*states[-1:])
             return go.Scatter3d(
                 x=x, y=y, z=z, mode='markers',
-                marker=dict(color=color, size=5, symbol='circle', opacity=0.5),
+                marker=dict(color=color, size=8, symbol='circle', opacity=0.8),
                 name=name
             )
         return None
@@ -290,12 +290,11 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
 
     # Plot the traces
     ax3.plot(rad, true_heights, c='b', linestyle="dashed", label='Real Trajectory', linewidth=2)
-    ax3.scatter(rad3, radar_heights, c='g', label='Radar Data', s = 8)
+    ax3.scatter(rad3, radar_heights, c='g', label='Radar Data', s = 8, zorder = 10)
 
     ax3.set_title('Angle vs Distance')
     ax3.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
 
-    plt.tight_layout()
     plt.show()
 
 
