@@ -235,7 +235,12 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         '''
 
         m = np.zeros(6)
+        m[0] = self.m[0] + 0.5 * self.dt * self.m[1]
+        m[1] = self.m[1] + 0.5 * self.dt * self.m[2]
         m[2] = -self.G  * self.Me * 1/(self.m[0] ** 2) + self.m[0] * self.m[4] ** 2
+
+        m[3] = self.m[3] + 0.5 * self.dt * self.m[4]
+        m[4] = self.m[4] + 0.5 * self.dt * self.m[5]
         m[5] = -0.5 * rho * self.m[0] * (self.m[4] ** 2) * self.As * self.Cd/self.ms
 
 
@@ -244,13 +249,6 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
 
         # m[0] = self.m[0] + self.dt * self.m[1] + 0.5 * self.dt**2 * self.m[2]
         # m[3] = self.m[3] + self.dt * self.m[4] + 0.5 * self.dt**2 * self.m[5]
-
-        m[1] = self.m[1] + 0.5 * self.dt * self.m[2]
-        m[4] = self.m[4] + 0.5 * self.dt * self.m[5]
-
-        m[0] = self.m[0] + 0.5 * self.dt * self.m[1]
-        m[3] = self.m[3] + 0.5 * self.dt * self.m[4]
-
 
 ####
         # sat_coords = np.array([m[0], m[3], self.orbital_angle])
