@@ -44,7 +44,7 @@ class Main():
         # Adjust this to initialize at a random point with the same noise as radar
         initial_r = config['Kalman']['initial_r_guess']
         initial_angle = config['Kalman']['initial_angle_guess']
-        self.mean_0 = np.array([initial_r , 0, 0, initial_angle, 0, 0])
+        self.mean_0 = np.array([initial_r , 0, 0, initial_angle, 4000, 0])
 
         self.cov_0 = np.array(config['Kalman']['cov_matrix'])
 

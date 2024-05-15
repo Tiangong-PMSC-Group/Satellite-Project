@@ -235,25 +235,21 @@ class VisualisationPlotly:
 
 
 # Plot static plots of the trajectories
-def polar_plot(states1, states2):
+def polar_plot(R, rad, R2, rad2):
     """Generates a plot in polar coordinates.
 
     Args:
         states1 (numpy.array): states of the satellite predictions
         states2 (numpy.array): states of the satellite simulations
     """
-    rho_from_states1 = [state[0] for state in states1]
-    polar_from_states1 = [state[2] for state in states1]
-    rho_from_states2 = [state[0] for state in states2]
-    polar_from_states2 = [state[2] for state in states2]
 
     plt.figure(figsize=(10, 8))
     gs = gridspec.GridSpec(2, 1, height_ratios=[1, 1])
 
     # Plotting the distance over time
     ax1 = plt.subplot(gs[0])
-    ax1.plot(range(len(states1)), rho_from_states1, label='Real Distance', marker='o')
-    ax1.plot(range(len(states2)), rho_from_states2, label='Predicted Distance', linestyle='--')
+    ax1.plot(range(len(R)), R, label='Real Distance', marker='o')
+    ax1.plot(range(len(R2)), R2, label='Predicted Distance', linestyle='--')
     ax1.set_title('Distance Between Satellite And The Origin Of The Earth Over Time')
     ax1.set_xlabel('Time Steps')
     ax1.set_ylabel('Distance (m)')
@@ -262,10 +258,6 @@ def polar_plot(states1, states2):
 
     # Plotting the polar and distance
     ax2 = plt.subplot(gs[1], projection='polar')
-    rad = np.array(polar_from_states1)
-    R = np.array(rho_from_states1)
-    rad2 = np.array(polar_from_states2)
-    R2 = np.array(rho_from_states2)
 
     ax2.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
     ax2.tick_params(axis='both', which='both', colors='gray', width=0.5)
@@ -310,16 +302,8 @@ def main():
     visual_plotly = VisualisationPlotly(states1, states2,radar_system.get_radar_positions())
     visual_plotly.visualise()
 
-    polar_real_state = []
-    for state in states1:
-        polar_real_state.append(utilities.c_to_p(state))
-
-    polar_predict_state = []
-    for state in states2:
-        polar_predict_state.append(utilities.c_to_p(state))
-
     # Show static plots of trajectories
-    polar_plot(polar_real_state, polar_predict_state)
+    polar_plot(R, rad, R2, rad2)
 
 
 main()
