@@ -282,27 +282,27 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     # Plotting the polar and distance
     axs['B'] = plt.subplot(projection='polar')
     
-    ax2.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
-    ax2.tick_params(axis='both', which='both', colors='gray', width=0.5)
+    axs['B'].grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
+    axs['B'].tick_params(axis='both', which='both', colors='gray', width=0.5)
 
     # Plot the traces
-    ax2.plot(rad, true_heights, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
-    ax2.plot(rad2, pred_heights, c='r', linestyle="dashed", label='Predicted Trajectory', linewidth=2)
+    axs['B'].plot(rad, true_heights, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
+    axs['B'].plot(rad2, pred_heights, c='r', linestyle="dashed", label='Predicted Trajectory', linewidth=2)
 
-    ax2.set_title('Angle vs Distance')
-    ax2.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
+    axs['B'].set_title('Angle vs Distance')
+    axs['B'].legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
 
     axs['C']= plt.subplot(projection='polar')
 
-    ax3.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
-    ax3.tick_params(axis='both', which='both', colors='gray', width=0.5)
+    axs['C'].grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
+    axs['C'].tick_params(axis='both', which='both', colors='gray', width=0.5)
 
     # Plot the traces
-    ax3.plot(rad, true_heights, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
-    ax3.plot(rad3, radar_heights, c='g', linestyle="dashed", label='Radar Data', linewidth=2)
+    axs['C'].plot(rad, true_heights, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
+    axs['C'].plot(rad3, radar_heights, c='g', linestyle="dashed", label='Radar Data', linewidth=2)
 
-    ax3.set_title('Angle vs Distance')
-    ax3.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
+    axs['C'].set_title('Angle vs Distance')
+    axs['C'].legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
 
 
     plt.tight_layout()
