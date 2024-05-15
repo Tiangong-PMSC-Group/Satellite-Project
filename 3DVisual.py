@@ -280,7 +280,7 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     ax1.grid(True)
 
     # Plotting the polar and distance
-    #ax2 = plt.subplot(gs[1], projection='polar')
+    axs['B'] = plt.subplot(projection='polar')
     ax2.subplot(projection='polar')
     
     ax2.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
@@ -293,7 +293,7 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     ax2.set_title('Angle vs Distance')
     ax2.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
 
-    ax3.subplot(projection='polar')
+    axs['C']= plt.subplot(projection='polar')
 
     ax3.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
     ax3.tick_params(axis='both', which='both', colors='gray', width=0.5)
