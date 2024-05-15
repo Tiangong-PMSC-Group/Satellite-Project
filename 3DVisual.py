@@ -135,9 +135,9 @@ class VisualisationPlotly:
 
             # Create frame data of trajectorys
             frame_data = [
-                go.Scatter3d(x=x1, y=y1, z=z1, mode='lines', line=dict(color=color1, width=4), opacity=0.7,
+                go.Scatter3d(x=x1, y=y1, z=z1, mode='lines', line=dict(color=color1, width=7), opacity=0.7,
                              name="real trace        "),
-                go.Scatter3d(x=x2, y=y2, z=z2, mode='lines', line=dict(color=color2, width=4, dash='dash'), opacity=0.7,
+                go.Scatter3d(x=x2, y=y2, z=z2, mode='lines', line=dict(color=color2, width=7, dash='dash'), opacity=0.7,
                              name="predicted trace       "),
             ]
 
@@ -170,10 +170,10 @@ class VisualisationPlotly:
         fig.add_trace(earth_surface)
 
         # Add empty traces for real and predicted satellite trajectories
-        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='yellow', width=6), opacity=0.8,
+        fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='red', width=7), opacity=0.7,
                                    name='Trace 1'))
         fig.add_trace(
-            go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='red', width=6), opacity=0.8, name='Trace 2'))
+            go.Scatter3d(x=[], y=[], z=[], mode='lines', line=dict(color='green', width=7), opacity=0.8, name='Trace 2'))
 
         # Add empty markers for real and predicted crash positions
         fig.add_trace(go.Scatter3d(x=[], y=[], z=[], mode='markers', name='Real crash Pos'))
@@ -188,7 +188,7 @@ class VisualisationPlotly:
         ))
 
         # Create frames for the animation of trajectories
-        fig.frames = self.create_trajectory_frames(self.states1, self.states2, 'yellow', 'red')
+        fig.frames = self.create_trajectory_frames(self.states1, self.states2, 'red', 'green')
 
         # Define the slider for the animation
         sliders = [{
@@ -274,7 +274,7 @@ def polar_plot(states1, states2):
     ax2.plot(rad, R, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
     ax2.plot(rad2, R2, c='r', linestyle="dashed", label='Predicted Trajectory', linewidth=2)
 
-    ax2.set_title('Polar Plot Over Time')
+    ax2.set_title('Angle vs Distance')
     ax2.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
 
     plt.tight_layout()
