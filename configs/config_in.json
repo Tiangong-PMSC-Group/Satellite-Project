@@ -160,18 +160,20 @@
         "drag_coefficient": 2.2,
         "comment": "drag_coefficient hasn't been decided",
         "initial_conditions": {
-            "distance": 6778136.0,
-            "polar_angle": 1.2,
+            "distance": 6578136.0,
+            "polar_angle": 1.57,
             "azimuthal_angle": 0,
-            "angular_velocity": 0.0011313,
+            "angular_velocity": 0.0011833599626,
             "radial_velocity": 0,
             "azimuthal_velocity": 0,
             "comment": "Satellites position as described in earth's spherical coordinate system, azimuthal angle set at const 0, polar angle describing latitude from north pole (0, pi]"
         }
     },
     "Kalman":{
-        "initial_r_guess": 6900000,
-        "initial_angle_guess": 1.2,
+        "initial_r_guess": 6579136,
+        "initial_angle_guess": 1.57,
+        "initial_vr_guess": 0,
+        "initial_vphi_guess": 4000,
         "cov_matrix": [
             [1e3, 0, 0, 0, 0, 0],
             [0, 1e1, 0, 0, 0, 0],
