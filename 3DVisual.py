@@ -307,7 +307,7 @@ def main():
     main.simulate()
     main.predict()
     # Get distance and polar datas from real simulator, predictor and radar
-    R, rad, R2, rad2, R3, rad3 = main.output()
+    R, rad, R2, rad2, R3, rad3, var_r, var_phi = main.output()
 
     # Transform the data to the appropriate coordinate
     trd = [np.pi / 2 - config['satellite']['initial_conditions']['polar_angle']] * len(R)
