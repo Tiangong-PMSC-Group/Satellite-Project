@@ -18,9 +18,20 @@ from copy import deepcopy
 
 #@singleton
 class Satellite():
-    """Satellite Class
+    """_summary_
     """
     def __init__(self, true_state0, prior_state, filter=None, earth=None):
+        """_summary_
+
+        Args:
+            true_state0 (_type_): _description_
+            prior_state (_type_): _description_
+            filter (_type_, optional): _description_. Defaults to None.
+            earth (_type_, optional): _description_. Defaults to None.
+
+        Returns:
+            _type_: _description_
+        """
         # true_state is a SatelliteState data type
 
         # Initialize the Kalman Filter
@@ -53,6 +64,8 @@ class Satellite():
         # Event class for handling the crash
         # For the solver
         class CrashEvent:
+            """_summary_
+            """
             def __init__(self, satellite):
                 self.satellite = satellite
             
@@ -69,33 +82,19 @@ class Satellite():
 
         self.crash_event = CrashEvent(self)
 
-    ##### Old
-
-    def update_true_state(self):
-        # Update the state one step.
-        
-        # Placeholder function, just as example
-        # Change for the physical real one
-        
-        distance = self.earth.distane_to_surface(self.true_state.pos)['distance'] # Get distance to earth
-        air = self.earth.air_density(distance)
-        self.true_state.pos = self.true_state.pos + self.true_state.velocity * self.dt 
-        #- air * self.dt # Dummy function
-        self.true_state.velocity = self.true_state.velocity + self.true_state.acceleration  * self.dt
-        self.recorded_true_states.append(deepcopy(self.true_state))
-
-    def run_simulation(self):
-        # Run the whole simulation from "S_0" until the crash.
-        # The intermediary result must be an array of arrays, each one in the satellite coordinates.
-        # This vector should be passed through s_to_e and returned a new array of arrays in the earth coordinates
-        pass
-
-    #######
-
 
     ####### Actual Dymanics
 
     def d_state(self, t, state):
+        """_summary_
+
+        Args:
+            t (_type_): _description_
+            state (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         # state in satelitte plane coordinates
         # "t" is not required in the actual calculations, but it is neeeded
         # for the scipy solver
@@ -122,19 +121,28 @@ class Satellite():
         return np.array([d_r, d_vr, d_phi, d_v_phi])
 
     def plane_to_altitude(self, r, phi):
+        """_summary_
+
+        Args:
+            r (_type_): _description_
+            phi (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         earth_coor = utilities.spherical_to_spherical([r, phi, self.plane_of_inclination])
         return self.earth.distance_to_surface(earth_coor)
 
 
-    #def crash(self, t, state):
-     #   #Check if satellite hitted the earth
-      #  r, v_r, phi, v_phi = state
-       # return self.plane_to_altitude(r, phi)['distance']
-    
-    
-
-
     def simulate(self, time_limit):
+        """_summary_
+
+        Args:
+            time_limit (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         # Run the full integration
 
 
@@ -159,6 +167,14 @@ class Satellite():
         return sol
     
     def get_position_at_t(self, t):
+        """_summary_
+
+        Args:
+            t (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         r = self.solution.y[0][t]
         theta = self.solution.y[2][t]
         phi = self.plane_of_inclination
@@ -170,7 +186,11 @@ class Satellite():
 
     
     def update_estimated_state(self, measurement=None):
-        
+        """_summary_
+
+        Args:
+            measurement (_type_, optional): _description_. Defaults to None.
+        """
         distance = self.earth.distane_to_surface(self.estimated_state.pos)['distance']
         air = self.earth.air_density(distance)
         transition_matrix = np.eye(9) # Dummy function. Defines a new transition given the air
@@ -185,14 +205,5 @@ class Satellite():
             self.estimated_state.cov = c
                     
         self.recorded_estimated_states.append(deepcopy(self.estimated_state))
-
-    def full_prediction(self):
-        # Implement a loop to predict to full trajectory, given the current state.
-        # It has to initialize a new Kalman Filter.
-        # Check if it reached the ground.
-        # Else keep looping.
-        # Return the full mean-trajectory and the uncertainty area on the ground.
-        # It is a PREDICTION, not the true simulation. Use for the bonus part 
-        pass 
 
 
