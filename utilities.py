@@ -34,7 +34,9 @@ def c_to_p(state):
             assert True, "Point lies on the the z-axis, Azimuthal angle cannot be defined, try a new inclination!"
     
         if x == y == z == 0:
-            assert False, "Point is on the origin, therefore the polar and azimuthal angles cannot be defined, how did you manage that?"
+            rho = 0
+            polar = 0
+            azimuthal = 0
         
         assert math.isinf(x) == False, "Unstable Orbit: a function is receiving an infinty instead of number, try some different values!"
         assert math.isinf(y) == False, "Unstable Orbit: a function is receiving an infinty instead of number, try some different values!"
@@ -62,6 +64,7 @@ def c_to_p(state):
             azimuthal = -0.5*np.pi
         else:
             azimuthal = 0
+
 
         polar_state = np.array([rho, polar, azimuthal])
 
@@ -130,7 +133,8 @@ def earth_to_orbit(states):
     x, z, y = p_to_c(states)
     
     if x == y == z == 0:
-        assert False, "Point is on the origin, therefore the polar and azimuthal angles cannot be defined, how did you manage that?"
+        rho = 0
+        polar = 0
     
     rho = np.sqrt(x**2 + y**2 + z**2)
     
