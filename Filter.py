@@ -238,11 +238,29 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         m[2] = -self.G  * self.Me * 1/(self.m[0] ** 2) + self.m[0] * self.m[4] ** 2
         m[5] = -0.5 * rho * self.m[0] * (self.m[4] ** 2) * self.As * self.Cd/self.ms
 
+
+        # m[1] = self.m[1] + 0.5 * self.dt * (m[2] + self.m[2])
+        # m[4] = self.m[4] + 0.5 * self.dt * (m[5] + self.m[5])
+
+        # m[0] = self.m[0] + self.dt * self.m[1] + 0.5 * self.dt**2 * self.m[2]
+        # m[3] = self.m[3] + self.dt * self.m[4] + 0.5 * self.dt**2 * self.m[5]
+
         m[1] = self.m[1] + 0.5 * self.dt * self.m[2]
         m[4] = self.m[4] + 0.5 * self.dt * self.m[5]
 
         m[0] = self.m[0] + 0.5 * self.dt * self.m[1]
         m[3] = self.m[3] + 0.5 * self.dt * self.m[4]
+
+
+####
+        # sat_coords = np.array([m[0], m[3], self.orbital_angle])
+        # earth_coords = ut.spherical_to_spherical(sat_coords)
+        # res = self.planet.distance_to_surface(state=earth_coords)
+
+        # rho = self.planet.air_density(res['distance'])
+
+        # m[5] = -0.5 * rho * self.m[0] * (self.m[4] ** 2) * self.As * self.Cd/self.ms
+###
 
 
         m = m[:, np.newaxis]
@@ -257,7 +275,7 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         """
         F, rho = self.get_F()
         self.m = self.forecast_mean(rho=rho)
-        self.C = self.forecast_cov(transition_matrix=F, process_noise=self.Q)
+        self.C = self.forecast_cov(transition_matrix=F, process_noise=None)
 
         return self.m, self.C
     
