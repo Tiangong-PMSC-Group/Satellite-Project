@@ -20,6 +20,8 @@ def on_button_click():
             radar_noise_polar = input_radar_noise_polar.get()
             prior_distance = input_prior_distance.get()
             prior_angle = input_prior_angle.get()
+            prior_vr = input_prior_vr.get()
+            prior_vphi = input_prior_vphi.get()
             satellite_mass = input_satellite_mass.get()
             satellite_area = input_satellite_area.get()
             satellite_drag = input_satellite_drag.get()
@@ -36,6 +38,8 @@ def on_button_click():
             radar_noise_polar = config_i['radar']['noise']['theta']
             prior_distance = config_i['Kalman']['initial_r_guess']
             prior_angle = config_i['Kalman']['initial_angle_guess']
+            prior_vr = config_i['Kalman']['initial_vr_guess']
+            prior_vphi = config_i['Kalman']['initial_vphi_guess']
             satellite_mass = config_i['satellite']['mass']
             satellite_area = config_i['satellite']['area']
             satellite_drag = config_i['satellite']['drag_coefficient']
@@ -82,6 +86,13 @@ def on_button_click():
         if not is_float(prior_angle):
             messagebox.showerror("Input Error", "Prior angle must be a numeric value.")
             return
+        
+        if not is_float(prior_vr):
+            messagebox.showerror("Input Error", "Prior distance must be a numeric value.")
+            return
+        if not is_float(prior_vphi):
+            messagebox.showerror("Input Error", "Prior angle must be a numeric value.")
+            return
 
 
         # Update configuration with validated values
@@ -93,6 +104,8 @@ def on_button_click():
         config['radar']['noise']['theta'] = float(radar_noise_polar)
         config['Kalman']['initial_r_guess'] = float(prior_distance)
         config['Kalman']['initial_angle_guess'] = float(prior_angle)
+        config['Kalman']['initial_vr_guess'] = float(prior_vr)
+        config['Kalman']['initial_vphi_guess'] = float(prior_vphi)
         config['satellite']['mass'] = float(satellite_mass)
         config['satellite']['area'] = float(satellite_area)
         config['satellite']['drag_coefficient'] = float(satellite_drag)
@@ -178,6 +191,12 @@ def reset_input_fields():
     input_prior_angle.delete(0, tk.END)
     input_prior_angle.insert(0, config_in['Kalman']['initial_angle_guess'])
 
+    input_prior_vr.delete(0, tk.END)
+    input_prior_vr.insert(0, config_in['Kalman']['initial_vr_guess'])
+
+    input_prior_vphi.delete(0, tk.END)
+    input_prior_vphi.insert(0, config_in['Kalman']['initial_vphi_guess'])
+
 
 def is_float(value):
     """Check if a value can be converted to a float."""
@@ -222,6 +241,8 @@ if __name__ == "__main__":
               ("Radar noise for angle (deg):", config_in['radar']['noise']['theta']),
               ("Kalman prior for distance (m):", config_in['Kalman']['initial_r_guess']),
               ("Kalman prior for angle (deg):", config_in['Kalman']['initial_angle_guess']),
+              ("Kalman prior for radial velocity (m/s):", config_in['Kalman']['initial_vr_guess']),
+              ("Kalman prior for tangencial velocity (m/s):", config_in['Kalman']['initial_vphi_guess']),
               ("satellite mass (kg):", config_in['satellite']['mass']),
               ("satellite cross section (m2):", config_in['satellite']['area']),
               ("satellite drag coefficient:", config_in['satellite']['drag_coefficient']),
@@ -238,7 +259,8 @@ if __name__ == "__main__":
     # Unpack entries into individual variables for easier access
     (input_file, input_satellite_distance, input_satellite_angle, input_radar, 
      input_radar_noise_distance, input_radar_noise_polar, input_prior_distance, 
-     input_prior_angle, input_satellite_mass, input_satellite_area, input_satellite_drag, 
+     input_prior_angle, input_prior_vr, 
+     input_prior_vphi, input_satellite_mass, input_satellite_area, input_satellite_drag, 
      input_time_interval, input_radar_frequency) = entries
 
 
