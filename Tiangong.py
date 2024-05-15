@@ -191,9 +191,11 @@ def create_label_entry(root, text, row, default_value):
     """Create a label and entry widget, insert default value, and grid them."""
     label = tk.Label(root, text=text, justify="left", anchor="w")
     label.grid(row=row, column=0, padx=10, pady=(0, 0), sticky='w')
+    label.grid(row=row, column=0, padx=10, pady=5, sticky='w')
     entry = tk.Entry(root)
     entry.insert(0, default_value)
     entry.grid(row=row, column=1, padx=(0, 10), pady=(0, 0))
+    entry.grid(row=row, column=1, padx=10, pady=5)
     return entry
 
 import sys
