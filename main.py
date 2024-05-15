@@ -105,17 +105,17 @@ class Main():
             new_state_satellite_cord = [forecast[0][0][0], forecast[0][3][0]]
 
             predicted_states_satellite_cord += new_state_satellite_cord,
-            #predicted_var_r += self.tianhe.forecast()[1][0][0]
-            #predicted_var_phi += self.tianhe.forecast()[1][3][3]
+            predicted_var_r += forecast[1][0,0]
+            predicted_var_phi += forecast[1][3,3]
 
 
 
         self.R_predi, self.rad_predi = np.array(predicted_states_satellite_cord[:]).T
         self.R_radar, self.rad_radar = np.array(radar_states_satellite_cord[1:]).T
-        #self.predicted_var_rs = np.array(predicted_var_r)
-        #self.predicted_var_phis = np.array(predicted_var_phi)
+        self.predicted_var_rs = np.array(predicted_var_r)
+        self.predicted_var_phis = np.array(predicted_var_phi)
 
 
 
     def output(self):
-        return [self.R_simulation, self.rad_simulation, self.R_predi, self.rad_predi, self.R_radar, self.rad_radar]#, self.predicted_var_rs, self.predicted_var_phis]
+        return [self.R_simulation, self.rad_simulation, self.R_predi, self.rad_predi, self.R_radar, self.rad_radar, self.predicted_var_rs, self.predicted_var_phis]
