@@ -106,7 +106,7 @@ class VisualisationPlotly:
             x, y, z = zip(*states[-1:])
             return go.Scatter3d(
                 x=x, y=y, z=z, mode='markers',
-                marker=dict(color=color, size=5, symbol='circle', opacity=0.5),
+                marker=dict(color=color, size=8, symbol='circle', opacity=0.8),
                 name=name
             )
         return None
