@@ -17,10 +17,9 @@ from config import config
 
 
 class Main():
-    def __init__(self, n_radars, n = 10000000):
+    def __init__(self, n_radars = config['radar']['counts'], n = 10000000):
 
         self.n = n
-
         self.earth = Earth()
         self.BACC = RadarSystem(Earth(), n_radars)
 

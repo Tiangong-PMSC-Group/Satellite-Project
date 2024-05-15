@@ -285,7 +285,7 @@ def main():
     """Generates the simulation and its environment.
     """
     # Run simulation
-    main = Main(200)
+    main = Main()
     main.simulate()
     main.predict()
     # Get distance and polar datas from real simulator, predictor and radar
