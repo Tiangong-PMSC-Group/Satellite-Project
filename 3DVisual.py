@@ -257,20 +257,11 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     for i in range(len(radar_heights)):
         radar_heights[i] = earth.distance_to_surface(radar_states_earth_cord[i])['distance']
 
-    #plt.figure(figsize=(10, 8))
-    #gs = gridspec.GridSpec(2, 1, height_ratios=[1, 1])
-
-    fig, axs = plt.subplot_mosaic('''
-    AA
-    BC
-    ''', figsize=(10, 10))
-
-    ax1 = axs['A']
-    ax2 = axs['B']
-    ax3 = axs['C']
+    fig3 = plt.figure(constrained_layout=True)
+    gs = fig3.add_gridspec(2, 2, height_ratios=[1, 1])
 
     # Plotting the distance over time
-    #ax1 = plt.subplot(gs[0])
+    ax1 = plt.subplot(gs[0,:])
     ax1.plot(range(len(R)), R, label='Real Distance', marker='o')
     ax1.plot(range(len(R2)), R2, label='Predicted Distance', linestyle='--')
     ax1.set_title('Distance Between Satellite And The Origin Of The Earth Over Time')
@@ -280,30 +271,29 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     ax1.grid(True)
 
     # Plotting the polar and distance
-    axs['B'] = plt.subplot(projection='polar')
+    ax2 = plt.subplot(gs[1,0], projection = 'polar')
     
-    axs['B'].grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
-    axs['B'].tick_params(axis='both', which='both', colors='gray', width=0.5)
+    ax2.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
+    ax2.tick_params(axis='both', which='both', colors='gray', width=0.5)
 
     # Plot the traces
-    axs['B'].plot(rad, true_heights, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
-    axs['B'].plot(rad2, pred_heights, c='r', linestyle="dashed", label='Predicted Trajectory', linewidth=2)
+    ax2.plot(rad, true_heights, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
+    ax2.plot(rad2, pred_heights, c='r', linestyle="dashed", label='Predicted Trajectory', linewidth=2)
 
-    axs['B'].set_title('Angle vs Distance')
-    axs['B'].legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
+    ax2.set_title('Angle vs Distance')
+    ax2.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
 
-    axs['C']= plt.subplot(projection='polar')
+    ax3 = plt.subplot(gs[1,1], projection= 'polar')
 
-    axs['C'].grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
-    axs['C'].tick_params(axis='both', which='both', colors='gray', width=0.5)
+    ax3.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
+    ax3.tick_params(axis='both', which='both', colors='gray', width=0.5)
 
     # Plot the traces
-    axs['C'].plot(rad, true_heights, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
-    axs['C'].plot(rad3, radar_heights, c='g', linestyle="dashed", label='Radar Data', linewidth=2)
+    ax3.plot(rad, true_heights, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
+    ax3.scatter(rad3, radar_heights, c='g', linestyle="dashed", label='Radar Data', linewidth=2)
 
-    axs['C'].set_title('Angle vs Distance')
-    axs['C'].legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
-
+    ax3.set_title('Angle vs Distance')
+    ax3.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
 
     plt.tight_layout()
     plt.show()
