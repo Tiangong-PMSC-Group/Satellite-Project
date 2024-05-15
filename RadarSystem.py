@@ -1,7 +1,6 @@
 import math
 import numpy as np
 
-from Interface.IRadarSystem import IRadarSystem
 from SatelliteState import SatelliteState
 from config import config
 import utilities
@@ -10,7 +9,7 @@ from Earth import Earth
 
 
 """A class control all radars to make them detect satellite positions periodically"""
-class RadarSystem(IRadarSystem):
+class RadarSystem():
     # Radar system parameters from the configuration
     radar_dt = config['sim_config']['dt']['main_dt']
     radar_los_frequency = config['sim_config']['dt']['radar_los']

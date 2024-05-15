@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import utilities
 from Earth import Earth
-from ISimulator import ISimulator, FakeSimulator, RealSimulator
+from The_Pit.ISimulator import ISimulator, FakeSimulator, RealSimulator
 from RadarSystem import RadarSystem
 from TwoD.TwoDRadarSystem import TwoDRadarSystem
 from config import config
