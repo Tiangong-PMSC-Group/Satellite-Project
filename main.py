@@ -44,8 +44,8 @@ class Main():
 
         # Adjust this to initialize at a random point with the same noise as radar
         initial_r = config['Kalman']['initial_r_guess']
-        initial_anlge = config['Kalman']['initial_angle_guess']
-        self.mean_0 = np.array([initial_r , 0, 0, initial_anlge, 0, 0])
+        initial_angle = config['Kalman']['initial_angle_guess']
+        self.mean_0 = np.array([initial_r , 0, 0, initial_angle, 0, 0])
 
         self.cov_0 = np.array(config['Kalman']['cov_matrix'])
 
@@ -79,20 +79,15 @@ class Main():
             
             if i < sim_lenght:
                 current_state_satellite_cord = self.tiangong.get_position_at_t(i)
-                #current_state_earth_cord = utilities.spherical_to_spherical(current_state_satellite_cord)
                 current_state_earth_cord = current_state_satellite_cord
-                noise_states_earth_cord = self.BACC.try_detect_satellite(current_state_earth_cord, i)
-                #if len(noise_states_earth_cord) > 0:
-                 #   print(current_state_earth_cord, noise_states_earth_cord[0].pos, self.rad_simulation[i])
+                noise_states_satellite_cord = self.BACC.try_detect_satellite(current_state_satellite_cord, i)
 
-                #print(len(noise_states_earth_cord))
-                if len(noise_states_earth_cord) > 0:
+                if len(noise_states_satellite_cord) > 0:
                     #print("Enter")
                     flag = 0
-                    for state_earth_cord in noise_states_earth_cord:
-                        #print("Update0")
-                        #state_satellite_cord = utilities.spherical_to_spherical(state_earth_cord.pos)
-                        state_satellite_cord = state_earth_cord.pos
+                    for state in noise_states_satellite_cord:
+
+                        state_satellite_cord = state.pos
                         new_state_satellite_cord = self.tianhe.update(state_satellite_cord[:2])
 
                         if flag == 0:

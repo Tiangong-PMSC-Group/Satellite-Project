@@ -71,11 +71,6 @@ class LinearKalmanFilter():
             numpy.array: updated LKF state using the measurement
         """
         K = self.get_kalman_gain()
-        #print(K)
-        #print(measurement)
-        #print(self.H)
-        #print(self.m[0])
-        #print('##############')
         return self.m + K @ (measurement - self.H @ self.m)
         
     def update_cov(self):
@@ -95,7 +90,7 @@ class LinearKalmanFilter():
         """
         #CHANGE THIS LINE TO SOLVE INSTEAD OF LINALG.INV
         return self.C @ self.H.T @ np.linalg.inv(self.H @ self.C @ self.H.T + self.R)
-        #K = self.C @ self.H.T @ np.linalg.solve(self.H @ self.C @ self.H.T + self.R, self.R)
+
 
     # Project without new information
     def forecast(self, transition_matrix = None):
@@ -262,7 +257,7 @@ class ExtendedKalmanFilter(LinearKalmanFilter):
         """
         F, rho = self.get_F()
         self.m = self.forecast_mean(rho=rho)
-        self.C = self.forecast_cov(transition_matrix=F, process_noise=None)
+        self.C = self.forecast_cov(transition_matrix=F, process_noise=self.Q)
 
         return self.m, self.C
     
