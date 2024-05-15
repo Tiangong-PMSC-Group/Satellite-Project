@@ -5,7 +5,6 @@ from decorators import singleton
 from scipy.integrate import solve_ivp
 
 from config import config
-from ISimulator import ISimulator
 
 import utilities
 
