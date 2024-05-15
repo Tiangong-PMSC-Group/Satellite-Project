@@ -25,12 +25,13 @@ class TwoDSimulator:
         self.dtheta = np.sqrt(self.G * self.M / self.r ** 3)
         self.theta = 0  # Initial angle
         self.dr = 0  # Initial radial velocity
+        self.earth_radius = config['earth']['major_axis']
 
-    def simulate(self, current_time) -> SatelliteState:
+    def simulate(self) -> SatelliteState:
         """Simulate one time step of the satellite's motion and return its state."""
         # Calculate atmospheric density based on altitude
-        if self.r > config['earth']['major_axis']:
-            altitude = self.r - config['earth']['major_axis']
+        if self.r > self.earth_radius:
+            altitude = self.r - self.earth_radius
             rho = 1.225 * np.exp(-altitude / 8500)  # Density decreases exponentially with altitude
         else:
             rho = 0  # No atmosphere below Earth's surface
@@ -64,7 +65,7 @@ def print_trajectory_for_test():
     num_steps = int(3600 * 24 / simulator.dt)  # Number of simulation steps for 24 hours
 
     for step in range(num_steps):
-        satellite_state = simulator.simulate(step)
+        satellite_state = simulator.simulate()
         positions.append(utilities.p_to_c(satellite_state.pos))  # Convert polar to Cartesian coordinates
         satellite_states.append(satellite_state)
 
