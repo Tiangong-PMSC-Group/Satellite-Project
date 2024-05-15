@@ -105,8 +105,8 @@ class Main():
             new_state_satellite_cord = [forecast[0][0][0], forecast[0][3][0]]
 
             predicted_states_satellite_cord += new_state_satellite_cord,
-            predicted_var_r += forecast[1][0,0]
-            predicted_var_phi += forecast[1][3,3]
+            predicted_var_r += forecast[1][0,0],
+            predicted_var_phi += forecast[1][3,3],
 
 
 
