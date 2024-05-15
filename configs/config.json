@@ -17,7 +17,7 @@
         ]
     },
     "radar": {
-        "counts": 200,
+        "counts": 100,
         "noise": {
             "rho": 100.0,
             "theta": 0.0,
@@ -170,8 +170,8 @@
         }
     },
     "Kalman": {
-        "initial_r_guess": 6579136.0,
-        "initial_angle_guess": 1.57,
+        "initial_r_guess": 6779136.0,
+        "initial_angle_guess": 1.0,
         "initial_vr_guess": 0,
         "initial_vphi_guess": 4000,
         "cov_matrix": [
