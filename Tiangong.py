@@ -116,6 +116,8 @@ def on_button_click():
             time_interval = config_i['sim_config']['dt']['main_dt']
             radar_frequency = str(config_i['sim_config']['dt']['radar_freq'])
 
+            config = config_i
+
 
         
 
@@ -189,7 +191,6 @@ def on_button_click():
         # config['sim_config']['dt']['main_dt'] = float(time_interval)
         # config['sim_config']['dt']['radar_freq'] = int(radar_frequency)
 
-        config = config_i
 
         save_config(config)  # Save updated config
 
