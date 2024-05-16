@@ -239,8 +239,16 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     """Generates a plot in polar coordinates.
 
     Args:
-        states1 (numpy.array): states of the satellite predictions
-        states2 (numpy.array): states of the satellite simulations
+        true_states_earth_coord (numpy.array): True states of the satellite in Earth coordinates.
+        predicted_states_earth_coord (numpy.array): Predicted states of the satellite in Earth coordinates.
+        radar_states_earth_cord (numpy.array): Radar-detected states of the satellite in Earth coordinates.
+        R (numpy.array): True radius of the orbit at each time step.
+        rad (numpy.array): True angles of the orbit at each time step.
+        R2 (numpy.array): Predicted radius of the orbit at each time step.
+        rad2 (numpy.array): Predicted angles of the orbit at each time step.
+        rad3 (numpy.array): Angles corresponding to radar measurements.
+        var_r (numpy.array): Variance of the radius from the Kalman filter at each time step.
+        var_phi (numpy.array): Variance of the angle from the Kalman filter at each time step.
     """
     earth = Earth()
 
@@ -260,7 +268,7 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     for i in range(len(radar_heights)):
         radar_heights[i] = earth.distance_to_surface(radar_states_earth_cord[i])['distance']
 
-    fig = plt.figure(constrained_layout=True)
+    fig = plt.figure(constrained_layout=True, figsize=(13, 9))
     gs = fig.add_gridspec(3, 2, height_ratios=[2, 2, 1], width_ratios = [3, 2])
 
     # Plotting the distance over time

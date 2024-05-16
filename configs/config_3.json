@@ -161,7 +161,7 @@
         "comment": "drag_coefficient hasn't been decided",
         "initial_conditions": {
             "distance": 6978136.0,
-            "polar_angle": 1.57,
+            "polar_angle": 1.2,
             "azimuthal_angle": 0,
             "angular_velocity": 0.001082,
             "radial_velocity": 0,
