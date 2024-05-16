@@ -316,7 +316,7 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
 
     ax5 = plt.subplot(gs[2,:])
     tab = ax5.table(cellText = cell_text, colLabels = titles, cellLoc= 'center', loc = 'center', colColours = ['lightgrey' for i in range(len(titles))])
-    tab.scale(0.9,1)
+    tab.scale(0.9,2)
     tab.auto_set_font_size(False)
     tab.set_fontsize=(30)
     ax5.axis('off')
