@@ -260,7 +260,7 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     for i in range(len(radar_heights)):
         radar_heights[i] = earth.distance_to_surface(radar_states_earth_cord[i])['distance']
 
-    fig = plt.figure(constrained_layout=True)
+    fig = plt.figure(constrained_layout=True, figsize=(13, 9))
     gs = fig.add_gridspec(3, 2, height_ratios=[2, 2, 1], width_ratios = [3, 2])
 
     # Plotting the distance over time
