@@ -235,7 +235,7 @@ class VisualisationPlotly:
 
 
 # Plot static plots of the trajectories
-def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_states_earth_cord, R, rad, R2, rad2, rad3):
+def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_states_earth_cord, R, rad, R2, rad2, rad3, var_r, var_phi):
     """Generates a plot in polar coordinates.
 
     Args:
@@ -247,6 +247,9 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     pred_heights = np.zeros(len(predicted_states_earth_coord))
     true_heights = np.zeros(len(true_states_earth_coord))
     radar_heights = np.zeros(len(radar_states_earth_cord))
+
+    Vp = var_phi
+    Vr = var_r
 
     for i in range(len(pred_heights)):
         pred_heights[i] = earth.distance_to_surface(predicted_states_earth_coord[i])['distance']
@@ -261,17 +264,19 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     gs = fig3.add_gridspec(2, 2, height_ratios=[1, 1])
 
     # Plotting the distance over time
-    ax1 = plt.subplot(gs[0,:])
-    ax1.plot(range(len(R)), R, label='Real Radius of Orbit', marker='o')
-    ax1.plot(range(len(R2)), R2, label='Predicted Radius of Orbit', linestyle='--')
+    ax1 = plt.subplot(gs[0,0])
+    ax1.plot(range(len(R)), R, label='Real Radius of Orbit', linewidth = 2)
+    ax1.plot(range(len(R2)), R2, label='Predicted Radius of Orbit', linestyle='--', linewidth = 4)
+
+    #ax1.fill_between(range(len(Vr)), R2[1:] - 3*np.sqrt(Vr), R2[1:] + 3*np.sqrt(Vr), color = 'dimgrey', alpha = 0.7)
     ax1.set_title('Distance Between Satellite And The Origin Of The Earth Over Time')
     ax1.set_xlabel('Time Steps')
     ax1.set_ylabel('Distance (m)')
-    ax1.legend(loc='upper right')
+    ax1.legend(loc='upper left')
     ax1.grid(True)
 
     # Plotting the polar and distance
-    ax2 = plt.subplot(gs[1,0], projection = 'polar')
+    ax2 = plt.subplot(gs[0,1], projection = 'polar')
     
     ax2.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
     ax2.tick_params(axis='both', which='both', colors='gray', width=0.5)
@@ -281,7 +286,12 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     ax2.plot(rad2, pred_heights, c='r', linestyle="dashed", label='Predicted Trajectory', linewidth=2)
 
     ax2.set_title('Angle vs Distance')
-    ax2.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
+    ax2.legend(loc='upper left')  # Adjust legend position
+
+    ax4 = plt.subplot(gs[1,0])
+    ax4.semilogy(range(len(Vr)), Vr, color = 'cornflowerblue', label = 'Variance of Radius')
+    ax4.semilogy(range(len(Vp)), Vp, color = 'palevioletred', label = 'Variance of Polar Angle')
+    ax4.legend()
 
     ax3 = plt.subplot(gs[1,1], projection= 'polar')
 
@@ -293,7 +303,7 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     ax3.scatter(rad3, radar_heights, c='g', label='Radar Data', s = 8, zorder = 10)
 
     ax3.set_title('Angle vs Distance')
-    ax3.legend(loc='upper right', bbox_to_anchor=(1.8, 1))  # Adjust legend position
+    ax3.legend(loc='upper right')  # Adjust legend position
 
     plt.show()
 
@@ -332,7 +342,7 @@ def main():
     visual_plotly.visualise()
 
     # Show static plots of trajectories
-    polar_plot(real_states_earth_cord, predict_states_earth_cord, radar_states_earth_cord, R, rad, R2, rad2, rad3)
+    polar_plot(real_states_earth_cord, predict_states_earth_cord, radar_states_earth_cord, R, rad, R2, rad2, rad3, var_r, var_phi)
 
 
 main()
