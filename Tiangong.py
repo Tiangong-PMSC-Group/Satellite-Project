@@ -252,9 +252,9 @@ if __name__ == "__main__":
               ("Kalman prior for angle (deg):", config_in['Kalman']['initial_angle_guess']),
               ("Kalman prior for radial velocity (m/s):", config_in['Kalman']['initial_vr_guess']),
               ("Kalman prior for tangencial velocity (m/s):", config_in['Kalman']['initial_vphi_guess']),
-              ("satellite mass (kg):", config_in['satellite']['mass']),
-              ("satellite cross section (m2):", config_in['satellite']['area']),
-              ("satellite drag coefficient:", config_in['satellite']['drag_coefficient']),
+              ("Satellite mass (kg):", config_in['satellite']['mass']),
+              ("Satellite cross section (m2):", config_in['satellite']['area']),
+              ("Satellite drag coefficient:", config_in['satellite']['drag_coefficient']),
               ("Timestep size (sec)", config_in['sim_config']['dt']['main_dt']),
               ("Radar update frequency (*dt)", config_in['sim_config']['dt']['radar_freq']),
               ]

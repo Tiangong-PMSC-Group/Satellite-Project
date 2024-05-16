@@ -73,8 +73,8 @@ class Main():
         m = deepcopy(self.mean_0)
         m = np.array([m[0], m[3]])
         predicted_states_satellite_cord = [m]
-        predicted_var_r = []
-        predicted_var_phi = []
+        predicted_var_r = [self.tianhe.C[0,0]]
+        predicted_var_phi = [self.tianhe.C[3,3]]
         radar_states_satellite_cord = [m]
 
 
