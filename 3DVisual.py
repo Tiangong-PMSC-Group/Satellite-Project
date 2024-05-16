@@ -260,51 +260,68 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     for i in range(len(radar_heights)):
         radar_heights[i] = earth.distance_to_surface(radar_states_earth_cord[i])['distance']
 
-    fig3 = plt.figure(constrained_layout=True)
-    gs = fig3.add_gridspec(2, 2, height_ratios=[1, 1])
+    fig = plt.figure(constrained_layout=True)
+    gs = fig.add_gridspec(3, 2, height_ratios=[2, 2, 1], width_ratios = [3, 2])
 
     # Plotting the distance over time
     ax1 = plt.subplot(gs[0,0])
-    ax1.plot(range(len(R)), R, label='Real Radius of Orbit', linewidth = 2)
-    ax1.plot(range(len(R2)), R2, label='Predicted Radius of Orbit', linestyle='--', linewidth = 4)
+    ax1.plot(range(len(R2)), R2, color = 'dodgerblue', label='Predicted Radius of Orbit',linewidth = 3)
+    ax1.plot(range(len(R)), R, color = 'black',  alpha = 0.8, linestyle = 'dashed', label='Real Radius of Orbit', linewidth = 3)
 
-    #ax1.fill_between(range(len(Vr)), R2[1:] - 3*np.sqrt(Vr), R2[1:] + 3*np.sqrt(Vr), color = 'dimgrey', alpha = 0.7)
-    ax1.set_title('Distance Between Satellite And The Origin Of The Earth Over Time')
-    ax1.set_xlabel('Time Steps')
+    ax1.set_title('Radius of Orbit for each Time Steps')
+    ax1.set_xlabel('Number of Time Steps')
     ax1.set_ylabel('Distance (m)')
-    ax1.legend(loc='upper left')
+    ax1.legend(loc='lower left')
     ax1.grid(True)
 
     # Plotting the polar and distance
     ax2 = plt.subplot(gs[0,1], projection = 'polar')
     
-    ax2.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
-    ax2.tick_params(axis='both', which='both', colors='gray', width=0.5)
 
     # Plot the traces
-    ax2.plot(rad, true_heights, c='b', linestyle="solid", label='Real Trajectory', linewidth=2)
-    ax2.plot(rad2, pred_heights, c='r', linestyle="dashed", label='Predicted Trajectory', linewidth=2)
+    ax2.plot(rad2, pred_heights, c='dodgerblue', label='Predicted Trajectory', linewidth=3)
+    ax2.plot(rad, true_heights, c='black', linestyle="dashed",  alpha = 0.7, label='Real Trajectory', linewidth=3)
 
-    ax2.set_title('Angle vs Distance')
-    ax2.legend(loc='upper left')  # Adjust legend position
+    ax2.set_title('Polar Angle (rad) vs Altitude (m)')
+    ax2.legend(loc='upper left', bbox_to_anchor=(1, 1))  # Adjust legend position
+
 
     ax4 = plt.subplot(gs[1,0])
-    ax4.semilogy(range(len(Vr)), Vr, color = 'cornflowerblue', label = 'Variance of Radius')
-    ax4.semilogy(range(len(Vp)), Vp, color = 'palevioletred', label = 'Variance of Polar Angle')
+    ax4.semilogy(range(len(Vr)), Vr, color = 'crimson', label = 'Variance of Radius (m$^2$)', linewidth = 3)
+    ax4.semilogy(range(len(Vp)), Vp, color = 'darkorange', label = 'Variance of Polar Angle (rad$^2$)', linewidth = 3)
     ax4.legend()
+    ax4.grid()
+    ax4.set(title='Kalman Filter Variance for each Time Step', xlabel = 'Number of Time steps')
+
 
     ax3 = plt.subplot(gs[1,1], projection= 'polar')
 
-    ax3.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
-    ax3.tick_params(axis='both', which='both', colors='gray', width=0.5)
-
     # Plot the traces
-    ax3.plot(rad, true_heights, c='b', linestyle="dashed", label='Real Trajectory', linewidth=2)
-    ax3.scatter(rad3, radar_heights, c='g', label='Radar Data', s = 8, zorder = 10)
+    ax3.plot(rad, true_heights, c='black', linestyle="dashed", label='Real Trajectory', linewidth=3, zorder = -3)
+    ax3.scatter(rad3, radar_heights, c='g', label='Radar Data', s = 5, zorder = -2, alpha = 0.3)
+    ax3.set_zorder(-1)
 
-    ax3.set_title('Angle vs Distance')
-    ax3.legend(loc='upper right')  # Adjust legend position
+    ax3.set_title('Polar Angle (rad) vs Altitude (m)')
+    ax3.legend(loc='upper left',  bbox_to_anchor=(1, 1))  # Adjust legend position
 
+    data_tab = [config['satellite']['initial_conditions']['distance'], config['satellite']['initial_conditions']['polar_angle'],
+        str(config['radar']['counts']), config['radar']['noise']['rho'], config['radar']['noise']['theta'], config['Kalman']['initial_r_guess'],
+        config['Kalman']['initial_angle_guess'], config['Kalman']['initial_vr_guess'], config['Kalman']['initial_vphi_guess'],
+        config['satellite']['mass'], config['satellite']['area'], config['satellite']['drag_coefficient'], config['sim_config']['dt']['main_dt'],
+        str(config['sim_config']['dt']['radar_freq'])]
+
+    titles = ['Satellite\nDistance (m)', 'Satellite\nAngle (rad)', 'Radar\nCounts','Distance\nNoise', 'Polar\nNoise', 'Prior\nDistance (m)', 
+              'Prior\nAngle (rad)', r'Prior $v_r$', r'Prior $v_\phi$', 'Satellite\nMass (kg)', 'Satellite\nArea'r'(m$^2$)', 'Satellite\nDrag', 'Time\nInterval', 'Radar\nFrequency' ]
+    cell_text = [[f'{x}' for x in data_tab]]
+
+    ax5 = plt.subplot(gs[2,:])
+    tab = ax5.table(cellText = cell_text, colLabels = titles, cellLoc= 'center', loc = 'center', colColours = ['lightgrey' for i in range(len(titles))])
+    tab.scale(0.9,1)
+    tab.auto_set_font_size(False)
+    tab.set_fontsize=(30)
+    ax5.axis('off')
+
+    plt.suptitle('Simulation and Prediction Results', fontsize = 'xx-large', fontweight = 'bold')
     plt.show()
 
 
