@@ -1,6 +1,7 @@
 import numpy as np
 import scipy as sp
 import math
+import numbers
 import random
 from config import config
 
@@ -41,6 +42,11 @@ def c_to_p(state):
         assert math.isinf(x) == False, "Unstable Orbit: a function is receiving an infinty instead of number, try some different values!"
         assert math.isinf(y) == False, "Unstable Orbit: a function is receiving an infinty instead of number, try some different values!"
         assert math.isinf(z) == False, "Unstable Orbit: a function is receiving an infinty instead of number, try some different values!"
+
+        assert  isinstance(x, numbers.Real), "Unstable Orbit: a function is receiving an infinty instead of number, try some different values!"
+        assert  isinstance(y, numbers.Real), "Unstable Orbit: a function is receiving an infinty instead of number, try some different values!"
+        assert  isinstance(z, numbers.Real), "Unstable Orbit: a function is receiving an infinty instead of number, try some different values!"
+
 
         if z > 0:    
             polar = np.arctan(np.sqrt(x**2 + y**2)/z)
@@ -102,6 +108,10 @@ def p_to_c(state):
         assert math.isinf(polar) == False, "Unstable Orbit: a function is receiving an undefined polar angle, try some different values!"
         assert math.isinf(azimuthal) == False, "Unstable Orbit: a function is receiving an undefined azimuthal angle, try some different values!"
 
+        assert  isinstance(rho, numbers.Real), "Unstable Orbit: a function is receiving an infinte radius instead of number, try some different values!"
+        assert  isinstance(polar, numbers.Real), "Unstable Orbit: a function is receiving an infinte angle instead of number, try some different values!"
+        assert  isinstance(azimuthal, numbers.Real), "Unstable Orbit: a function is receiving an infinte angle instead of number, try some different values!"
+
         x = rho * np.sin(polar) * np.cos(azimuthal)
         y = rho * np.sin(polar) * np.sin(azimuthal)
         z = rho * np.cos(polar)
@@ -114,6 +124,9 @@ def p_to_c(state):
 
         assert math.isinf(rho) == False, "Unstable Orbit: a function is receiving an infinte radius of orbit, try some different values!"
         assert math.isinf(theta) == False, "Unstable Orbit: a function is receiving an undefined polar angle, try some different values!"
+
+        assert isinstance(rho, numbers.Real), "Unstable Orbit: a function is receiving an infinte radius of number, try some different values!"
+        assert isinstance(theta, numbers.Real), "Unstable Orbit: a function is receiving an infinte angle of number, try some different values!"
 
         x = rho * np.cos(theta)
         y = rho * np.sin(theta)
