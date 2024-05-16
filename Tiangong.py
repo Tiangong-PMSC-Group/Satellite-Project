@@ -106,21 +106,22 @@ def on_button_click():
         
         # Update configuration with validated values
 
-        config['satellite']['initial_conditions']['distance'] = float(satellite_distance)
-        config['satellite']['initial_conditions']['polar_angle'] = float(satellite_angle)
-        config['radar']['counts'] = int(radar_counts)
-        config['radar']['noise']['rho'] = float(radar_noise_distance)
-        config['radar']['noise']['theta'] = float(radar_noise_polar)
-        config['Kalman']['initial_r_guess'] = float(prior_distance)
-        config['Kalman']['initial_angle_guess'] = float(prior_angle)
-        config['Kalman']['initial_vr_guess'] = float(prior_vr)
-        config['Kalman']['initial_vphi_guess'] = float(prior_vphi)
-        config['satellite']['mass'] = float(satellite_mass)
-        config['satellite']['area'] = float(satellite_area)
-        config['satellite']['drag_coefficient'] = float(satellite_drag)
-        config['sim_config']['dt']['main_dt'] = float(time_interval)
-        config['sim_config']['dt']['radar_freq'] = int(radar_frequency)
+        # config['satellite']['initial_conditions']['distance'] = float(satellite_distance)
+        # config['satellite']['initial_conditions']['polar_angle'] = float(satellite_angle)
+        # config['radar']['counts'] = int(radar_counts)
+        # config['radar']['noise']['rho'] = float(radar_noise_distance)
+        # config['radar']['noise']['theta'] = float(radar_noise_polar)
+        # config['Kalman']['initial_r_guess'] = float(prior_distance)
+        # config['Kalman']['initial_angle_guess'] = float(prior_angle)
+        # config['Kalman']['initial_vr_guess'] = float(prior_vr)
+        # config['Kalman']['initial_vphi_guess'] = float(prior_vphi)
+        # config['satellite']['mass'] = float(satellite_mass)
+        # config['satellite']['area'] = float(satellite_area)
+        # config['satellite']['drag_coefficient'] = float(satellite_drag)
+        # config['sim_config']['dt']['main_dt'] = float(time_interval)
+        # config['sim_config']['dt']['radar_freq'] = int(radar_frequency)
 
+        config = config_i
 
         save_config(config)  # Save updated config
 
