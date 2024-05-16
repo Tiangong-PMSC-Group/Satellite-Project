@@ -17,19 +17,16 @@ from copy import deepcopy
 
 #@singleton
 class Satellite():
-    """_summary_
+    """Satellite class, encapsulates all the processes within itself
     """
     def __init__(self, true_state0, prior_state, filter=None, earth=None):
-        """_summary_
+        """Creates an instance of the satellite class
 
         Args:
-            true_state0 (_type_): _description_
-            prior_state (_type_): _description_
-            filter (_type_, optional): _description_. Defaults to None.
-            earth (_type_, optional): _description_. Defaults to None.
-
-        Returns:
-            _type_: _description_
+            true_state0 (numpy.array): True starting state of the satellite
+            prior_state (numpy.array): Assumed state of the Kalman filter
+            filter (Object Class of Filter, optional): Linear or Extended Kalman Filter
+            earth (Object Class of Planet, optional): Earth class with all methods a properties.
         """
         # true_state is a SatelliteState data type
 
@@ -63,7 +60,7 @@ class Satellite():
         # Event class for handling the crash
         # For the solver
         class CrashEvent:
-            """_summary_
+            """Sends a call in the event that the satellite goes through the Earth.
             """
             def __init__(self, satellite):
                 self.satellite = satellite
@@ -85,14 +82,14 @@ class Satellite():
     ####### Actual Dymanics
 
     def d_state(self, t, state):
-        """_summary_
+        """Generates a single change of state, used for ODE solver.
 
         Args:
-            t (_type_): _description_
-            state (_type_): _description_
+            t (list): time, independent variable used in the ODE solvers
+            state (numpy.array): current state of the system, used to push the system forward 1 dt
 
         Returns:
-            _type_: _description_
+           numpy.array: array changes in the 4 state variables
         """
         # state in satelitte plane coordinates
         # "t" is not required in the actual calculations, but it is neeeded
@@ -120,27 +117,27 @@ class Satellite():
         return np.array([d_r, d_vr, d_phi, d_v_phi])
 
     def plane_to_altitude(self, r, phi):
-        """_summary_
+        """Converts a set of coordinates into altitude values
 
         Args:
-            r (_type_): _description_
-            phi (_type_): _description_
+            r (float): radius of orbit in satellite coordinates
+            phi (float): angle of orbit in satellite coordinates
 
         Returns:
-            _type_: _description_
+            float: returns the distance to the surface of the satellite after undergoing two conversions
         """
         earth_coor = utilities.spherical_to_spherical([r, phi, self.plane_of_inclination])
         return self.earth.distance_to_surface(earth_coor)
 
 
     def simulate(self, time_limit):
-        """_summary_
+        """Executes the ODE solver given above equations
 
         Args:
-            time_limit (_type_): _description_
+            time_limit (float): how long to sovle the ODE for
 
         Returns:
-            _type_: _description_
+            Solution Object: ivp file of the ODE solution
         """
         # Run the full integration
 
@@ -166,13 +163,13 @@ class Satellite():
         return sol
     
     def get_position_at_t(self, t):
-        """_summary_
+        """Returns satellite position at time t in the simulation
 
         Args:
-            t (_type_): _description_
+            t (int): time index of the desired position
 
         Returns:
-            _type_: _description_
+            numpy.array: polar positions of the Satellite wrt Earths polar coords
         """
         r = self.solution.y[0][t]
         theta = self.solution.y[2][t]
@@ -185,10 +182,10 @@ class Satellite():
 
     
     def update_estimated_state(self, measurement=None):
-        """_summary_
+        """Execute a run of the Kalman filter
 
         Args:
-            measurement (_type_, optional): _description_. Defaults to None.
+            measurement (numpy.array, optional): Measurement of the state of the Kalman filter. Defaults to None.
         """
         distance = self.earth.distane_to_surface(self.estimated_state.pos)['distance']
         air = self.earth.air_density(distance)
