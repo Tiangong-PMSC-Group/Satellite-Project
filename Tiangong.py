@@ -27,6 +27,74 @@ def on_button_click():
             satellite_drag = input_satellite_drag.get()
             time_interval = input_time_interval.get()
             radar_frequency = input_radar_frequency.get()
+
+                # Check inputs
+            if not radar_counts.isdigit():
+                messagebox.showerror("Input Error", "Radar counts must be a whole number.")
+                return
+            if not is_float(satellite_mass):
+                messagebox.showerror("Input Error", "Satellite mass must be a numeric value.")
+                return
+            if not is_float(satellite_area):
+                messagebox.showerror("Input Error", "Satellite area must be a numeric value.")
+                return
+            if not is_float(satellite_drag):
+                messagebox.showerror("Input Error", "Satellite drag coefficient must be a numeric value.")
+                return
+            
+            if not is_float(satellite_distance):
+                messagebox.showerror("Input Error", "Satellite distance must be a numeric value.")
+                return
+            if not is_float(satellite_angle):
+                messagebox.showerror("Input Error", "Satellite angle must be a numeric value.")
+                return
+            
+            if not is_float(time_interval):
+                messagebox.showerror("Input Error", "Time interval must be a numeric value.")
+                return
+            print("1")
+            if not radar_frequency.isdigit():
+                messagebox.showerror("Input Error", "Radar frequency must be a whole number.")
+                return
+            print("2")
+            if not is_float(radar_noise_distance):
+                messagebox.showerror("Input Error", "Radar noise distance must be a numeric value.")
+                return
+            
+            if not is_float(radar_noise_polar):
+                messagebox.showerror("Input Error", "Radar noise polar must be a numeric value.")
+                return
+            if not is_float(prior_distance):
+                messagebox.showerror("Input Error", "Prior distance must be a numeric value.")
+                return
+            if not is_float(prior_angle):
+                messagebox.showerror("Input Error", "Prior angle must be a numeric value.")
+                return
+            
+            if not is_float(prior_vr):
+                messagebox.showerror("Input Error", "Prior distance must be a numeric value.")
+                return
+            if not is_float(prior_vphi):
+                messagebox.showerror("Input Error", "Prior angle must be a numeric value.")
+                return
+            
+            #Update configuration with validated values
+
+            config['satellite']['initial_conditions']['distance'] = float(satellite_distance)
+            config['satellite']['initial_conditions']['polar_angle'] = float(satellite_angle)
+            config['radar']['counts'] = int(radar_counts)
+            config['radar']['noise']['rho'] = float(radar_noise_distance)
+            config['radar']['noise']['theta'] = float(radar_noise_polar)
+            config['Kalman']['initial_r_guess'] = float(prior_distance)
+            config['Kalman']['initial_angle_guess'] = float(prior_angle)
+            config['Kalman']['initial_vr_guess'] = float(prior_vr)
+            config['Kalman']['initial_vphi_guess'] = float(prior_vphi)
+            config['satellite']['mass'] = float(satellite_mass)
+            config['satellite']['area'] = float(satellite_area)
+            config['satellite']['drag_coefficient'] = float(satellite_drag)
+            config['sim_config']['dt']['main_dt'] = float(time_interval)
+            config['sim_config']['dt']['radar_freq'] = int(radar_frequency)
+
         else:
             print("Using Saved File")
             path = 'configs/config_' + str(file_number) + '.json'
