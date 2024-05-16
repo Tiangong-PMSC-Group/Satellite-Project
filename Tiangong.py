@@ -10,6 +10,8 @@ def on_button_click():
         file_number = input_file.get()
         print(file_number)
         if file_number == str(0):
+            path = 'configs/config.json'
+            config = load_config(path)
             # Collect input values from entries
 
             # Collect input values from entries
