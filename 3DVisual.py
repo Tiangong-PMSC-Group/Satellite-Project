@@ -291,7 +291,7 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     ax4.semilogy(range(len(Vp)), Vp, color = 'darkorange', label = 'Variance of Polar Angle (rad$^2$)', linewidth = 3)
     ax4.legend()
     ax4.grid()
-    ax4.set(title='Kalman Filter Variance for each Time Step', xlabel = 'Number of Time steps')
+    ax4.set(title='Kalman Filter Variance for each Time Step', xlabel = 'Number of Time Steps', ylabel = 'log(variance)')
 
 
     ax3 = plt.subplot(gs[1,1], projection= 'polar')
