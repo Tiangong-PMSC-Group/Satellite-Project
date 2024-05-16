@@ -243,7 +243,7 @@ if __name__ == "__main__":
 
     # List of input labels and default values
     
-    inputs = [("Default simulation (0 for input below):", 0),
+    inputs = [("Default simulation (1 for input below):", 1),
               ("Initial satellite distance (m):", config_in['satellite']['initial_conditions']['distance']),
               ("Initial satellite polar angle (deg):", config_in['satellite']['initial_conditions']['polar_angle']),
               ("Number of radars:", config_in['radar']['counts']),
