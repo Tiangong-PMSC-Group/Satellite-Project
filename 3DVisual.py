@@ -278,7 +278,7 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
 
     ax1.set_title('Radius of Orbit for each Time Steps')
     ax1.set_xlabel('Number of Time Steps')
-    ax1.set_ylabel('Distance (m)')
+    ax1.set_ylabel('Distance from centre of Earth (m)')
     ax1.legend(loc='lower left')
     ax1.grid(True)
 
@@ -290,7 +290,7 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     ax2.plot(rad2, pred_heights, c='dodgerblue', label='Predicted Trajectory', linewidth=3)
     ax2.plot(rad, true_heights, c='black', linestyle="dashed",  alpha = 0.7, label='Real Trajectory', linewidth=3)
 
-    ax2.set_title('Polar Angle (rad) vs Altitude (m)')
+    ax2.set_title('Polar Angle (rad) vs Height (m)')
     ax2.legend(loc='upper left', bbox_to_anchor=(1, 1))  # Adjust legend position
 
 
@@ -309,7 +309,7 @@ def polar_plot(true_states_earth_coord, predicted_states_earth_coord, radar_stat
     ax3.scatter(rad3, radar_heights, c='g', label='Radar Data', s = 5, zorder = -2, alpha = 0.3)
     ax3.set_zorder(-1)
 
-    ax3.set_title('Polar Angle (rad) vs Altitude (m)')
+    ax3.set_title('Polar Angle (rad) vs Height (m)')
     ax3.legend(loc='upper left',  bbox_to_anchor=(1, 1))  # Adjust legend position
 
     data_tab = [config['satellite']['initial_conditions']['distance'], config['satellite']['initial_conditions']['polar_angle'],
